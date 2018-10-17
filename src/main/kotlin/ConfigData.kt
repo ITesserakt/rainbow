@@ -1,0 +1,1 @@
+class ConfigData (val token : String, val version : String)
