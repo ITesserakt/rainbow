@@ -15,7 +15,6 @@ object ResolverService {
         val resolver = map[T::class]
         if (resolver != null)
             return resolver as ITypeResolver<T>
-        map.entries.map { print("${it.key} ${it.value}") }
         throw NoSuchElementException("Подходящий объект для класса ${T::class.qualifiedName} не найден")
     }
 }

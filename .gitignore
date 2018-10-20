@@ -96,3 +96,5 @@ fabric.properties
 settings.gradle
 /gradle/wrapper/gradle-wrapper.properties
 /src/main/resources/config.json
+/src/main/resources/welcome.gif
+/src/main/resources/omae_wa_mou.gif

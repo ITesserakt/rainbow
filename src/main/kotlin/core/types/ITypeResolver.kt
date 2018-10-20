@@ -1,7 +1,7 @@
 package core.types
 
-import core.commands.ICommandContext
+import core.commands.CommandContext
 
 interface ITypeResolver<T> {
-    fun read(context : ICommandContext, input: String) : T
+    fun read(context : CommandContext, input: String) : T
 }
