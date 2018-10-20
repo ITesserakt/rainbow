@@ -4,9 +4,10 @@ import java.util.*
 
 object CommandService {
     private val commandsMap = HashMap<String, Command>()
-    public val commandsList: MutableCollection<Command> = commandsMap.values
+    val commandsList: MutableCollection<Command> = commandsMap.values
 
-    fun addCommand(command: Command) {
+    fun addCommand(init: CommandBuilder.() -> Command) {
+        val command = init.invoke(CommandBuilder())
         commandsMap[command.name] = command
     }
 

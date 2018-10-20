@@ -2,24 +2,28 @@ package core.commands
 
 import kotlin.reflect.KClass
 
-class ParamBuilder(private val name : String) {
-
-    public val paramInfo = object : ParamInfo {
+class ParamBuilder {
+    val paramInfo = object : ParamInfo {
         override var isOptional: Boolean = false
         override var summary: String = ""
-        override var name: String = this@ParamBuilder.name
+        override var name: String = ""
         override var type : KClass<*>? = null
     }
 
-    fun optional(): ParamBuilder {
-        paramInfo.isOptional = true
-        return this
-    }
+    var name = ""
+        set(value) {
+            paramInfo.name = value
+        }
 
-    fun addSummary(summary: String): ParamBuilder {
-        paramInfo.summary = summary
-        return this
-    }
+    var isOptional = false
+        set(value) {
+            paramInfo.isOptional = value
+        }
+
+    var summary = ""
+        set(value) {
+            paramInfo.summary = value
+        }
 
     inline fun <reified T> build() : ParamInfo {
         paramInfo.type = T::class

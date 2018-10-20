@@ -1,9 +1,9 @@
 package core.types
 
-import core.commands.ICommandContext
+import core.commands.CommandContext
 
 internal class LongResolver : ITypeResolver<Long> {
-    override fun read(context: ICommandContext, input: String): Long {
+    override fun read(context: CommandContext, input: String): Long {
         val guild = context.guild
 
         return if (input.startsWith('<') && input.endsWith('>'))
