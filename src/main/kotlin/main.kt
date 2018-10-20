@@ -1,9 +1,9 @@
+
 import core.getParsedObject
-import core.types.LongResolver
-import core.types.ResolverService
-import core.types.UserResolver
+import core.types.*
 import modules.AdminsModule
 import modules.HelpModule
+import sx.blah.discord.handle.obj.IUser
 import kotlin.reflect.KProperty
 
 val VERSION : String by object {
@@ -12,9 +12,13 @@ val VERSION : String by object {
 }
 
 fun main(args: Array<String>) {
+    ResolverService
+            .bind(UserResolver(), IUser::class)
+            .bind(LongResolver(), Long::class)
+            .bind(BooleanResolver(), Boolean::class)
+            .bind(IntResolver(), Int::class)
     AdminsModule()
     HelpModule()
-    ResolverService.addResolver(UserResolver())
-    ResolverService.addResolver(LongResolver())
+
     RegisterBot()
 }

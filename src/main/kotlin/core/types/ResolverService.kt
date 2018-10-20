@@ -1,15 +1,21 @@
 package core.types
 
-object ResolverService {
-    public val map = HashMap<Class<*>, ITypeResolver<*>>()
+import kotlin.reflect.KClass
 
-    inline fun <reified T> getForType() : ITypeResolver<T> {
-        if(map[T::class.java] != null)
-            return (map[T::class.java] as ITypeResolver<T>?)!!
-        throw NoSuchElementException("Подходящий конвертер для типа ${T::class.java.name} не найден!")
+object ResolverService {
+    val map = HashMap<KClass<*>, ITypeResolver<*>>()
+
+    fun bind(resolver : ITypeResolver<*>, with : KClass<*>) : ResolverService {
+        map[with] = resolver
+        return this
     }
 
-    inline fun <reified T> addResolver(resolver: ITypeResolver<T>) {
-        map[T::class.java] = resolver
+    @Suppress("UNCHECKED_CAST")
+    inline fun <reified T> getForType() : ITypeResolver<T> {
+        val resolver = map[T::class]
+        if (resolver != null)
+            return resolver as ITypeResolver<T>
+        map.entries.map { print("${it.key} ${it.value}") }
+        throw NoSuchElementException("Подходящий объект для класса ${T::class.qualifiedName} не найден")
     }
 }
