@@ -2,6 +2,9 @@ package core.commands
 
 import java.util.*
 
+/**
+ * Предоставляет методы для упрвления командами
+ */
 object CommandService {
     private val commandsMap = HashMap<String, Command>()
     val commandsList: MutableCollection<Command> = commandsMap.values
@@ -11,6 +14,9 @@ object CommandService {
         commandsMap[command.name] = command
     }
 
+    /**
+     * Возвращает команду
+     */
     fun getCommandByName(name: String) = commandsMap[name]
 
     fun getCommandByAlias(input: String): Command? {

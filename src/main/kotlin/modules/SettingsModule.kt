@@ -1,12 +1,11 @@
 package modules
 
 import core.ModuleBase
-import core.commands.CommandContext
 import core.commands.CommandService
 import core.registerPrefix
 import core.types.ResolverService
 
-class SettingsModule : ModuleBase<CommandContext>() {
+internal class SettingsModule : ModuleBase() {
     init {
         CommandService.addCommand {
             name = "prefix"

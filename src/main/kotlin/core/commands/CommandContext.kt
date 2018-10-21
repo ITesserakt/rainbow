@@ -1,31 +1,39 @@
 package core.commands
 
 import core.IContext
+import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
+import sx.blah.discord.handle.obj.IChannel
+import sx.blah.discord.handle.obj.IGuild
+import sx.blah.discord.handle.obj.IMessage
+import sx.blah.discord.handle.obj.IUser
 import java.util.*
 
 data class CommandContext (private val event : MessageReceivedEvent, val args : Array<String>) : IContext {
-    val channel = event.channel!!
-    override val user = event.author!!
-    val message = event.message!!
-    override val client = event.client!!
-    override val guild = event.guild!!
+    val channel: IChannel = event.channel
+    override val user: IUser = event.author
+    val message: IMessage = event.message
+    override val client: IDiscordClient = event.client
+    override val guild: IGuild = event.guild
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as CommandContext
+        return compareProperties(other as? CommandContext)
+    }
 
-        if (event != other.event) return false
-        if (!Arrays.equals(args, other.args)) return false
-        if (channel != other.channel) return false
-        if (user != other.user) return false
-        if (message != other.message) return false
-        if (client != other.client) return false
-        if (guild != other.guild) return false
-
-        return true
+    private fun compareProperties(other: CommandContext?): Boolean {
+        return when {
+            event != other?.event -> false
+            !Arrays.equals(args, other.args) -> false
+            channel != other.channel -> false
+            user != other.user -> false
+            message != other.message -> false
+            client != other.client -> false
+            guild != other.guild -> false
+            else -> true
+        }
     }
 
     override fun hashCode(): Int {

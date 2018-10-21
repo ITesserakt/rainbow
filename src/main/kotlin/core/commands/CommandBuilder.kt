@@ -1,5 +1,8 @@
 package core.commands
 
+/**
+ * Строитель для команды
+ */
 class CommandBuilder {
     private val command: Command
 
@@ -9,17 +12,14 @@ class CommandBuilder {
                     StringBuilder(this.name)
                             .append(" (")
                             .append(this.parameters.map {
-                                if (!it.isOptional) "${it.name} : ${it.type!!.simpleName}"   //some : Int
-                                else "<${it.name} : ${it.type!!.simpleName}>"                //<some : Int>
+                                if (!it.isOptional) "${it.name} : ${it.type?.simpleName}"   //some : Int
+                                else "<${it.name} : ${it.type?.simpleName}>"                //<some : Int>
                             }
                                     .joinToString { it })
                             .append(")")
                             .toString()
 
-            override fun execute(context: CommandContext) {
-                action!!(context)
-            }
-
+            override var action: (CommandContext) -> Unit = {}
             override var aliases: Array<String> = arrayOf()
             override var summary = "Описание отстутствует"
             override var name = ""
@@ -27,7 +27,10 @@ class CommandBuilder {
         }
     }
 
-    var action: ((CommandContext) -> Unit)? = null
+    var action: (CommandContext) -> Unit = {}
+        set(value) {
+            command.action = value
+        }
 
     var aliases: Array<String> = arrayOf()
         set(value) {
@@ -48,10 +51,13 @@ class CommandBuilder {
             command.name = value
         }
 
+    /**
+     * Заверщает построение команды
+     */
     fun build(): Command {
         if (command.name == "")
             throw NullPointerException("Отсутствует имя команды")
-        if (action == null)
+        if (action == {})
             throw NullPointerException("Отсутствует действие, выполняемое командой")
         if (command.summary == "Описание отстутствует" || command.summary == "")
             println("Отсутствует описание для функции '${command.name}'")

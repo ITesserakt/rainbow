@@ -5,8 +5,7 @@ interface Command {
     var summary : String
     var aliases : Array<String>
     var parameters : Array<out ParamInfo>
-
-    fun execute(context: CommandContext)
+    var action : (CommandContext) -> Unit
 
     override fun toString(): String
 

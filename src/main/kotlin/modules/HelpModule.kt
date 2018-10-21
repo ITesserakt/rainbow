@@ -2,12 +2,11 @@ package modules
 
 import VERSION
 import core.ModuleBase
-import core.commands.CommandContext
 import core.commands.CommandService
 import core.resolvePrefix
 import sx.blah.discord.Discord4J
 
-class HelpModule : ModuleBase<CommandContext>() {
+class HelpModule : ModuleBase() {
     init {
         CommandService.addCommand{
             name = "help"

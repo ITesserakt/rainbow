@@ -2,13 +2,12 @@ package modules
 
 import CURRENTDIR
 import core.ModuleBase
-import core.commands.CommandContext
 import core.commands.CommandService
 import core.types.ResolverService
 import sx.blah.discord.handle.obj.IUser
 import java.io.File
 
-internal class AdminsModule : ModuleBase<CommandContext>() {
+internal class AdminsModule : ModuleBase() {
     init {
         CommandService.addCommand {
             name = "ban"
@@ -19,7 +18,6 @@ internal class AdminsModule : ModuleBase<CommandContext>() {
 
                 it.guild.banUser(user, reason)
                 it.replyFile(file)
-
             }
             summary = "Банит указанного пользователя по указанной причине"
             parameters({ name = "user"; build<IUser>() }, { name = "reason"; isOptional = true; build<String>() })

@@ -2,6 +2,9 @@ package core.commands
 
 import kotlin.reflect.KClass
 
+/**
+ * Строитель для параметра команды
+ */
 class ParamBuilder {
     val paramInfo = object : ParamInfo {
         override var isOptional: Boolean = false
@@ -26,6 +29,8 @@ class ParamBuilder {
         }
 
     inline fun <reified T> build() : ParamInfo {
+        if (name == "")
+            throw NullPointerException("Имя параметра не должно быть пустым")
         paramInfo.type = T::class
         return paramInfo
     }
