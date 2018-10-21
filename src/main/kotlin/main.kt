@@ -4,6 +4,7 @@ import core.types.*
 import modules.AdminsModule
 import modules.HelpModule
 import modules.SettingsModule
+import sx.blah.discord.handle.obj.IRole
 import sx.blah.discord.handle.obj.IUser
 import java.io.File
 import kotlin.reflect.KProperty
@@ -23,6 +24,7 @@ fun main(args: Array<String>) {
             .bind(BooleanResolver(), Boolean::class)
             .bind(IntResolver(), Int::class)
             .bind(CharResolver(), Char::class)
+            .bind(RoleResolver(), IRole::class)
     AdminsModule()
     HelpModule()
     SettingsModule()

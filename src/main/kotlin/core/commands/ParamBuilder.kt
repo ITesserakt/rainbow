@@ -29,7 +29,7 @@ class ParamBuilder {
         }
 
     inline fun <reified T> build() : ParamInfo {
-        if (name == "")
+        if (paramInfo.name == "")
             throw NullPointerException("Имя параметра не должно быть пустым")
         paramInfo.type = T::class
         return paramInfo

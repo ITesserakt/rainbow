@@ -1,5 +1,7 @@
 package core.commands
 
+import sx.blah.discord.Discord4J
+
 /**
  * Строитель для команды
  */
@@ -55,12 +57,14 @@ class CommandBuilder {
      * Заверщает построение команды
      */
     fun build(): Command {
+        val logger = Discord4J.Discord4JLogger("main")
+
         if (command.name == "")
             throw NullPointerException("Отсутствует имя команды")
         if (action == {})
             throw NullPointerException("Отсутствует действие, выполняемое командой")
         if (command.summary == "Описание отстутствует" || command.summary == "")
-            println("Отсутствует описание для функции '${command.name}'")
+            logger.warn("Отсутствует описание для функции '${command.name}'")
 
         return command
     }

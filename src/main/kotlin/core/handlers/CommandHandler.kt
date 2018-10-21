@@ -38,7 +38,7 @@ class CommandHandler {
         } catch (ex: NoSuchElementException) {
             context.channel.sendMessage("Ошибка: подходящий элемент не найден")
         } catch (ex: RuntimeException) {
-            context.channel.sendMessage(ex.localizedMessage)
+            context.channel.sendMessage("${ex.localizedMessage}\n${ex.stackTrace.map { it.toString() }}")
         }
     }
 }

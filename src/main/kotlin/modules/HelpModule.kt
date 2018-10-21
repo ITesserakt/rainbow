@@ -4,7 +4,10 @@ import VERSION
 import core.ModuleBase
 import core.commands.CommandService
 import core.resolvePrefix
+import core.types.ResolverService
 import sx.blah.discord.Discord4J
+import sx.blah.discord.handle.obj.IRole
+import sx.blah.discord.util.EmbedBuilder
 
 class HelpModule : ModuleBase() {
     init {
@@ -38,6 +41,21 @@ class HelpModule : ModuleBase() {
                 it.reply("$VERSION\nОсновано на DISCORD4Jv${Discord4J.VERSION}")
             }
             summary = "Информация о боте"
+            build()
+        }
+
+        CommandService.addCommand {
+            name = "role_info"
+            action = {
+                val role = ResolverService.getForType<IRole>().readToEnd(it, it.args)
+                it.reply("", EmbedBuilder()
+                        .withColor(role.color)
+                        .appendField("Id", role.stringID, true)
+                        .appendField("Position", role.position.toString(), false)
+                        .appendField("Created", role.creationDate.toString(), false))
+            }
+            summary = "Информация об указанной роли"
+            parameters({name = "role"; build<IRole>()})
             build()
         }
     }
