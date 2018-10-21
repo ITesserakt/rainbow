@@ -1,8 +1,8 @@
 package core.handlers
 
+import core.Prefix
 import core.commands.CommandContext
 import core.commands.CommandService
-import core.resolvePrefix
 import core.types.EmptyInput
 import sx.blah.discord.api.events.EventSubscriber
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
@@ -19,7 +19,7 @@ class CommandHandler {
 
         if (runArray.isEmpty()) return
 
-        if (runArray[0][0] != resolvePrefix(event.guild)) return
+        if (runArray[0][0] != Prefix.resolve(event.guild)) return
 
         val cmdStr = runArray[0].substring(1)
         val argArray = runArray.subList(1, runArray.size).toTypedArray()

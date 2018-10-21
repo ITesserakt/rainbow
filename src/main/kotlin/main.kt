@@ -1,4 +1,5 @@
 
+import core.Prefix
 import core.getParsedObject
 import core.types.*
 import modules.AdminsModule
@@ -23,9 +24,12 @@ fun main(args: Array<String>) {
             .bind(BooleanResolver(), Boolean::class)
             .bind(IntResolver(), Int::class)
             .bind(CharResolver(), Char::class)
+
     AdminsModule()
     HelpModule()
     SettingsModule()
+
+    Prefix.Loader.load()
 
     RegisterBot()
 }
