@@ -1,21 +1,8 @@
 
-import core.getParsedObject
+import core.Prefix
 import core.types.*
-import modules.AdminsModule
-import modules.HelpModule
-import modules.SettingsModule
-import sx.blah.discord.handle.obj.IRole
-import sx.blah.discord.handle.obj.IUser
-import java.io.File
-import kotlin.reflect.KProperty
-
-val VERSION : String by object {
-    operator fun getValue(ref: Any?, property: KProperty<*>): String =
-            getParsedObject<ConfigData>("src/main/resources/config.json").version
-}
-
-val CURRENTDIR = "${File("").absolutePath}/src/main"
-val CURRENTTESTDIR = "${File("").absolutePath}/src/test"
+import modules.*
+import sx.blah.discord.handle.obj.*
 
 fun main(args: Array<String>) {
     ResolverService
@@ -24,10 +11,18 @@ fun main(args: Array<String>) {
             .bind(BooleanResolver(), Boolean::class)
             .bind(IntResolver(), Int::class)
             .bind(CharResolver(), Char::class)
+            .bind(GuildResolver(), IGuild::class)
+            .bind(StringResolver(), String::class)
             .bind(RoleResolver(), IRole::class)
+            .bind(FloatResolver(), Float::class)
+  
     AdminsModule()
     HelpModule()
     SettingsModule()
+    ConsoleModule()
+    RainbowModule()
+
+    Prefix.Loader.load()
 
     RegisterBot()
 }

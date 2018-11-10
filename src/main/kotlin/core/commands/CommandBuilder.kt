@@ -1,35 +1,15 @@
 package core.commands
 
+import core.ICommandContext
 import sx.blah.discord.Discord4J
 
 /**
  * Строитель для команды
  */
 class CommandBuilder {
-    private val command: Command
+    private val command: Command = Command()
 
-    init {
-        command = object : Command {
-            override fun toString(): String =
-                    StringBuilder(this.name)
-                            .append(" (")
-                            .append(this.parameters.map {
-                                if (!it.isOptional) "${it.name} : ${it.type?.simpleName}"   //some : Int
-                                else "<${it.name} : ${it.type?.simpleName}>"                //<some : Int>
-                            }
-                                    .joinToString { it })
-                            .append(")")
-                            .toString()
-
-            override var action: (CommandContext) -> Unit = {}
-            override var aliases: Array<String> = arrayOf()
-            override var summary = "Описание отстутствует"
-            override var name = ""
-            override var parameters: Array<out ParamInfo> = arrayOf()
-        }
-    }
-
-    var action: (CommandContext) -> Unit = {}
+    var action: (ICommandContext) -> Unit = {}
         set(value) {
             command.action = value
         }
@@ -57,7 +37,7 @@ class CommandBuilder {
      * Заверщает построение команды
      */
     fun build(): Command {
-        val logger = Discord4J.Discord4JLogger("main")
+        val logger = LoggerFactory.getLogger(CommandBuilder::class.java)
 
         if (command.name == "")
             throw NullPointerException("Отсутствует имя команды")

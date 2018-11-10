@@ -1,8 +1,8 @@
 package modules
 
 import core.ModuleBase
+import core.Prefix
 import core.commands.CommandService
-import core.registerPrefix
 import core.types.ResolverService
 
 internal class SettingsModule : ModuleBase() {
@@ -11,7 +11,7 @@ internal class SettingsModule : ModuleBase() {
             name = "prefix"
             action = {
                 val prefix = ResolverService.getForType<Char>().read(it, it.args[0])
-                registerPrefix(it.guild, prefix)
+                Prefix.register(it.guild, prefix)
                 it.reply("Префикс для данной гильдии заменен на **$prefix**")
             }
             summary = "Изменяет префикс для гильдии"

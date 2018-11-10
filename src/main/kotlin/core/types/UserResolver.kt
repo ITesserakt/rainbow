@@ -1,11 +1,11 @@
 package core.types
 
-import core.commands.CommandContext
+import core.ICommandContext
 import sx.blah.discord.handle.obj.IUser
 
 internal class UserResolver : ITypeResolver <IUser> {
-    override fun read(context: CommandContext, input: String): IUser {
-        val fromPureId = input.toLongOrNull()
+    override fun read(context: ICommandContext, input: String): IUser {
+        val fromPureId : Long? = input.toLongOrNull()
         val guild = context.guild
 
         return if (input.startsWith('<') && input.endsWith('>')) {

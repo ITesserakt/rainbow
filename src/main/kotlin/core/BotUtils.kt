@@ -1,31 +1,52 @@
 package core
 
+import ConfigData
 import sx.blah.discord.handle.obj.IGuild
+import java.io.File
 
-private val prefixes = HashMap<Long, Char>()
+val RESOURCES: String = if (File("D:\\JetBrains\\rainbow\\src\\main\\resources").exists())
+    "D:\\JetBrains\\rainbow\\src\\main\\resources"
+else
+    ""
+val VERSION : String = getParsedObject<ConfigData>("$RESOURCES\\config.json").version
 
-/**
- * Возвращает зарегистрированный префикс или стандартный
- * @param guild объект гильдии
- */
-fun resolvePrefix(guild : IGuild) : Char {
-    return resolvePrefix(guild.longID)
-}
+object Prefix {
+    internal var prefixes = HashMap<String, String>()
 
-/**
- * Сохраняет префикс для указанной гильдии
- * @param guild объект гильдии
- * @param prefix префикс
- */
-fun registerPrefix(guild: IGuild, prefix : Char) {
-    registerPrefix(guild.longID, prefix)
-}
+    /**
+     * Возвращает зарегистрированный префикс или стандартный
+     * @param guild объект гильдии
+     */
+    fun resolve(guild: IGuild): Char {
+        return resolvePrefix(guild.stringID)
+    }
 
-internal fun registerPrefix(guildId : Long, prefix: Char) : Char {
-    prefixes[guildId] = prefix
-    return prefix
-}
+    /**
+     * Сохраняет префикс для указанной гильдии
+     * @param guild объект гильдии
+     * @param prefix префикс
+     */
+    fun register(guild: IGuild, prefix: Char) {
+        registerPrefix(guild.stringID, prefix)
+    }
 
-internal fun resolvePrefix(guildId : Long) : Char {
-    return prefixes[guildId] ?: registerPrefix(guildId, '/')
+    private fun registerPrefix(guildId: String, prefix: Char): String {
+        prefixes[guildId] = prefix.toString()
+        Loader.save()
+        return prefix.toString()
+    }
+
+    private fun resolvePrefix(guildId: String): Char {
+        return (prefixes[guildId] ?: registerPrefix(guildId, '/'))[0]
+    }
+
+    object Loader {
+        fun save() {
+            writeToJSON("$RESOURCES/prefixes.json", prefixes)
+        }
+
+        internal fun load() {
+            prefixes = getParsedObject("$RESOURCES/prefixes.json")
+        }
+    }
 }

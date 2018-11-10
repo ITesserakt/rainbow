@@ -1,9 +1,9 @@
 package modules
 
-import VERSION
 import core.ModuleBase
+import core.Prefix
+import core.VERSION
 import core.commands.CommandService
-import core.resolvePrefix
 import core.types.ResolverService
 import sx.blah.discord.Discord4J
 import sx.blah.discord.handle.obj.IRole
@@ -20,7 +20,7 @@ class HelpModule : ModuleBase() {
                     if (command != null)
                         context.reply("**$command**\n*${command.summary}*")
                     else
-                        context.reply("Данной команды не существует; введите ${resolvePrefix(context.guild)}help для просмотра списка команд")
+                        context.reply("Данной команды не существует; введите **${Prefix.resolve(context.guild)}help** для просмотра списка команд")
                 } else {
                     val cmdStringList = CommandService.commandsList
                             .map { it.toString() }

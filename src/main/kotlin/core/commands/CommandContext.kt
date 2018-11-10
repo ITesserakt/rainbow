@@ -1,20 +1,19 @@
 package core.commands
 
-import core.IContext
+import core.ICommandContext
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
 import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.handle.obj.IGuild
-import sx.blah.discord.handle.obj.IMessage
 import sx.blah.discord.handle.obj.IUser
 import java.util.*
 
-data class CommandContext (private val event : MessageReceivedEvent, val args : Array<String>) : IContext {
-    val channel: IChannel = event.channel
+data class CommandContext (private val event : MessageReceivedEvent, override val args : Array<String>) : ICommandContext {
+    override val channel: IChannel = event.channel
     override val user: IUser = event.author
-    val message: IMessage = event.message
+    override val message: String = event.message.content
     override val client: IDiscordClient = event.client
-    override val guild: IGuild = event.guild
+    override var guild: IGuild = event.guild
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

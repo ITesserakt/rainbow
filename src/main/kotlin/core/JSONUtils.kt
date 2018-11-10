@@ -1,14 +1,14 @@
 package core
 
-import com.google.gson.Gson
+import com.alibaba.fastjson.JSON
 import java.io.File
 
 inline fun <reified T> getParsedObject(filePath : String) : T {
-    val reader = File(filePath).reader()
-    return Gson().fromJson(reader, T::class.java)
+    val text = File(filePath).reader().readText()
+    return JSON.parseObject(text, T::class.java)
 }
 
 fun writeToJSON(filePath: String, obj : Any) {
-    val output = Gson().toJson(obj)
+    val output = JSON.toJSONString(obj)
     File(filePath).writeText(output)
 }

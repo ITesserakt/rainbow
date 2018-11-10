@@ -2,12 +2,15 @@ plugins {
     id 'groovy'
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.2.71'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '4.0.2'
 }
 
 group 'ru.tesserakt.bot.rainbow'
-version '0.0.1-ALPHA'
+version '0.0.3-ALPHA'
 
 sourceCompatibility = 1.8
+mainClassName = 'MainKt'
 
 repositories {
     mavenCentral()
@@ -21,12 +24,12 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:1.2.71"
     
     compile "com.discord4j:Discord4J:2.10.1"
+
+    compile 'com.alibaba:fastjson:1.2.51'
     
     compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.2'
     compile group: 'ch.qos.logback', name:'logback-classic', version: '1.0.9'
     compile group: 'ch.qos.logback', name:'logback-core', version: '1.0.9'
-
-    implementation 'com.google.code.gson:gson:2.8.5'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
