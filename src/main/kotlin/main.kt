@@ -2,9 +2,7 @@
 import core.Prefix
 import core.types.*
 import modules.*
-import sx.blah.discord.handle.obj.IGuild
-import sx.blah.discord.handle.obj.IRole
-import sx.blah.discord.handle.obj.IUser
+import sx.blah.discord.handle.obj.*
 
 fun main(args: Array<String>) {
     ResolverService
@@ -17,7 +15,7 @@ fun main(args: Array<String>) {
             .bind(StringResolver(), String::class)
             .bind(RoleResolver(), IRole::class)
             .bind(FloatResolver(), Float::class)
-
+  
     AdminsModule()
     HelpModule()
     SettingsModule()
