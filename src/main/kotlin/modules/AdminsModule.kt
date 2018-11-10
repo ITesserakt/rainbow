@@ -1,7 +1,7 @@
 package modules
 
-import CURRENTDIR
 import core.ModuleBase
+import core.RESOURCES
 import core.commands.CommandService
 import core.types.ResolverService
 import sx.blah.discord.handle.obj.IUser
@@ -13,8 +13,11 @@ internal class AdminsModule : ModuleBase() {
             name = "ban"
             action = {
                 val user = ResolverService.getForType<IUser>().read(it, it.args[0])
-                val reason = if (it.args.size > 1) it.args[1] else ""
-                val file = File("$CURRENTDIR/resources/omae_wa_mou.gif")
+                val file = File("$RESOURCES/omae_wa_mou.gif")
+                val reason = when {
+                    it.args.size > 1 -> ResolverService.getForType<String>().read(it, it.args[1])
+                    else -> ""
+                }
 
                 it.guild.banUser(user, reason)
                 it.replyFile(file)

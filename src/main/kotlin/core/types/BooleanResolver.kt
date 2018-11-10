@@ -1,9 +1,7 @@
 package core.types
 
-import core.commands.CommandContext
+import core.ICommandContext
 
 internal class BooleanResolver : ITypeResolver <Boolean>{
-    override fun read(context: CommandContext, input: String): Boolean {
-        return input.toBoolean()
-    }
+    override fun read(context: ICommandContext, input: String): Boolean = input.toBoolean()
 }

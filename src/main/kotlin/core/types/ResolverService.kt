@@ -22,6 +22,6 @@ object ResolverService {
         val resolver = map[T::class]
         if (resolver != null)
             return resolver as ITypeResolver<T>
-        throw NoSuchElementException("Подходящий объект для класса ${T::class.qualifiedName} не найден")
+        throw NoSuchElementException("There is no one resolver for type ${T::class.qualifiedName}")
     }
 }

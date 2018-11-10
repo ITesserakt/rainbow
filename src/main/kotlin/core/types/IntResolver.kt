@@ -1,9 +1,9 @@
 package core.types
 
-import core.commands.CommandContext
+import core.ICommandContext
 
 class IntResolver : ITypeResolver<Int> {
-    override fun read(context: CommandContext, input: String): Int {
+    override fun read(context: ICommandContext, input: String): Int {
         if (input.isNotEmpty())
             return input.toInt()
         throw EmptyInput()

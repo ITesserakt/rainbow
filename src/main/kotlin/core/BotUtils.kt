@@ -1,7 +1,14 @@
 package core
 
-import CURRENTDIR
+import ConfigData
 import sx.blah.discord.handle.obj.IGuild
+import java.io.File
+
+val RESOURCES: String = if (File("D:\\JetBrains\\rainbow\\src\\main\\resources").exists())
+    "D:\\JetBrains\\rainbow\\src\\main\\resources"
+else
+    ""
+val VERSION : String = getParsedObject<ConfigData>("$RESOURCES\\config.json").version
 
 object Prefix {
     internal var prefixes = HashMap<String, String>()
@@ -35,11 +42,11 @@ object Prefix {
 
     object Loader {
         fun save() {
-            writeToJSON("$CURRENTDIR/resources/prefixes.json", prefixes)
+            writeToJSON("$RESOURCES/prefixes.json", prefixes)
         }
 
         internal fun load() {
-            prefixes = getParsedObject("$CURRENTDIR/resources/prefixes.json")
+            prefixes = getParsedObject("$RESOURCES/prefixes.json")
         }
     }
 }
