@@ -7,6 +7,7 @@ import core.commands.CommandService
 import core.types.ResolverService
 import sx.blah.discord.Discord4J
 import sx.blah.discord.handle.obj.IRole
+import sx.blah.discord.handle.obj.Permissions
 import sx.blah.discord.util.EmbedBuilder
 
 class HelpModule : ModuleBase() {
@@ -47,13 +48,14 @@ class HelpModule : ModuleBase() {
         CommandService.addCommand {
             name = "role_info"
             action = {
-                val role = ResolverService.getForType<IRole>().readToEnd(it, it.args)
+                val role = ResolverService.parse<IRole>(it, 0, true)
                 it.reply("", EmbedBuilder()
                         .withColor(role.color)
                         .appendField("Id", role.stringID, true)
                         .appendField("Position", role.position.toString(), false)
                         .appendField("Created", role.creationDate.toString(), false))
             }
+            restrictions(Permissions.VIEW_AUDIT_LOG)
             summary = "Информация об указанной роли"
             parameters({name = "role"; build<IRole>()})
             build()

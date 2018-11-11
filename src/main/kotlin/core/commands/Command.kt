@@ -1,6 +1,7 @@
 package core.commands
 
 import core.ICommandContext
+import sx.blah.discord.handle.obj.Permissions
 
 class Command {
     var name : String = ""
@@ -8,6 +9,7 @@ class Command {
     var aliases : Array<String> = arrayOf()
     var parameters : Array<out ParamInfo> = arrayOf()
     var action : (ICommandContext) -> Unit = {}
+    var restrictions : Array<out Permissions> = arrayOf()
 
     override fun toString(): String =
             StringBuilder(this.name)

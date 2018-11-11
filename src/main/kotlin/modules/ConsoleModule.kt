@@ -24,7 +24,7 @@ class ConsoleModule : ModuleBase() {
         ConsoleService.addCommand {
             name = "login"
             action = {
-                guild = ResolverService.getForType<IGuild>().read(it, it.args[0])
+                guild = ResolverService.parse(it, 0, true)
                 it.guild = guild
             }
             summary = "Дает доступ к командной строке"
@@ -38,7 +38,7 @@ class ConsoleModule : ModuleBase() {
             action = {
                 updateLateInitProps(it)
 
-                val user = ResolverService.getForType<IUser>().read(it, it.args[0])
+                val user = ResolverService.parse<IUser>(it, 0, true)
                 val botRolePos = it.user.getRolesForGuild(it.guild).maxBy { role -> role.position }?.position
                 val maxBotRole = it.guild.roles
                         .first {role -> botRolePos?.minus(1) == role.position && !role.isEveryoneRole}

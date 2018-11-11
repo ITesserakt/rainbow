@@ -38,12 +38,13 @@ class RainbowModule : ModuleBase() {
         CommandService.addCommand {
             name = "rainbow"
             action = {
-                val role = ResolverService.getForType<IRole>().read(it, it.args[0])
-                val delta = if (it.args.size > 1) ResolverService.getForType<Float>().read(it, it.args[1]) else .1f
-                if (delta < .06) throw IllegalArgumentException("Задержка не можеть быть меньше 0.06с")
+                val role = ResolverService.parse<IRole>(it, 0)
+                val delta = if (it.args.size > 1) ResolverService.parse(it, 1) else .1f
+                if (delta < .038) throw IllegalArgumentException("Задержка не можеть быть меньше 0.038с")
 
                 start(role, (delta * 1000).toLong())
             }
+            restrictions(268435488)
             parameters({ name = "role"; build<IRole>() }, { name = "delta time in sec"; isOptional = true; build<Float>() })
             summary = "Радужный цвет у указанной роли"
             build()
@@ -52,9 +53,10 @@ class RainbowModule : ModuleBase() {
         CommandService.addCommand {
             name = "rainbow_stop"
             action = {
-                val role = ResolverService.getForType<IRole>().read(it, it.args[0])
+                val role = ResolverService.parse<IRole>(it, 0, true)
                 stop(role)
             }
+            restrictions(268435488)
             summary = "Останавлвает перелиание цвета указанной роли"
             parameters({ name = "role";build<IRole>() })
             build()

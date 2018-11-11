@@ -2,6 +2,7 @@ package core.types
 
 import core.ICommandContext
 
-class FloatResolver : ITypeResolver<Float> {
-    override fun read(context: ICommandContext, input: String): Float = input.toFloat()
+class FloatResolver : NumberResolver<Float>() {
+    override fun read(context: ICommandContext, input: String): Float =
+            super.read(context, input.toFloatOrNull())
 }

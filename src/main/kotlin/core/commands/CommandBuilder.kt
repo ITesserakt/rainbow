@@ -1,7 +1,8 @@
 package core.commands
 
 import core.ICommandContext
-import sx.blah.discord.Discord4J
+import org.slf4j.LoggerFactory
+import sx.blah.discord.handle.obj.Permissions
 
 /**
  * Строитель для команды
@@ -28,6 +29,14 @@ class CommandBuilder {
         command.parameters = params.map { it.invoke(ParamBuilder()) }.toTypedArray()
     }
 
+    fun restrictions(vararg perms : Permissions) {
+        command.restrictions = perms
+    }
+
+    fun restrictions(permNumber : Int) {
+        command.restrictions = Permissions.getAllowedPermissionsForNumber(permNumber).toTypedArray()
+    }
+
     var name: String = ""
         set(value) {
             command.name = value
@@ -45,6 +54,8 @@ class CommandBuilder {
             throw NullPointerException("Отсутствует действие, выполняемое командой")
         if (command.summary == "Описание отстутствует" || command.summary == "")
             logger.warn("Отсутствует описание для функции '${command.name}'")
+        if(command.restrictions.isEmpty())
+            logger.info("Каждый пользователь может использовать '${command.name}'")
 
         return command
     }
