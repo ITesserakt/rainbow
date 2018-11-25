@@ -8,13 +8,11 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
 
-val RESOURCES: String = if (File("D:\\JetBrains\\rainbow\\src\\main\\resources").exists())
-    "D:\\JetBrains\\rainbow\\src\\main\\resources"
-else
-    ""
-val VERSION : String = getParsedObject<ConfigData>("$RESOURCES\\config.json").version
+private val locationOfMainClass = File(Class.forName("MainKt").protectionDomain.codeSource.location.toURI()).toPath()
+private val separator = File.separator
 
-private var lastId = 0L
+val RESOURCES: String = "${locationOfMainClass.parent.parent}${separator}resources${separator}main$separator"
+val VERSION : String = getParsedObject<ConfigData>("${RESOURCES}config.json").version
 
 object Prefix {
     internal var prefixes = HashMap<String, String>()
@@ -48,19 +46,13 @@ object Prefix {
 
     object Loader {
         fun save() {
-            writeToJSON("$RESOURCES/prefixes.json", prefixes)
+            writeToJSON("${RESOURCES}prefixes.json", prefixes)
         }
 
         internal fun load() {
-            prefixes = getParsedObject("$RESOURCES/prefixes.json")
+            prefixes = getParsedObject("${RESOURCES}prefixes.json")
         }
     }
-}
-
-fun uniqueId() : Long {
-    val id = lastId
-    lastId += 1L
-    return id
 }
 
 fun launch(context : CoroutineContext = EmptyCoroutineContext, block: suspend () -> Unit) =

@@ -8,5 +8,4 @@ interface IContext {
     val user : IUser
     val client : IDiscordClient
     var guild : IGuild
-    val contextId : Long
 }

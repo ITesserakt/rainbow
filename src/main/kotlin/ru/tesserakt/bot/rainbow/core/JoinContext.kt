@@ -10,7 +10,6 @@ import java.time.Instant
  * Контекст события UserJoinEvent
  */
 data class JoinContext (private val event : UserJoinEvent) : IContext {
-    override val contextId: Long = uniqueId()
     override var guild: IGuild = event.guild
     override val client: IDiscordClient = event.client
     override var user: IUser = event.user

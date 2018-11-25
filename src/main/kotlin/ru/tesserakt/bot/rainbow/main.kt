@@ -9,6 +9,7 @@ import sx.blah.discord.handle.obj.IRole
 import sx.blah.discord.handle.obj.IUser
 
 fun main(args: Array<String>) {
+
     ResolverService
             .bind(UserResolver(), IUser::class)
             .bind(LongResolver(), Long::class)

@@ -9,7 +9,6 @@ import sx.blah.discord.handle.obj.IUser
 import java.util.*
 
 data class CommandContext (private val event : MessageReceivedEvent, override val args : Array<String>) : ICommandContext {
-    override val contextId: Long = event.messageID
     override val channel: IChannel = event.channel
     override val user: IUser = event.author
     override val message: String = event.message.content

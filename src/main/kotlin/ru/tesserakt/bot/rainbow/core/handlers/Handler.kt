@@ -31,7 +31,7 @@ abstract class Handler {
             else
                 params[param] = (ResolverService.parse(type, context, param.index - 1, isRemainder))
         }
-        command.funObj.callBy(params)
+        command.funObj.callBy(params.filter { it.value != null })
     }
 
     protected fun getCommand(name : String) : CommandInfo? {
