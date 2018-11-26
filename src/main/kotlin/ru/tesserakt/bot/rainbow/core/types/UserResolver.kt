@@ -13,7 +13,7 @@ internal class UserResolver : ITypeResolver<IUser> {
         } else if (fromPureId != null) {
             guild.getUserByID(fromPureId)
         } else {
-            guild.getUsersByName(input).first()
+            guild.getUsersByName(input).firstOrNull() ?: throw NoSuchElementException("Не найдено ни одного подходящего пользователя")
         }
     }
 }

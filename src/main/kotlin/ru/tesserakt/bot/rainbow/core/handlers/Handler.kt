@@ -1,9 +1,10 @@
 package ru.tesserakt.bot.rainbow.core.handlers
 
 import ru.tesserakt.bot.rainbow.core.ICommandContext
+import ru.tesserakt.bot.rainbow.core.IService
 import ru.tesserakt.bot.rainbow.core.commands.CommandInfo
-import ru.tesserakt.bot.rainbow.core.commands.CommandService
 import ru.tesserakt.bot.rainbow.core.commands.Remainder
+import ru.tesserakt.bot.rainbow.core.commands.RequireLogin
 import ru.tesserakt.bot.rainbow.core.types.ResolverService
 import sx.blah.discord.handle.obj.Permissions
 import sx.blah.discord.util.PermissionUtils
@@ -15,6 +16,11 @@ import kotlin.reflect.full.findAnnotation
 abstract class Handler {
     protected fun runCommand(command : CommandInfo, context : ICommandContext) {
         command.parentModule.setContextInternal(context)
+
+        val reqLogin = command.funObj.findAnnotation<RequireLogin>() != null
+        if(reqLogin && !command.parentModule.updateLateInitProps())
+            return
+
         val params = mutableMapOf<KParameter, Any?>()
 
         for (param in command.parameters) {
@@ -34,8 +40,8 @@ abstract class Handler {
         command.funObj.callBy(params.filter { it.value != null })
     }
 
-    protected fun getCommand(name : String) : CommandInfo? {
-        return CommandService.getCommandByName(name) ?: return CommandService.getCommandByAlias(name)
+    protected fun getCommand(service : IService<*>, name : String) : CommandInfo? {
+        return service.getCommandByName(name) ?: return service.getCommandByAlias(name)
     }
 
     protected fun checkPermissions(perms: Array<out Permissions>, context: ICommandContext): Boolean {

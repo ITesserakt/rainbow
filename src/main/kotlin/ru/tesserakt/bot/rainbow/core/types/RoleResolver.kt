@@ -13,7 +13,7 @@ class RoleResolver : ITypeResolver<IRole> {
         } else if (fromPureId != null) {
             guild.getRoleByID(fromPureId)
         } else {
-            guild.getRolesByName(input).first()
+            guild.getRolesByName(input).firstOrNull() ?: throw NoSuchElementException("Не найдено ни одной подходящей роли")
         }
     }
 }

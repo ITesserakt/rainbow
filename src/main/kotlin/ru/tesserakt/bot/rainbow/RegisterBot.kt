@@ -1,5 +1,4 @@
 
-import ru.tesserakt.bot.rainbow.core.RESOURCES
 import ru.tesserakt.bot.rainbow.core.console.EndlessConsoleInput
 import ru.tesserakt.bot.rainbow.core.getParsedObject
 import ru.tesserakt.bot.rainbow.core.handlers.CommandHandler
@@ -9,7 +8,7 @@ import sx.blah.discord.api.ClientBuilder
 
 class RegisterBot {
     init {
-        val config = getParsedObject<ConfigData>("${RESOURCES}config.json")
+        val config = getParsedObject<ConfigData>("config.json")
         val client = ClientBuilder()
                 .withToken(config.token)
                 .registerListener(CommandHandler())

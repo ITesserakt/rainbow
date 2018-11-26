@@ -21,7 +21,7 @@ class HelpModule : ModuleBase<CommandContext>() {
             if (command != null)
                 context.reply("**$command**\n*${command.summary}*")
             else
-                context.reply("Данной команды не существует; введите **${Prefix.resolve(context.guild)}help** для просмотра списка команд")
+                context.reply("Данной команды не существует; введите **${Prefix.resolve()}help** для просмотра списка команд")
         } else {
             val cmdStringList = CommandService.commandsList
                     .map { it.toString() }

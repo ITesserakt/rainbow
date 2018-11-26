@@ -13,7 +13,7 @@ class GuildResolver : ITypeResolver<IGuild> {
         } else if (fromPureId != null) {
             client.getGuildByID(fromPureId)
         } else {
-            client.guilds.first { it.name == input}
+            client.guilds.firstOrNull { it.name == input} ?: throw NoSuchElementException("Не найдено ни одной подходящей гильдии")
         }
     }
 }

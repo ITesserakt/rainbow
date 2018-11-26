@@ -16,3 +16,6 @@ annotation class Aliases(vararg val alias : String)
 
 @Target(AnnotationTarget.FUNCTION)
 annotation class Restrictions(vararg val permissions : Permissions)
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class RequireLogin

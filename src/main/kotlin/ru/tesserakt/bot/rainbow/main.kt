@@ -1,5 +1,4 @@
 
-import ru.tesserakt.bot.rainbow.core.Prefix
 import ru.tesserakt.bot.rainbow.core.commands.CommandService
 import ru.tesserakt.bot.rainbow.core.console.ConsoleService
 import ru.tesserakt.bot.rainbow.core.types.*
@@ -8,7 +7,7 @@ import sx.blah.discord.handle.obj.IGuild
 import sx.blah.discord.handle.obj.IRole
 import sx.blah.discord.handle.obj.IUser
 
-fun main(args: Array<String>) {
+fun main() {
 
     ResolverService
             .bind(UserResolver(), IUser::class)
@@ -28,8 +27,6 @@ fun main(args: Array<String>) {
             .addModule(RainbowModule())
     ConsoleService
             .addModule(ConsoleModule())
-
-    Prefix.Loader.load()
 
     RegisterBot()
 }

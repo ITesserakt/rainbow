@@ -2,14 +2,13 @@ package ru.tesserakt.bot.rainbow.modules
 
 import kotlinx.coroutines.delay
 import ru.tesserakt.bot.rainbow.core.ModuleBase
-import ru.tesserakt.bot.rainbow.core.RESOURCES
 import ru.tesserakt.bot.rainbow.core.commands.*
+import ru.tesserakt.bot.rainbow.core.getResource
 import ru.tesserakt.bot.rainbow.core.launch
 import sx.blah.discord.handle.obj.IRole
 import sx.blah.discord.handle.obj.IUser
 import sx.blah.discord.handle.obj.Permissions
 import java.awt.Color
-import java.io.File
 import java.util.*
 
 internal class AdminsModule : ModuleBase<CommandContext>() {
@@ -20,12 +19,12 @@ internal class AdminsModule : ModuleBase<CommandContext>() {
     @Restrictions(Permissions.BAN)
     fun ban(user: IUser, reason: String = "") {
         context.guild.banUser(user, reason)
-        context.replyFile(File("${RESOURCES}omae_wa_mou.gif"), "")
+        context.replyFile(getResource("omae_wa_mou.gif"))
     }
 
     @Command
     @Summary("Кикает пользователя")
-    @Aliases("Поджопник")
+    @Aliases("поджопник")
     @Restrictions(Permissions.KICK)
     fun kick(user: IUser, reason: String = "") {
         context.guild.kickUser(user, reason)
