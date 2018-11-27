@@ -10,6 +10,11 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '4.0.2'
 }
 
+task stage () {
+    dependsOn clean, shadowJar
+}
+shadowJar.mustRunAfter clean
+
 group 'ru.tesserakt.bot.rainbow'
 version '0.0.5.1-ALPHA'
 
@@ -39,6 +44,11 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
+
+shadowJar {
+    baseName = 'rainbow'
+    version = null
 }
 
 compileKotlin {

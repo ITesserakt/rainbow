@@ -13,7 +13,6 @@
 *.war
 *.nar
 *.ear
-*.zip
 *.tar.gz
 *.rar
 
@@ -91,3 +90,4 @@ fabric.properties
 /src/main/resources/*
 build/
 !/gradle/wrapper/gradle-wrapper.jar
+.gradle/
