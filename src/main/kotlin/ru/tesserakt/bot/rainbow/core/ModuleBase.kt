@@ -22,7 +22,7 @@ abstract class ModuleBase<T : ICommandContext>{
      * Отправляет файл в тот же канал с дополнительным сообщением
      */
     fun T.replyFile(url: URL, message: String = "") {
-        this.channel.sendFile(message, url.openStream(), url.file)
+        this.channel.sendFile(message, url.openConnection().getInputStream(), url.file)
     }
 
     internal fun updateLateInitProps() : Boolean{

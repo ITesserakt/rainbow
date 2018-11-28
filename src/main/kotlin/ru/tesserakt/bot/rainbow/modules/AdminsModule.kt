@@ -8,6 +8,7 @@ import sx.blah.discord.handle.obj.IRole
 import sx.blah.discord.handle.obj.IUser
 import sx.blah.discord.handle.obj.Permissions
 import java.awt.Color
+import java.net.URL
 import java.util.*
 
 internal class AdminsModule : ModuleBase<CommandContext>() {
@@ -16,9 +17,14 @@ internal class AdminsModule : ModuleBase<CommandContext>() {
     @Command
     @Summary("Банит указанного пользователя")
     @Restrictions(Permissions.BAN)
-    fun ban(user: IUser, reason: String = "") {
+    fun ban(user: IUser, reason: String = "") = launch {
+        val urls = arrayOf(
+                "https://i.pinimg.com/originals/5d/77/0c/5d770cbd18e7f9857d1e497a851509b8.gif",
+                "https://69.media.tumblr.com/904432c5b044f0588bb31fc49ab8b642/tumblr_ow4mafo4eI1son3fpo2_500.gif"
+        )
+
+        context.replyFile(URL(urls.randomEntry))
         context.guild.banUser(user, reason)
-        context.replyFile(Any::class.java.getResource("omae_wa_mou.gif"))
     }
 
     @Command
@@ -87,3 +93,9 @@ internal fun IUser.removeRoles(roles: Array<out IRole>) {
     for (role in roles)
         this.removeRole(role)
 }
+
+val <T> Array<T>.randomEntry : T
+    get() {
+        val rnd = kotlin.random.Random.nextInt(this.size)
+        return this[rnd]
+    }
