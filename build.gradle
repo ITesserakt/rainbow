@@ -16,10 +16,9 @@ task stage () {
 build.mustRunAfter clean
 
 group 'ru.tesserakt.bot.rainbow'
-version '0.0.6-ALPHA'
 
 sourceCompatibility = 1.8
-mainClassName = 'MainKt'
+mainClassName = 'ru.tesserakt.bot.rainbow.MainKt'
 
 repositories {
     mavenCentral()

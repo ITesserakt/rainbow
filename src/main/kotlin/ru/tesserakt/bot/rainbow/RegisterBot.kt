@@ -1,5 +1,5 @@
+package ru.tesserakt.bot.rainbow
 
-import ru.tesserakt.bot.rainbow.ConfigData
 import ru.tesserakt.bot.rainbow.core.console.EndlessConsoleInput
 import ru.tesserakt.bot.rainbow.core.handlers.CommandHandler
 import ru.tesserakt.bot.rainbow.core.handlers.ConsoleHandler
