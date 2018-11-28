@@ -1,6 +1,5 @@
 package ru.tesserakt.bot.rainbow.core.handlers
 
-import ru.tesserakt.bot.rainbow.core.Prefix
 import ru.tesserakt.bot.rainbow.core.commands.CommandContext
 import ru.tesserakt.bot.rainbow.core.commands.CommandService
 import sx.blah.discord.api.events.EventSubscriber
@@ -18,7 +17,7 @@ class CommandHandler : Handler() {
 
         if (runArray.isEmpty()) return
 
-        if (runArray[0][0] != Prefix.resolve()) return
+        if (runArray[0][0] != '!') return
 
         val cmdStr = runArray[0].substring(1)
         val argArray = runArray.drop(1).toTypedArray()

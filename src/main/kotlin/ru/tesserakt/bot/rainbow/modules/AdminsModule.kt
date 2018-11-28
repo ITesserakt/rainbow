@@ -3,7 +3,6 @@ package ru.tesserakt.bot.rainbow.modules
 import kotlinx.coroutines.delay
 import ru.tesserakt.bot.rainbow.core.ModuleBase
 import ru.tesserakt.bot.rainbow.core.commands.*
-import ru.tesserakt.bot.rainbow.core.getResource
 import ru.tesserakt.bot.rainbow.core.launch
 import sx.blah.discord.handle.obj.IRole
 import sx.blah.discord.handle.obj.IUser
@@ -19,7 +18,7 @@ internal class AdminsModule : ModuleBase<CommandContext>() {
     @Restrictions(Permissions.BAN)
     fun ban(user: IUser, reason: String = "") {
         context.guild.banUser(user, reason)
-        context.replyFile(getResource("omae_wa_mou.gif"))
+        context.replyFile(Any::class.java.getResource("omae_wa_mou.gif"))
     }
 
     @Command

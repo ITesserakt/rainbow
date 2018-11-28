@@ -7,7 +7,7 @@ import sx.blah.discord.util.EmbedBuilder
 import java.net.URL
 
 @Suppress("UNCHECKED_CAST")
-abstract class ModuleBase<T : ICommandContext> {
+abstract class ModuleBase<T : ICommandContext>{
     protected lateinit var guild : IGuild
 
     /**

@@ -1,8 +1,7 @@
 package ru.tesserakt.bot.rainbow.modules
 
+import ru.tesserakt.bot.rainbow.ConfigData
 import ru.tesserakt.bot.rainbow.core.ModuleBase
-import ru.tesserakt.bot.rainbow.core.Prefix
-import ru.tesserakt.bot.rainbow.core.VERSION
 import ru.tesserakt.bot.rainbow.core.commands.*
 import sx.blah.discord.Discord4J
 import sx.blah.discord.handle.obj.IRole
@@ -21,7 +20,7 @@ class HelpModule : ModuleBase<CommandContext>() {
             if (command != null)
                 context.reply("**$command**\n*${command.summary}*")
             else
-                context.reply("Данной команды не существует; введите **${Prefix.resolve()}help** для просмотра списка команд")
+                context.reply("Данной команды не существует; введите **!help** для просмотра списка команд")
         } else {
             val cmdStringList = CommandService.commandsList
                     .map { it.toString() }
@@ -34,7 +33,8 @@ class HelpModule : ModuleBase<CommandContext>() {
     @Command
     @Summary("Допонительная информация о боте")
     fun about() {
-        context.reply("$VERSION\nhttps://github.com/ITesserakt/rainbow\nОсновано на DISCORD4Jv${Discord4J.VERSION}")
+        val version : String = ConfigData.version
+        context.reply("$version\nhttps://github.com/ITesserakt/rainbow\nОсновано на DISCORD4Jv${Discord4J.VERSION}")
     }
 
     @Command
