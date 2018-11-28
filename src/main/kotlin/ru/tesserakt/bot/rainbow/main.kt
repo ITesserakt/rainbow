@@ -1,3 +1,4 @@
+package ru.tesserakt.bot.rainbow
 
 import ru.tesserakt.bot.rainbow.core.commands.CommandService
 import ru.tesserakt.bot.rainbow.core.console.ConsoleService
