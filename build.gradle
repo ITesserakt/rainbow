@@ -11,9 +11,10 @@ plugins {
 }
 
 task stage () {
-    dependsOn clean, shadowJar
+    dependsOn clean, shadowJar, build
 }
-shadowJar.mustRunAfter clean
+build.mustRunAfter clear
+shadowJar.mustRunAfter build
 
 group 'ru.tesserakt.bot.rainbow'
 version '0.0.5.1-ALPHA'
