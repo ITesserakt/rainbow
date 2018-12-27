@@ -11,15 +11,15 @@ import sx.blah.discord.handle.obj.IUser
 fun main() {
 
     ResolverService
-            .bind(UserResolver(), IUser::class)
-            .bind(LongResolver(), Long::class)
-            .bind(BooleanResolver(), Boolean::class)
-            .bind(IntResolver(), Int::class)
-            .bind(CharResolver(), Char::class)
-            .bind(GuildResolver(), IGuild::class)
-            .bind(StringResolver(), String::class)
-            .bind(RoleResolver(), IRole::class)
-            .bind(FloatResolver(), Float::class)
+            .bind(UserResolver() to IUser::class)
+            .bind(LongResolver() to Long::class)
+            .bind(BooleanResolver() to Boolean::class)
+            .bind(IntResolver() to Int::class)
+            .bind(CharResolver() to Char::class)
+            .bind(GuildResolver() to IGuild::class)
+            .bind(StringResolver() to String::class)
+            .bind(RoleResolver() to IRole::class)
+            .bind(FloatResolver() to Float::class)
   
     CommandService
             .addModule(AdminsModule())

@@ -1,10 +1,7 @@
 package ru.tesserakt.bot.rainbow.modules
 
 import ru.tesserakt.bot.rainbow.core.ModuleBase
-import ru.tesserakt.bot.rainbow.core.commands.Command
-import ru.tesserakt.bot.rainbow.core.commands.CommandContext
-import ru.tesserakt.bot.rainbow.core.commands.Restrictions
-import ru.tesserakt.bot.rainbow.core.commands.Summary
+import ru.tesserakt.bot.rainbow.core.commands.*
 import sx.blah.discord.handle.obj.IRole
 import sx.blah.discord.handle.obj.Permissions
 import java.awt.Color
@@ -13,21 +10,20 @@ import kotlin.concurrent.fixedRateTimer
 
 class RainbowModule : ModuleBase<CommandContext>() {
     private var stepAccumulator = 0f
-    private val rndObj = Random()
-    private val random: () -> Int = { rndObj.nextInt(256) }
 
-    private var currentColor = Color(random(), random(), random())
-    private var targetColor = Color(random(), random(), random())
+    private val colors = arrayOf(Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA)
+
+    private var currentColor = colors[0]
+    private var targetColor = colors[1]
+    private var index = 2
 
     private val timerDict = HashMap<String, Timer>()
     private val task: () -> Color = {
         if (stepAccumulator >= 1) {
             stepAccumulator = 0f
-            val r = random()
-            val g = random()
-            val b = random()
             currentColor = targetColor
-            targetColor = Color(r, g, b)
+            targetColor = colors[index]
+            index = (index + 1) % 7
         }
         val mixR: Int = (currentColor.red * (1 - stepAccumulator) + targetColor.red * stepAccumulator).toInt()
         val mixG: Int = (currentColor.green * (1 - stepAccumulator) + targetColor.green * stepAccumulator).toInt()
@@ -40,7 +36,7 @@ class RainbowModule : ModuleBase<CommandContext>() {
     @Command
     @Summary("Радужный цвет у указанной роли")
     @Restrictions(Permissions.MANAGE_ROLES)
-    fun rainbow(role: IRole, delay : Long = 40) {
+    fun rainbow(role: IRole, delay : Long) {
         timerDict[role.stringID] = fixedRateTimer(period = delay) {
             val color = task()
             role.changeColor(color)
@@ -48,9 +44,9 @@ class RainbowModule : ModuleBase<CommandContext>() {
     }
 
     @Command
-    @Summary("Останавлвает перелиание цвета указанной роли")
+    @Summary("Останавлвает переливание цвета указанной роли")
     @Restrictions(Permissions.MANAGE_ROLES)
-    fun rainbow_stop(role: IRole) {
+    fun rainbow_stop(@Remainder role: IRole) {
         timerDict[role.stringID]?.cancel()
     }
 }

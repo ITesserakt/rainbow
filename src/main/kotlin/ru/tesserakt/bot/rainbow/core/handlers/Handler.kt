@@ -45,11 +45,11 @@ abstract class Handler {
     }
 
     protected fun checkPermissions(perms: Array<out Permissions>, context: ICommandContext): Boolean {
-        if (perms.isEmpty())
-            return true
-        if (PermissionUtils.hasPermissions(context.guild, context.user, perms.toEnumSet()))
-            return true
-        else throw IllegalAccessException("Доступ запрещен")
+        return when {
+            perms.isEmpty() -> true
+            PermissionUtils.hasPermissions(context.guild, context.user, perms.toEnumSet()) -> true
+            else -> throw IllegalAccessException("Не хватает прав! (${perms.joinToString { it.name }})")
+        }
     }
 
     private fun <T : Enum<T>?> Array<out T>.toEnumSet(): EnumSet<T> = EnumSet.copyOf(this.toList())

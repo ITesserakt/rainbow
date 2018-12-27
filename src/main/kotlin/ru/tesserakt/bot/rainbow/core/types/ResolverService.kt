@@ -11,8 +11,8 @@ object ResolverService {
     /**
      * Сохраняет [resolver] для определённого класса
      */
-    fun bind(resolver: ITypeResolver<*>, with: KClass<*>): ResolverService {
-        map[with] = resolver
+    fun bind(resolver: Pair<ITypeResolver<*>, KClass<*>>): ResolverService {
+        map[resolver.second] = resolver.first
         return this
     }
 
@@ -24,15 +24,15 @@ object ResolverService {
         val resolver = map[clazz]
         if (resolver != null)
             return resolver as ITypeResolver<T>
-        throw NoSuchElementException("There is no one resolver for type ${clazz.qualifiedName}")
+        throw NoSuchElementException("Нет подходящего элемента для ${clazz.qualifiedName}")
     }
 
-    internal fun <T : Any> parse(clazz : KClass<T>, context: ICommandContext, argPos: Int, isRemainder: Boolean = false): T {
+    internal fun <T : Any> parse(clazz: KClass<T>, context: ICommandContext, argPos: Int, isRemainder: Boolean = false): T {
         val resolver = getForType(clazz)
         val args = context.args
         val mulArgs = args.drop(argPos).toTypedArray()
 
-        if(mulArgs.isEmpty()) throw NullPointerException("Пропущены параметры с ${argPos + 1} места")
+        if (mulArgs.isEmpty()) throw NullPointerException("Пропущены параметры с ${argPos + 1} места")
 
         return if (isRemainder)
             resolver.readToEnd(context, mulArgs)
@@ -41,7 +41,8 @@ object ResolverService {
                     ?: throw NullPointerException("Пропущен параметр на ${argPos + 1} месте"))
     }
 
-    internal fun <T : Any> parseOptional(clazz : KClass<T>, context: ICommandContext, argPos: Int, isRemainder: Boolean = false): T? {
-        return if (context.args.size > argPos) parse(clazz, context, argPos, isRemainder) else null
-    }
+    internal fun <T : Any> parseOptional(clazz: KClass<T>, context: ICommandContext, argPos: Int, isRemainder: Boolean = false): T? =
+            if (context.args.size > argPos)
+                parse(clazz, context, argPos, isRemainder)
+            else null
 }

@@ -12,3 +12,12 @@ fun launch(context : CoroutineContext = EmptyCoroutineContext, block: suspend ()
                 curThread.uncaughtExceptionHandler.uncaughtException(curThread, ex)
             }
         })
+
+val <T> Array<T>.randomEntry : T
+    get() {
+        val rnd = kotlin.random.Random.nextInt(this.size)
+        return this[rnd]
+    }
+
+inline fun <reified R> Iterable<R>.dropToArray(n : Int) : Array<R> =
+    drop(n).toTypedArray()

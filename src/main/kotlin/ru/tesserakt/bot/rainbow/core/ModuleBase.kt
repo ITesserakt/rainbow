@@ -1,7 +1,6 @@
 package ru.tesserakt.bot.rainbow.core
 
 import org.slf4j.LoggerFactory
-import ru.tesserakt.bot.rainbow.modules.ConsoleModule
 import sx.blah.discord.handle.obj.IGuild
 import sx.blah.discord.util.EmbedBuilder
 import java.net.URL
@@ -26,7 +25,7 @@ abstract class ModuleBase<T : ICommandContext>{
     }
 
     internal fun updateLateInitProps() : Boolean{
-        val logger = LoggerFactory.getLogger(ConsoleModule::class.java)
+        val logger = LoggerFactory.getLogger(ModuleBase::class.java)
 
         if (::guild.isInitialized) {
             this.context.guild = guild

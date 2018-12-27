@@ -3,15 +3,10 @@ buildscript {
 }
 
 plugins {
-    id 'groovy'
-    id 'java'
+    id 'nu.studer.jooq' version '3.0.2'
     id 'org.jetbrains.kotlin.jvm' version '1.3.10'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
-}
-
-task stage () {
-    dependsOn clean, shadowJar
 }
 
 group 'ru.tesserakt.bot.rainbow'
@@ -37,14 +32,47 @@ dependencies {
     compile group: 'ch.qos.logback', name:'logback-classic', version: '1.0.9'
     compile group: 'ch.qos.logback', name:'logback-core', version: '1.0.9'
 
-    compile 'org.postgresql:postgresql:42.2.1'
+    compile 'org.jooq:jooq'
 
+    compile 'org.postgresql:postgresql:42.2.1'
+    jooqRuntime 'org.postgresql:postgresql:42.2.1'
     //NEVER USE KODEIN!
+}
+
+clean {
+    File.newInstance("$DEFAULT_BUILD_DIR_NAME/../src/main/java/").deleteDir()
 }
 
 shadowJar {
     baseName = 'rainbow'
     version = null
+}
+
+jooq {
+    version = '3.11.2'
+    sample(sourceSets.main) {
+        jdbc {
+            driver = 'org.postgresql.Driver'
+            def uri = URI.create(System.getenv("DATABASE_URL"))
+            user = uri.userInfo.split(':')[0]
+            password = uri.userInfo.split(':')[1]
+            url = "jdbc:postgresql://$uri.host:$uri.port$uri.path?sslmode=require"
+        }
+        generator {
+            database {
+                name = 'org.jooq.meta.postgres.PostgresDatabase'
+                inputSchema = 'public'
+            }
+            target {
+                packageName = 'ru.tesserakt.bot.rainbow.generated'
+                directory = "$DEFAULT_BUILD_DIR_NAME/../src/main/java/"
+            }
+        }
+    }
+}
+
+task stage () {
+    dependsOn generateSampleJooqSchemaSource, clean, shadowJar
 }
 
 compileKotlin {

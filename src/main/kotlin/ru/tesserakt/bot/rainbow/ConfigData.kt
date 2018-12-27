@@ -1,20 +1,27 @@
 package ru.tesserakt.bot.rainbow
 
 import ru.tesserakt.bot.rainbow.core.Database
+import ru.tesserakt.bot.rainbow.generated.tables.Config.CONFIG
 
 object ConfigData {
+    @JvmStatic
     val version : String
+    @JvmStatic
     val token : String
+    @JvmStatic
+    val debug : Boolean
 
     init {
-        version = configQuarry("version")
-        token = configQuarry("token")
-        Database.disconnect()
+        version = configQuarryFor("version")
+        token = configQuarryFor("token")
+        debug = configQuarryFor("debug_mode").toBoolean()
     }
 
-    private fun configQuarry(ref : String) : String {
-        val result = Database.execute("SELECT value FROM config WHERE key='$ref'")
-        result.next()
-        return result.getString(1)
+    @JvmStatic
+    private fun configQuarryFor(ref : String) : String = Database.connect {
+        select(CONFIG.VALUE)
+                .from(CONFIG)
+                .where(CONFIG.KEY.eq(ref))
+                .fetch(CONFIG.VALUE)[0]
     }
 }
