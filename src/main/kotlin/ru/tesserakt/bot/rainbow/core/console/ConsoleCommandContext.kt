@@ -1,6 +1,7 @@
 package ru.tesserakt.bot.rainbow.core.console
 
 import ru.tesserakt.bot.rainbow.core.ICommandContext
+import ru.tesserakt.bot.rainbow.core.dropToArray
 import sx.blah.discord.api.IDiscordClient
 import sx.blah.discord.handle.obj.IChannel
 import sx.blah.discord.handle.obj.IGuild
@@ -10,6 +11,6 @@ data class ConsoleCommandContext(override val client: IDiscordClient, private va
     override lateinit var guild: IGuild
     override val user: IUser = client.ourUser
     override val message = input[0]
-    override val args: Array<String> = input.drop(1).toTypedArray()
+    override val args: Array<String> = input.dropToArray(1)
     override val channel: IChannel = client.channels.first()
 }

@@ -13,7 +13,7 @@ class HelpModule : ModuleBase<CommandContext>() {
     @Command
     @Summary("Выводит список всех команд, если имя команды не передано, иначе - описание команды")
     @Aliases("test")
-    fun help(cmdName: String = "") {
+    fun help(@Remainder cmdName: String = "") {
         if (cmdName.isNotBlank()) {
             val command = CommandService.getCommandByName(cmdName)
                     ?: CommandService.getCommandByAlias(cmdName)

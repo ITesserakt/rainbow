@@ -6,7 +6,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.jvmErasure
 
-data class CommandInfo(val name: String, val summary: String,
+data class CommandInfo internal constructor (val name: String, val summary: String,
                        val aliases: Array<out String> = arrayOf(), val parameters: Array<out KParameter>,
                        val restrictions: Array<out Permissions> = arrayOf(), val funObj: KFunction<*>,
                        val parentModule: ModuleBase<*>) {

@@ -1,30 +1,27 @@
 package ru.tesserakt.bot.rainbow.core
 
+import org.jooq.DSLContext
+import org.jooq.impl.DSL
 import java.net.URI
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.Statement
+
 
 object Database{
-    private val connection : Connection
-    private val statement : Statement
+    private val dbURL : String
+    private val user : String
+    private val password : String
 
     init {
-        val dbUri = URI(System.getenv("DATABASE_URL"))
-        val userData = dbUri.userInfo.split(':')
-        val userName = userData[0]
-        val password = userData[1]
-        val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}?sslmode=require"
-
-        connection = DriverManager.getConnection(dbUrl, userName, password)
-        statement = connection.createStatement()
+        val dbURI = URI(System.getenv("DATABASE_URL"))
+        val userData = dbURI.userInfo.split(':')
+        user = userData[0]
+        password = userData[1]
+        dbURL = "jdbc:postgresql://${dbURI.host}:${dbURI.port}${dbURI.path}?sslmode=require"
     }
 
-    fun disconnect() {
-        statement.close()
-        connection.close()
+    fun <R> connect(block : DSLContext.() -> R) : R {
+        val context =  DSL.using(dbURL, user, password)
+        val result = block(context)
+        context.close()
+        return result
     }
-
-    fun execute(command : String) =
-        statement.executeQuery(command)
 }
