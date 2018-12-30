@@ -1,5 +1,6 @@
 package ru.tesserakt.bot.rainbow.core
 
+import ru.tesserakt.bot.rainbow.ConfigData
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -12,6 +13,13 @@ fun launch(context : CoroutineContext = EmptyCoroutineContext, block: suspend ()
                 curThread.uncaughtExceptionHandler.uncaughtException(curThread, ex)
             }
         })
+
+fun Throwable.prettyPrint() : String{
+    val debugTrace = if (ConfigData.debug) stackTrace.joinToString { it.toString() } else ""
+    return """Ошибка:
+                |$localizedMessage
+                |$debugTrace""".trimMargin()
+}
 
 val <T> Array<T>.randomEntry : T
     get() {

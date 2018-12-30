@@ -1,7 +1,9 @@
 package ru.tesserakt.bot.rainbow.modules
 
+import org.slf4j.LoggerFactory
 import ru.tesserakt.bot.rainbow.core.ModuleBase
 import ru.tesserakt.bot.rainbow.core.commands.*
+import ru.tesserakt.bot.rainbow.core.prettyPrint
 import sx.blah.discord.handle.obj.IRole
 import sx.blah.discord.handle.obj.Permissions
 import java.awt.Color
@@ -9,6 +11,8 @@ import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
 class RainbowModule : ModuleBase<CommandContext>() {
+    val logger = LoggerFactory.getLogger(RainbowModule::class.java)
+
     private var stepAccumulator = 0f
 
     private val colors = arrayOf(Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA)
@@ -36,10 +40,14 @@ class RainbowModule : ModuleBase<CommandContext>() {
     @Command
     @Summary("Радужный цвет у указанной роли")
     @Restrictions(Permissions.MANAGE_ROLES)
-    fun rainbow(role: IRole, delay : Long) {
+    fun rainbow(role: IRole, delay : Long = 40L) {
         timerDict[role.stringID] = fixedRateTimer(period = delay) {
-            val color = task()
-            role.changeColor(color)
+            runCatching {
+                val newColor = task()
+                role.changeColor(newColor)
+            }.onFailure {
+                logger.error(it.prettyPrint())
+            }
         }
     }
 

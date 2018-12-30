@@ -1,9 +1,9 @@
 package ru.tesserakt.bot.rainbow.core.handlers
 
-import ru.tesserakt.bot.rainbow.ConfigData
 import ru.tesserakt.bot.rainbow.core.commands.CommandContext
 import ru.tesserakt.bot.rainbow.core.commands.CommandService
 import ru.tesserakt.bot.rainbow.core.dropToArray
+import ru.tesserakt.bot.rainbow.core.prettyPrint
 import sx.blah.discord.api.events.EventSubscriber
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent
 
@@ -30,10 +30,7 @@ class CommandHandler : Handler() {
                 runCommand(command, context)
             }
         } catch (ex: Exception) {
-            val stackTrace = if (ConfigData.debug) ex.stackTrace.joinToString { it.toString() } else ""
-            context.channel.sendMessage("""Ошибка: '
-                |${ex.localizedMessage}
-                |$stackTrace""".trimMargin())
+            context.channel.sendMessage(ex.prettyPrint())
         }
     }
 
