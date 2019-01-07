@@ -1,21 +1,21 @@
 package ru.tesserakt.bot.rainbow.core.commands
 
-import sx.blah.discord.handle.obj.Permissions
+import discord4j.core.`object`.util.Permission
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Remainder
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class Command(val name : String = "")
+annotation class CommandAnn(val name : String = "")
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER)
 annotation class Summary(val description : String)
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class Aliases(vararg val alias : String)
+annotation class Aliases(vararg val aliases : String)
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class Restrictions(vararg val permissions : Permissions)
+annotation class Permissions(vararg val permissions : Permission)
 
 @Target(AnnotationTarget.FUNCTION)
 annotation class RequireLogin

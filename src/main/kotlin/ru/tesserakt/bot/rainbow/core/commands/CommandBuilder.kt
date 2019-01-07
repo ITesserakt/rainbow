@@ -1,40 +1,58 @@
 package ru.tesserakt.bot.rainbow.core.commands
 
-import org.slf4j.LoggerFactory
+import discord4j.core.`object`.util.Permission
+import discord4j.core.`object`.util.PermissionSet
+import reactor.util.Logger
+import reactor.util.Loggers
 import ru.tesserakt.bot.rainbow.core.ModuleBase
-import sx.blah.discord.handle.obj.Permissions
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
-/**
- * Строитель для команды
- */
 class CommandBuilder {
-    internal var funObject : KFunction<*>? = null
-    internal var aliases: Array<out String> = arrayOf()
-    internal var summary: String = ""
-    internal var parameters : Array<out KParameter> = arrayOf()
-    internal var restrictions : Array<out Permissions> = arrayOf()
-    internal var name: String = ""
-    internal var parentModule: ModuleBase<*>? = null
+    private val logger: Logger = Loggers.getLogger(CommandBuilder::class.java)
 
-    /**
-     * Заверщает построение команды
-     */
-    internal fun build(): CommandInfo {
-        val logger = LoggerFactory.getLogger(CommandBuilder::class.java)
+    private lateinit var parentFunc: KFunction<*>
+    private var aliases: Array<out String> = arrayOf()
+    private var description: String = ""
+    private var parameters: Array<out KParameter> = arrayOf()
+    private var permissions: PermissionSet = PermissionSet.none()
+    private var name: String = ""
+    private lateinit var parentModule: ModuleBase<*>
 
-        if (name.isBlank())
-            throw NullPointerException("Отсутствует имя команды")
-        if (funObject == null)
-            throw NullPointerException("Отсутствует действие, выполняемое командой")
-        if (summary.isBlank())
-            logger.warn("Отсутствует описание для функции '$name'")
-        if(restrictions.isEmpty())
-            logger.info("Каждый пользователь может использовать '$name'")
-        if(parentModule == null)
-            throw NullPointerException("Указатель на модуль отсутствует")
+    internal fun setName(name: String) {
+        this.name = name
+    }
 
-        return CommandInfo(name, summary, aliases, parameters, restrictions, funObject!!, parentModule!!)
+    internal fun setDescription(description: String) {
+        this.description = description
+    }
+
+    internal fun setParentFunc(parentFunc: KFunction<*>) {
+        this.parentFunc = parentFunc
+    }
+
+    internal fun setAliases(vararg aliases: String) {
+        this.aliases = aliases
+    }
+
+    internal fun setParams(vararg parameters: KParameter) {
+        this.parameters = parameters
+    }
+
+    internal fun setParentModule(module: ModuleBase<*>) {
+        this.parentModule = module
+    }
+
+    internal fun setPermissions(vararg permissions: Permission) {
+        this.permissions = PermissionSet.of(*permissions)
+    }
+
+    internal fun build(): Command {
+        if (name.isBlank()) throw IllegalArgumentException("Не задано имя команды")
+        if (!this::parentFunc.isInitialized) throw IllegalArgumentException("Команда ничего не выполняет")
+        if (!this::parentModule.isInitialized) throw IllegalArgumentException("Указатель на модуль отсутствует!")
+        if (description.isBlank()) logger.warn("Отсутствует описание для функции '$name'")
+
+        return Command(name, description, parentFunc, parentModule, parameters, aliases, permissions)
     }
 }

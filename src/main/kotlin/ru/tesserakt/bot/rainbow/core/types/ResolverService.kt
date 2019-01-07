@@ -1,48 +1,41 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package ru.tesserakt.bot.rainbow.core.types
 
-import ru.tesserakt.bot.rainbow.core.ICommandContext
+import ru.tesserakt.bot.rainbow.core.context.ICommandContext
+import java.util.*
 import kotlin.reflect.KClass
 
 object ResolverService {
-    private val map = HashMap<KClass<*>, ITypeResolver<*>>()
+    private val resolvers = mutableMapOf<KClass<*>, ITypeResolver<*>>()
 
-    /**
-     * Сохраняет [resolver] для определённого класса
-     */
-    fun bind(resolver: Pair<ITypeResolver<*>, KClass<*>>): ResolverService {
-        map[resolver.second] = resolver.first
-        return this
-    }
+    internal fun <T : Any> parseOptional(type: KClass<T>, context: ICommandContext, index: Int, remainder: Boolean): T? =
+        if (context.args.size > index)
+            parse(type, context, index, remainder)
+        else null
 
-    /**
-     * Возвращает объект [ITypeResolver]
-     * @throws [NoSuchElementException]
-     */
-    private fun <T : Any> getForType(clazz: KClass<T>): ITypeResolver<T> {
-        val resolver = map[clazz]
-        if (resolver != null)
-            return resolver as ITypeResolver<T>
-        throw NoSuchElementException("Нет подходящего элемента для ${clazz.qualifiedName}")
-    }
-
-    internal fun <T : Any> parse(clazz: KClass<T>, context: ICommandContext, argPos: Int, isRemainder: Boolean = false): T {
-        val resolver = getForType(clazz)
+    internal fun <T : Any> parse(type: KClass<T>, context: ICommandContext, index: Int, remainder: Boolean): T {
+        val resolver = getForType(type)
         val args = context.args
-        val mulArgs = args.drop(argPos).toTypedArray()
+        val mulArgs = args.drop(index).toTypedArray()
 
-        if (mulArgs.isEmpty()) throw NullPointerException("Пропущены параметры с ${argPos + 1} места")
+        if (mulArgs.isEmpty()) throw NullPointerException("Пропущены параметры с ${index + 1} места")
 
-        return if (isRemainder)
+        return if (remainder)
             resolver.readToEnd(context, mulArgs)
         else
-            resolver.read(context, args.getOrNull(argPos)
-                    ?: throw NullPointerException("Пропущен параметр на ${argPos + 1} месте"))
+            resolver.read(context, args.getOrNull(index)
+                    ?: throw NullPointerException("Пропущен параметр на ${index + 1} месте"))
     }
 
-    internal fun <T : Any> parseOptional(clazz: KClass<T>, context: ICommandContext, argPos: Int, isRemainder: Boolean = false): T? =
-            if (context.args.size > argPos)
-                parse(clazz, context, argPos, isRemainder)
-            else null
+    private fun <T : Any> getForType(type: KClass<T>): ITypeResolver<T> {
+        val resolver = resolvers[type]
+        @Suppress("UNCHECKED_CAST")
+        if (resolver != null)
+            return resolver as ITypeResolver<T>
+        throw NoSuchElementException("Нет подходящего элемента для ${type.qualifiedName}")
+    }
+
+    fun <T : Any> bind(pair : Pair<ITypeResolver<T>, KClass<T>>) : ResolverService {
+        resolvers[pair.second] = pair.first
+        return this
+    }
 }

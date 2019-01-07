@@ -1,56 +1,53 @@
 package ru.tesserakt.bot.rainbow.core.handlers
 
-import ru.tesserakt.bot.rainbow.core.ICommandContext
-import ru.tesserakt.bot.rainbow.core.IService
-import ru.tesserakt.bot.rainbow.core.commands.CommandInfo
+import discord4j.core.`object`.entity.Member
+import discord4j.core.`object`.util.PermissionSet
+import discord4j.core.event.domain.Event
+import reactor.core.publisher.Mono
+import reactor.core.publisher.toMono
+import ru.tesserakt.bot.rainbow.core.commands.Command
 import ru.tesserakt.bot.rainbow.core.commands.Remainder
-import ru.tesserakt.bot.rainbow.core.commands.RequireLogin
+import ru.tesserakt.bot.rainbow.core.context.ICommandContext
 import ru.tesserakt.bot.rainbow.core.types.ResolverService
-import sx.blah.discord.handle.obj.Permissions
-import sx.blah.discord.util.PermissionUtils
-import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
 
-abstract class Handler {
-    protected fun runCommand(command : CommandInfo, context : ICommandContext) {
+abstract class Handler <T : Event> {
+    abstract fun handle(event: T)
+
+    protected fun checkPermissions(neededPerms: PermissionSet, user: Mono<Member>): Mono<Boolean> =
+            user.flatMap { it.basePermissions }
+                    .map {
+                        val copy = neededPerms.asEnumSet().clone()
+                        copy.removeAll(it)
+                        copy.isEmpty()
+                    }.toMono()
+
+    protected fun execute(command: Command, context: ICommandContext) {
         command.parentModule.setContextInternal(context)
 
-        val reqLogin = command.funObj.findAnnotation<RequireLogin>() != null
-        if(reqLogin && !command.parentModule.updateLateInitProps())
-            return
+        val params = parseParameters(command, context)
+        command.parentFunc.callBy(params)
+    }
 
-        val params = mutableMapOf<KParameter, Any?>()
+    private fun parseParameters(command: Command, context: ICommandContext): MutableMap<KParameter, Any> {
+        val params = mutableMapOf<KParameter, Any>()
 
         for (param in command.parameters) {
-            val isRemainder = param.findAnnotation<Remainder>() != null
+            val remainder = param.findAnnotation<Remainder>() != null
             val type = param.type.classifier as KClass<*>
 
-            if(type == command.parentModule::class) {
+            if (type == command.parentModule::class) {
                 params[param] = command.parentModule
                 continue
             }
 
             if (param.isOptional)
-                params[param] = (ResolverService.parseOptional(type, context, param.index - 1, isRemainder)) ?: continue
+                params[param] = ResolverService.parseOptional(type, context, param.index - 1, remainder) ?: continue
             else
-                params[param] = (ResolverService.parse(type, context, param.index - 1, isRemainder))
+                params[param] = ResolverService.parse(type, context, param.index - 1, remainder)
         }
-        command.funObj.callBy(params.filter { it.value != null })
+        return params
     }
-
-    protected fun getCommand(service : IService<*>, name : String) : CommandInfo? {
-        return service.getCommandByName(name) ?: return service.getCommandByAlias(name)
-    }
-
-    protected fun checkPermissions(perms: Array<out Permissions>, context: ICommandContext): Boolean {
-        return when {
-            perms.isEmpty() -> true
-            PermissionUtils.hasPermissions(context.guild, context.user, perms.toEnumSet()) -> true
-            else -> throw IllegalAccessException("Не хватает прав! (${perms.joinToString { it.name }})")
-        }
-    }
-
-    private fun <T : Enum<T>?> Array<out T>.toEnumSet(): EnumSet<T> = EnumSet.copyOf(this.toList())
 }
