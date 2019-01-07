@@ -3,7 +3,6 @@ buildscript {
 }
 
 plugins {
-    id 'nu.studer.jooq' version '3.0.2'
     id 'org.jetbrains.kotlin.jvm' version '1.3.10'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
@@ -12,11 +11,12 @@ plugins {
 group 'ru.tesserakt.bot.rainbow'
 
 sourceCompatibility = 1.8
-mainClassName = 'ru.tesserakt.bot.rainbow.MainKt'
+mainClassName = 'ru.tesserakt.bot.rainbow.main'
 
 repositories {
     mavenCentral()
     jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -25,22 +25,15 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile "org.jetbrains.kotlin:kotlin-reflect:1.3.10"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
-    
-    compile "com.discord4j:Discord4J:2.10.1"
+
+    implementation 'com.discord4j.discord4j:discord4j-core:v3-SNAPSHOT'
     
     compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.2'
     compile group: 'ch.qos.logback', name:'logback-classic', version: '1.0.9'
     compile group: 'ch.qos.logback', name:'logback-core', version: '1.0.9'
 
-    compile 'org.jooq:jooq'
-
     compile 'org.postgresql:postgresql:42.2.1'
-    jooqRuntime 'org.postgresql:postgresql:42.2.1'
     //NEVER USE KODEIN!
-}
-
-clean {
-    File.newInstance("$DEFAULT_BUILD_DIR_NAME/../src/main/java/").deleteDir()
 }
 
 shadowJar {
@@ -48,31 +41,8 @@ shadowJar {
     version = null
 }
 
-jooq {
-    version = '3.11.2'
-    sample(sourceSets.main) {
-        jdbc {
-            driver = 'org.postgresql.Driver'
-            def uri = URI.create(System.getenv("DATABASE_URL"))
-            user = uri.userInfo.split(':')[0]
-            password = uri.userInfo.split(':')[1]
-            url = "jdbc:postgresql://$uri.host:$uri.port$uri.path?sslmode=require"
-        }
-        generator {
-            database {
-                name = 'org.jooq.meta.postgres.PostgresDatabase'
-                inputSchema = 'public'
-            }
-            target {
-                packageName = 'ru.tesserakt.bot.rainbow.generated'
-                directory = "$DEFAULT_BUILD_DIR_NAME/../src/main/java/"
-            }
-        }
-    }
-}
-
 task stage () {
-    dependsOn generateSampleJooqSchemaSource, clean, shadowJar
+    dependsOn clean, shadowJar
 }
 
 compileKotlin {

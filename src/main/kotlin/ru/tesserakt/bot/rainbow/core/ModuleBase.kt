@@ -1,45 +1,33 @@
 package ru.tesserakt.bot.rainbow.core
 
-import org.slf4j.LoggerFactory
-import sx.blah.discord.handle.obj.IGuild
-import sx.blah.discord.util.EmbedBuilder
+import discord4j.core.spec.MessageCreateSpec
+import ru.tesserakt.bot.rainbow.core.context.ICommandContext
 import java.net.URL
 
-@Suppress("UNCHECKED_CAST")
-abstract class ModuleBase<T : ICommandContext>{
-    protected lateinit var guild : IGuild
+abstract class ModuleBase<T : ICommandContext> {
+    protected lateinit var context : T
 
-    /**
-     * Отправляет сообщение в канал, из которого оно пришло
-     * @param tts прочитать текст вслух?
-     */
-    fun T.reply(message: String, embed: EmbedBuilder? = null, tts: Boolean = false) {
-        this.channel.sendMessage(message, embed?.build(), tts)
-    }
-
-    /**
-     * Отправляет файл в тот же канал с дополнительным сообщением
-     */
-    fun T.replyFile(url: URL, message: String = "") {
-        this.channel.sendFile(message, url.openConnection().getInputStream(), url.file)
-    }
-
-    internal fun updateLateInitProps() : Boolean{
-        val logger = LoggerFactory.getLogger(ModuleBase::class.java)
-
-        if (::guild.isInitialized) {
-            this.context.guild = guild
-            return true
-        }
-        logger.error("Войдите в консоль сначала!")
-        return false
-    }
-
-    lateinit var context : T
-        private set
-
-    internal fun setContextInternal(value : ICommandContext){
+    internal fun setContextInternal(value : ICommandContext) {
+        @Suppress("UNCHECKED_CAST")
         val newContext = value as? T
         context = newContext ?: throw IllegalArgumentException("Неверный тип контекста")
+    }
+
+    protected fun T.reply(message : String) {
+        this.message.channel
+                .subscribe { it.createMessage(message).subscribe() }
+    }
+
+    protected fun T.reply(file : URL, message: String = "") {
+        this.message.channel
+                .subscribe { it.createMessage { spec ->
+                    spec.setFile(file.file, file.openStream())
+                    spec.setContent(message)
+                }.subscribe() }
+    }
+
+    protected fun T.reply(spec : MessageCreateSpec.() -> Unit) {
+        this.message.channel
+                .subscribe { it.createMessage(spec).subscribe() }
     }
 }
