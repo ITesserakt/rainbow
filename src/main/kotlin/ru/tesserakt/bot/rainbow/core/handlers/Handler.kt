@@ -9,6 +9,8 @@ import ru.tesserakt.bot.rainbow.core.commands.Command
 import ru.tesserakt.bot.rainbow.core.commands.Remainder
 import ru.tesserakt.bot.rainbow.core.context.ICommandContext
 import ru.tesserakt.bot.rainbow.core.types.ResolverService
+import ru.tesserakt.bot.rainbow.util.debug
+import java.time.Instant
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
@@ -25,10 +27,14 @@ abstract class Handler <T : Event> {
                     }.toMono()
 
     protected fun execute(command: Command, context: ICommandContext) {
+        val savedTime = Instant.now()
         command.parentModule.setContextInternal(context)
 
         val params = parseParameters(command, context)
         command.parentFunc.callBy(params)
+
+        if(debug)
+            println("После запуска '${command.name}' прошло ${Instant.now().minusMillis(savedTime.toEpochMilli()).nano / 1000000L} мс")
     }
 
     private fun parseParameters(command: Command, context: ICommandContext): MutableMap<KParameter, Any> {

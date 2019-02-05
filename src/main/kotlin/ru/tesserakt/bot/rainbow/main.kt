@@ -14,7 +14,7 @@ import ru.tesserakt.bot.rainbow.modules.HelpModule
 import ru.tesserakt.bot.rainbow.util.on
 import ru.tesserakt.bot.rainbow.util.token
 
-fun main(args : Array<String>) {
+fun main() {
     reactor.util.Loggers.useSl4jLoggers()
 
     val client = DiscordClientBuilder(token).build()
