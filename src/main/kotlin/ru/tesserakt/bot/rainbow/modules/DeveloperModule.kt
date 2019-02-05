@@ -7,7 +7,7 @@ import ru.tesserakt.bot.rainbow.core.context.GCommandContext
 import ru.tesserakt.bot.rainbow.util.Database
 
 class DeveloperModule : ModuleBase<GCommandContext>() {
-    @CommandAnn()
+    @CommandAnn
     @Summary("Выключает бота")
     fun logout() = requireOwner {
         context.client.logout()
@@ -15,9 +15,14 @@ class DeveloperModule : ModuleBase<GCommandContext>() {
         System.exit(0)
     }
 
-    private fun requireOwner(block: () -> Any) {
+    private fun requireOwner(block: () -> Unit) {
         context.message.authorAsMember
                 .map { it.id.asLong() == 316249690092077065L }
-                .subscribe { if (it) block() }
+                .subscribe {
+                    if (it)
+                        block()
+                    else
+                        context.reply("Только владелец бота может сделать это!")
+                }
     }
 }

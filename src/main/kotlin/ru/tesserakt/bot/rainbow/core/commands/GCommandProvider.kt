@@ -11,14 +11,13 @@ object GCommandProvider : CommandProvider<GCommandContext>() {
         private set
 
     override fun find(name: String): Command? { //TODO оптмизировать
-        val result = commands.find { it.name == name}
-        if(result == null) {
+        val result = commands.find { it.name == name }
+        if (result == null)
             for (command in commands)
                 for (alias in command.aliases)
-                    if(alias == name)
+                    if (alias == name) {
                         return command
-            return null
-        }
+                    }
         return result
     }
 
@@ -27,7 +26,7 @@ object GCommandProvider : CommandProvider<GCommandContext>() {
         commands = arrayOf(*commands, command)
     }
 
-    public override fun addModule(module: ModuleBase<GCommandContext>) : GCommandProvider {
+    public override fun addModule(module: ModuleBase<GCommandContext>): GCommandProvider {
         modules = arrayOf(*modules, module)
         super.addModule(module)
         return this
