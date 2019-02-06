@@ -12,7 +12,7 @@ abstract class CommandProvider <T : ICommandContext> {
     abstract val modules: Array<ModuleBase<T>>
 
     abstract fun find(name: String): Command?
-    abstract fun addCommand(builder: CommandBuilder.() -> Command)
+    internal abstract fun addCommand(builder: CommandBuilder.() -> Command)
 
     protected open fun addModule(module: ModuleBase<T>): CommandProvider<T> {
         module::class.declaredFunctions.toFlux()
