@@ -10,18 +10,23 @@ object Database{
     private val user : String
     private val password : String
 
+    private val connection : DSLContext
+
     init {
         val dbURI = URI(System.getenv("DATABASE_URL"))
         val userData = dbURI.userInfo.split(':')
         user = userData[0]
         password = userData[1]
         dbURL = "jdbc:postgresql://${dbURI.host}:${dbURI.port}${dbURI.path}?sslmode=require"
+
+        connection = DSL.using(dbURL, user, password)
     }
 
     fun <R> connect(block : DSLContext.() -> R) : R {
-        val context =  DSL.using(dbURL, user, password)
-        val result = block(context)
-        context.close()
-        return result
+        return block(connection)
+    }
+
+    internal fun close() {
+        connection.close()
     }
 }

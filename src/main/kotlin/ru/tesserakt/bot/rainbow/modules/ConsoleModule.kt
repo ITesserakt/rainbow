@@ -1,5 +1,6 @@
 package ru.tesserakt.bot.rainbow.modules
 
+import ru.tesserakt.bot.rainbow.core.Database
 import ru.tesserakt.bot.rainbow.core.ModuleBase
 import ru.tesserakt.bot.rainbow.core.commands.*
 import ru.tesserakt.bot.rainbow.core.console.ConsoleCommandContext
@@ -10,8 +11,9 @@ import sx.blah.discord.handle.obj.Permissions
 class ConsoleModule : ModuleBase<ConsoleCommandContext>() {
     @Command
     @Summary("Выход")
-    @Aliases("exit")
+    @Aliases("exit", "logout")
     fun quit() {
+        Database.close()
         System.exit(0)
     }
 
