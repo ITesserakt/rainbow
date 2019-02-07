@@ -5,6 +5,8 @@ import discord4j.core.`object`.util.PermissionSet
 import discord4j.core.event.domain.Event
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
+import reactor.util.Logger
+import reactor.util.Loggers
 import ru.tesserakt.bot.rainbow.core.commands.Command
 import ru.tesserakt.bot.rainbow.core.commands.Remainder
 import ru.tesserakt.bot.rainbow.core.context.ICommandContext
@@ -16,6 +18,8 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
 
 abstract class Handler <T : Event> {
+    private val logger: Logger = Loggers.getLogger(Handler::class.java)
+
     abstract fun handle(event: T)
 
     protected fun checkPermissions(neededPerms: PermissionSet, user: Mono<Member>): Mono<Boolean> =
@@ -33,8 +37,9 @@ abstract class Handler <T : Event> {
         val params = parseParameters(command, context)
         command.parentFunc.callBy(params)
 
-        if(debug)
-            println("После запуска '${command.name}' прошло ${Instant.now().minusMillis(savedTime.toEpochMilli()).nano / 1000000L} мс")
+        if (debug)
+            logger.debug("После запуска '${command.name}' прошло ${
+            Instant.now().minusMillis(savedTime.toEpochMilli()).nano / 1000000L} мс")
     }
 
     private fun parseParameters(command: Command, context: ICommandContext): MutableMap<KParameter, Any> {
