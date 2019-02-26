@@ -1,0 +1,18 @@
+dependencies {
+    compile "io.projectreactor.addons:reactor-adapter:3.2.2.RELEASE"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    implementation "com.discord4j:discord4j-core:$discord_version"
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.4.0"
+
+    testCompile "io.projectreactor:reactor-test:3.2.6.RELEASE"
+    testImplementation "io.mockk:mockk:1.9.1"
+}
