@@ -8,10 +8,10 @@ import discord4j.core.event.domain.message.MessageCreateEvent
 import reactor.core.Disposable
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toFlux
-import reactor.core.publisher.toMono
 import reactor.util.function.component1
 import reactor.util.function.component2
 import util.prettyPrint
+import util.zipWith
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
@@ -37,7 +37,7 @@ abstract class CommandHandler : Handler<MessageCreateEvent>() {
                     .filter { it }
                     .thenReturn(command.modulePointer.setContext(context))
                     .doOnNext { parser = Parser(context) }
-                    .then(parseParameters(command)).zipWith(command.toMono())
+                    .then(parseParameters(command)).zipWith(command)
                     .doOnNext { (params, command) ->
                         command.functionPointer.callBy(params)
                     }
