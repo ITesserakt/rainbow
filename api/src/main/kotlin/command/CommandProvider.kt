@@ -15,6 +15,7 @@ abstract class CommandProvider <T : ICommandContext> {
 
     open fun addModule(module : ModuleBase<T>) : CommandProvider<T> {
         module::class.declaredFunctions.toFlux()
+                .parallel()
                 .filter { it.findAnnotation<Command>() != null }
                 .map {
                     val commandAnnotation = it.findAnnotation<Command>()!!
