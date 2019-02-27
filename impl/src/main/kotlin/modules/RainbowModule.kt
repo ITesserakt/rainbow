@@ -9,12 +9,13 @@ import discord4j.core.`object`.util.Permission
 import discord4j.core.`object`.util.Snowflake
 import reactor.core.Disposable
 import reactor.core.publisher.Mono
-import reactor.math.max
 import reactor.util.function.component1
 import reactor.util.function.component2
 import util.RandomColor
+import util.isHigher
 import java.awt.Color
 import java.time.Duration
+import javax.naming.NoPermissionException
 
 class RainbowModule : ModuleBase<GuildCommandContext>() {
     private val rainbows = hashMapOf<Snowflake, Disposable>()
@@ -47,11 +48,15 @@ class RainbowModule : ModuleBase<GuildCommandContext>() {
             return
         }
 
-        checkThatBotRoleUpper(role).subscribe {
-            if (!it) context.reply(
-                    "Роль `${role.name}` находится иерархически выше роли бота.\n" +
-                            "В разделе управления сервером передвиньте роль бота выше необходимой роли")
-        }
+        context.client.self
+                .flatMap { it.asMember(context.guildId) }
+                .flatMap { it.isHigher(role) }
+                .subscribe {
+                    if (!it) throw NoPermissionException(
+                            "Роль `${role.name}` находится иерархически выше роли бота.\n" +
+                            "В разделе управления сервером передвиньте роль бота выше необходимой роли"
+                    )
+                }
 
         rainbows[role.id] = Mono.fromCallable { task(step) }
                 .delayElement(delay).zipWith(context.guild.flatMap { it.getRoleById(role.id) })
@@ -63,14 +68,6 @@ class RainbowModule : ModuleBase<GuildCommandContext>() {
                 .onBackpressureDrop()
                 .subscribe()
     }
-
-    private fun checkThatBotRoleUpper(role: Role) =
-            context.guild.map { it.id }
-                    .flatMap { context.client.self.flatMap { bot -> bot.asMember(it) } }
-                    .flatMapMany { it.roles }
-                    .flatMap { it.position }
-                    .max { pos1, pos2 -> pos1.compareTo(pos2) }.zipWith(role.position)
-                    .map { (botPos, rolePos) -> botPos > rolePos }
 
     @Command("rainbow_stop")
     fun rainbowStop(role: Role) {

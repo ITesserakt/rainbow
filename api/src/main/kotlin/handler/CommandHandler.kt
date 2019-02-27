@@ -8,43 +8,39 @@ import discord4j.core.event.domain.message.MessageCreateEvent
 import reactor.core.Disposable
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toFlux
+import reactor.util.Loggers
 import reactor.util.function.component1
 import reactor.util.function.component2
-import util.prettyPrint
 import util.zipWith
+import javax.naming.NoPermissionException
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
 abstract class CommandHandler : Handler<MessageCreateEvent>() {
     private lateinit var parser: Parser
+    private val logger = Loggers.getLogger(CommandHandler::class.java)
 
-    private fun checkPermissions(member: Mono<Member>, neededPerms: PermissionSet, context: ICommandContext) =
+    private fun checkPermissions(member: Mono<Member>, neededPerms: PermissionSet) =
             member.flatMap { it.basePermissions }
                     .map {
                         val copy = neededPerms.asEnumSet().clone()
                         copy.removeAll(it)
-                        if (copy.isEmpty()) true
-                        else {
-                            context.message.channel.subscribe { channel ->
-                                channel.createMessage("Недостаточно привелегий.").subscribe()
-                            }
-                            false
-                        }
+                        if (copy.isEmpty()) return@map true
+                        throw NoPermissionException("Недостаточно привелегий")
                     }
 
     protected fun execute(command: CommandInfo, context: ICommandContext): Disposable =
-            checkPermissions(context.member, command.permissions, context)
+            checkPermissions(context.member, command.permissions)
                     .filter { it }
                     .thenReturn(command.modulePointer.setContext(context))
                     .doOnNext { parser = Parser(context) }
                     .then(parseParameters(command)).zipWith(command)
                     .doOnNext { (params, command) ->
                         command.functionPointer.callBy(params)
-                    }
-                    .doOnError { err ->
-                        err.printStackTrace()
-                        context.message.channel.subscribe { it.createMessage(err.prettyPrint()) }
-                    }.subscribe()
+                    }.subscribe({}, { err ->
+                        context.message.channel.subscribe { it.createMessage(err.cause?.message ?: err.message ?: "Ошибка").subscribe() }
+                        logger.error(err.localizedMessage, err)
+                    })
 
     private fun parseParameters(command: CommandInfo): Mono<Map<KParameter, Any?>> =
             command.parameters.toFlux()
