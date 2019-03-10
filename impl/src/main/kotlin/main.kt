@@ -1,4 +1,5 @@
 import command.GuildCommandProvider
+import command.PrivateChannelCommandProvider
 import discord4j.core.DiscordClient
 import discord4j.core.DiscordClientBuilder
 import discord4j.core.`object`.entity.Member
@@ -9,11 +10,9 @@ import discord4j.core.event.domain.lifecycle.ReadyEvent
 import discord4j.core.event.domain.message.MessageCreateEvent
 import handler.GuildCommandHandler
 import handler.JoinHandler
+import handler.PrivateChannelCommandHandler
 import handler.ReadyEventHandler
-import modules.AdminModule
-import modules.DeveloperModule
-import modules.HelpModule
-import modules.RainbowModule
+import modules.*
 import reactor.util.Logger
 import reactor.util.Loggers
 import types.MemberResolver
@@ -49,7 +48,10 @@ private fun specifyEvents(client: DiscordClient) {
         on(ReadyEvent::class.java)
                 .subscribe { ReadyEventHandler().handle(it) }
         on(MessageCreateEvent::class.java)
-                .subscribe { GuildCommandHandler().handle(it) }
+                .subscribe {
+                    GuildCommandHandler().handle(it)
+                    PrivateChannelCommandHandler().handle(it)
+                }
         on(MemberJoinEvent::class.java)
                 .subscribe { JoinHandler().handle(it) }
     }
@@ -73,8 +75,10 @@ private fun specifyModules() {
             .registerModule<AdminModule>()
             .registerModule<RainbowModule>()
             .registerModule<DeveloperModule>()
+    PrivateChannelCommandProvider
+            .registerModule<PHelpModule>()
 
-    logger.info("Successfully loaded ${GuildCommandProvider.commands.size} commands")
+    logger.info("Successfully loaded ${GuildCommandProvider.commands.size + PrivateChannelCommandProvider.commands.size} commands")
 }
 
 lateinit var startedTime: LocalTime

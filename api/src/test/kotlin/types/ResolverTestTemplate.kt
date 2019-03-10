@@ -29,7 +29,7 @@ abstract class ResolverTestTemplate <T> {
 
         every { fakeContext.commandArgs } returns arrayOf()
         every { fakeContext.client } returns client!!
-        every { fakeContext.member } returns Mono.empty()
+        every { fakeContext.author } returns Mono.empty()
         every { fakeContext.message } returns mockk()
 
         client?.login()?.subscribe()
