@@ -1,7 +1,5 @@
 package util
 
-import discord4j.core.`object`.entity.Member
-import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.util.Snowflake
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
@@ -30,25 +28,3 @@ val RandomColor
 
 fun <T1 : Any, T2 : Any> Mono<T1>.zipWith(other: T2): Mono<Tuple2<T1, T2>> =
         this.zipWith(other.toMono())
-
-fun Member.isHigher(other : Member): Mono<Boolean> {
-    fun getHighestPos(member: Member) = member.roles.flatMap { it.position }.defaultIfEmpty(0).last()
-
-    if (id == other.id) return false.toMono()
-
-    return guild.map { it.ownerId }
-            .flatMap {
-                (it == id).toMono()
-                Mono.zip (getHighestPos(this), getHighestPos(other)) { p1, p2 -> p1 > p2 }
-            }
-}
-
-fun Member.isHigher(role : Role) : Mono<Boolean> {
-    fun getHighestPos(member: Member) = member.roles.flatMap { it.position }.defaultIfEmpty(0).last()
-
-    return guild.map { it.ownerId }
-            .flatMap {
-                (it == id).toMono()
-                Mono.zip (getHighestPos(this), role.position) { p1, p2 -> p1 > p2 }
-            }
-}

@@ -2,6 +2,7 @@ package handler
 
 import context.ICommandContext
 import reactor.core.publisher.Mono
+import types.ITypeResolver
 import types.ResolverProvider
 import kotlin.reflect.KClass
 
@@ -12,7 +13,7 @@ internal class Parser(private val context: ICommandContext) {
     }
 
     internal fun <T : Any> parse(index: Int, type: KClass<T>): Mono<T> {
-        val resolver = ResolverProvider.get(type)
+        val resolver: ITypeResolver<T> = ResolverProvider[type.java]
         val args = context.commandArgs
 
         val neededArg = args.getOrNull(index)

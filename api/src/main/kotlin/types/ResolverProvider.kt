@@ -1,49 +1,34 @@
 package types
 
 import discord4j.core.`object`.entity.User
-import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 object ResolverProvider {
-    @JvmStatic
-    private val map = hashMapOf<KClass<*>, ITypeResolver<*>>(
-            User::class to UserResolver(),
-            Int::class to IntResolver(),
-            Long::class to LongResolver(),
-            Short::class to ShortResolver(),
-            Byte::class to ByteResolver(),
-            Float::class to FloatResolver(),
-            Double::class to DoubleResolver(),
-            String::class to StringResolver(),
-            Char::class to CharResolver(),
-            Boolean::class to BooleanResolver()
+    val resolversMap = hashMapOf<Class<*>, ITypeResolver<*>>(
+            User::class.java to UserResolver(),
+            Int::class.java to IntResolver(),
+            Long::class.java to LongResolver(),
+            Short::class.java to ShortResolver(),
+            Byte::class.java to ByteResolver(),
+            Float::class.java to FloatResolver(),
+            Double::class.java to DoubleResolver(),
+            String::class.java to StringResolver(),
+            Char::class.java to CharResolver(),
+            Boolean::class.java to BooleanResolver()
     )
 
-    @JvmStatic
-    internal inline operator fun <reified T> getValue(thisRef : Any?, property: KProperty<*>): ITypeResolver<T> {
-        val type = T::class
-        val resolver = map[type]
+    inline operator fun <reified T> getValue(ref: Nothing?, property: KProperty<*>): ITypeResolver<T> =
+            ResolverProvider.get<T>() as ITypeResolver<T>
 
-        if (resolver != null)
-            return resolver as ITypeResolver<T>
-        throw NoSuchElementException("Нет подходящего парсера для ${type.qualifiedName}")
+    inline fun <reified T> get(): ITypeResolver<*> = resolversMap.getOrElse(T::class.java) {
+        throw NoSuchElementException("Нет подходящего парсера для ${T::class.qualifiedName}")
     }
 
-    @JvmStatic
-    fun <T : Any> bind(pair : Pair<ITypeResolver<T>, KClass<T>>): ResolverProvider {
-        map[pair.second] = pair.first
-        return this
+    fun <T : Any> bind(pair: Pair<ITypeResolver<T>, Class<T>>) = apply {
+        resolversMap[pair.second] = pair.first
     }
 
-    @JvmStatic
-    internal inline fun <reified T> get(): ITypeResolver<T> = ResolverProvider.getValue(this, this::map)
-
-    @JvmStatic
-    internal fun <T : Any> get(type : KClass<T>) : ITypeResolver<T> {
-        val resolver = map[type]
-
-        if (resolver != null)
-            return resolver as ITypeResolver<T>
-        throw NoSuchElementException("Нет подходящего элемента для ${type.qualifiedName}")
-    }
+    operator fun <T : Any> get(type: Class<T>): ITypeResolver<T> = resolversMap.getOrElse(type) {
+        throw NoSuchElementException("Нет подходящего парсера для ${type.simpleName}")
+    } as ITypeResolver<T>
 }

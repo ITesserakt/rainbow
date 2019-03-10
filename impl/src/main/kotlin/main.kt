@@ -20,7 +20,6 @@ import types.MemberResolver
 import types.MessageChannelResolver
 import types.ResolverProvider
 import types.RoleResolver
-import util.Database
 import util.DynamicPresence
 import java.time.Duration
 import java.time.LocalTime
@@ -30,8 +29,6 @@ private val logger: Logger = Loggers.getLogger(Class.forName("MainKt"))
 
 fun main() {
     logger.info("Starting loading of bot...")
-
-    Database.forceCreateClient()
 
     val props = ResourceBundle.getBundle("config")
     val client = DiscordClientBuilder(props.getString("token")).build()
@@ -61,9 +58,9 @@ private fun specifyEvents(client: DiscordClient) {
 fun setupResolvers() {
     logger.info("Starting loading of resolvers...")
 
-    ResolverProvider.bind(RoleResolver() to Role::class)
-            .bind(MemberResolver() to Member::class)
-            .bind(MessageChannelResolver() to MessageChannel::class)
+    ResolverProvider.bind(RoleResolver() to Role::class.java)
+            .bind(MemberResolver() to Member::class.java)
+            .bind(MessageChannelResolver() to MessageChannel::class.java)
 
     logger.info("Successfully loaded resolvers...")
 }
@@ -72,10 +69,10 @@ private fun specifyModules() {
     logger.info("Starting loading of commands...")
 
     GuildCommandProvider
-            .addModule(HelpModule())
-            .addModule(AdminModule())
-            .addModule(RainbowModule())
-            .addModule(DeveloperModule())
+            .registerModule<HelpModule>()
+            .registerModule<AdminModule>()
+            .registerModule<RainbowModule>()
+            .registerModule<DeveloperModule>()
 
     logger.info("Successfully loaded ${GuildCommandProvider.commands.size} commands")
 }
