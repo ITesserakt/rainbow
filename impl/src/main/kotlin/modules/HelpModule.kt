@@ -36,11 +36,7 @@ class HelpModule : ModuleBase<GuildCommandContext>() {
                         context.reply("Данной команды не найдено, используйте `!help` для списка всех команд.")
                     else {
                         val cmdInfo = optCmdInfo.get()
-                        context.reply("**$cmdInfo**\n${
-                        if (cmdInfo.description.isNotBlank())
-                            cmdInfo.description
-                        else "Описание отсутствует"}"
-                        )
+                        context.reply("**$cmdInfo**\n${cmdInfo.description}")
                     }
                 }
     }

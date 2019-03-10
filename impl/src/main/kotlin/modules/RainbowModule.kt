@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono
 import reactor.util.function.component1
 import reactor.util.function.component2
 import util.RandomColor
-import util.isHigher
 import java.awt.Color
 import java.time.Duration
 import javax.naming.NoPermissionException
@@ -50,11 +49,13 @@ class RainbowModule : ModuleBase<GuildCommandContext>() {
 
         context.client.self
                 .flatMap { it.asMember(context.guildId) }
-                .flatMap { it.isHigher(role) }
+                .flatMapMany { it.roles }.flatMap { it.position }.defaultIfEmpty(-1).last()
+                .zipWith(role.position)
+                .filter { (p1, p2) -> p1 < p2 }.then()
                 .subscribe {
-                    if (!it) throw NoPermissionException(
-                            "Роль `${role.name}` находится иерархически выше роли бота.\n" +
-                            "В разделе управления сервером передвиньте роль бота выше необходимой роли"
+                    throw NoPermissionException(
+                            """Роль `${role.name}` находится иерархически выше роли бота.
+                               В разделе управления сервером передвиньте роль бота выше необходимой роли""".trimIndent()
                     )
                 }
 

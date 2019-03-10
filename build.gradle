@@ -10,11 +10,10 @@ plugins {
 subprojects {
     buildscript {
         ext.kotlin_version = '1.3.21'
-        ext.discord_version = '3.0.0.RC2'
+        ext.discord_version = '3.0.0'
     }
 
     apply plugin: 'kotlin'
-    apply plugin: 'kotlin-kapt'
 
     group 'ru.tesserakt.bot.rainbow'
     version '0.0.7'

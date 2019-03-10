@@ -1,5 +1,4 @@
 dependencies {
-    compile "io.projectreactor.addons:reactor-adapter:3.2.2.RELEASE"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
@@ -12,7 +11,6 @@ dependencies {
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.4.0"
-
     testCompile "io.projectreactor:reactor-test:3.2.6.RELEASE"
     testImplementation "io.mockk:mockk:1.9.1"
 }
