@@ -21,7 +21,7 @@ class DeveloperModule : ModuleBase<GuildCommandContext>() {
     }
 
     private inline fun requireDeveloper(crossinline block: () -> Unit) {
-        context.member.map { it.id }
+        context.author.map { it.id }
                 .subscribe {
                     if (it in developersIds) block()
                     else {
