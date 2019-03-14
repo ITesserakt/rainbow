@@ -10,8 +10,11 @@ import util.RandomColor
 import util.toOptional
 import java.time.Duration
 import java.time.LocalTime
+import kotlin.reflect.KClass
 
 class HelpModule : ModuleBase<GuildCommandContext>() {
+    override val contextType: KClass<GuildCommandContext> = GuildCommandContext::class
+
     @Command
     @Summary("Выводит список всех команд, если имя команды не передано, иначе - описание команды")
     fun help(`command name`: String = "") {

@@ -24,11 +24,17 @@ object ResolverProvider {
         throw NoSuchElementException("Нет подходящего парсера для ${T::class.qualifiedName}")
     }
 
-    fun <T : Any> bind(pair: Pair<ITypeResolver<T>, Class<T>>) = apply {
-        resolversMap[pair.second] = pair.first
+    inline fun <reified T : Any> bind() = T::class.java
+
+    infix fun <T : Any> Class<T>.with(resolver: ITypeResolver<T>) {
+        resolversMap[this] = resolver
     }
 
     operator fun <T : Any> get(type: Class<T>): ITypeResolver<T> = resolversMap.getOrElse(type) {
         throw NoSuchElementException("Нет подходящего парсера для ${type.simpleName}")
     } as ITypeResolver<T>
+}
+
+fun resolverProvider(init: ResolverProvider.() -> Unit) {
+    ResolverProvider.init()
 }

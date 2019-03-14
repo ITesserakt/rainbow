@@ -1,3 +1,6 @@
+import bot.DynamicPresence
+import command.CommandLoader
+import command.CommandRegistry
 import command.GuildCommandProvider
 import command.PrivateChannelCommandProvider
 import discord4j.core.DiscordClient
@@ -12,14 +15,12 @@ import handler.GuildCommandHandler
 import handler.JoinHandler
 import handler.PrivateChannelCommandHandler
 import handler.ReadyEventHandler
-import modules.*
 import reactor.util.Logger
 import reactor.util.Loggers
 import types.MemberResolver
 import types.MessageChannelResolver
-import types.ResolverProvider
 import types.RoleResolver
-import util.DynamicPresence
+import types.resolverProvider
 import java.time.Duration
 import java.time.LocalTime
 import java.util.*
@@ -33,8 +34,18 @@ fun main() {
     val client = DiscordClientBuilder(props.getString("token")).build()
 
     specifyEvents(client)
-    specifyModules()
-    setupResolvers()
+
+    resolverProvider {
+        bind<MessageChannel>() with MessageChannelResolver()
+        bind<Role>() with RoleResolver()
+        bind<Member>() with MemberResolver()
+    }
+
+    CommandRegistry.addProvider(GuildCommandProvider)
+            .addProvider(PrivateChannelCommandProvider)
+
+    CommandLoader("modules")
+            .load()
 
     DynamicPresence(client, Duration.ofSeconds(5))
             .start()
@@ -55,30 +66,6 @@ private fun specifyEvents(client: DiscordClient) {
         on(MemberJoinEvent::class.java)
                 .subscribe { JoinHandler().handle(it) }
     }
-}
-
-fun setupResolvers() {
-    logger.info("Starting loading of resolvers...")
-
-    ResolverProvider.bind(RoleResolver() to Role::class.java)
-            .bind(MemberResolver() to Member::class.java)
-            .bind(MessageChannelResolver() to MessageChannel::class.java)
-
-    logger.info("Successfully loaded resolvers...")
-}
-
-private fun specifyModules() {
-    logger.info("Starting loading of commands...")
-
-    GuildCommandProvider
-            .registerModule<HelpModule>()
-            .registerModule<AdminModule>()
-            .registerModule<RainbowModule>()
-            .registerModule<DeveloperModule>()
-    PrivateChannelCommandProvider
-            .registerModule<PHelpModule>()
-
-    logger.info("Successfully loaded ${GuildCommandProvider.commands.size + PrivateChannelCommandProvider.commands.size} commands")
 }
 
 lateinit var startedTime: LocalTime
