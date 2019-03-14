@@ -6,8 +6,10 @@ import command.Summary
 import context.GuildCommandContext
 import discord4j.core.`object`.util.Snowflake
 import util.Database
+import kotlin.reflect.KClass
 
 class DeveloperModule : ModuleBase<GuildCommandContext>() {
+    override val contextType: KClass<GuildCommandContext> = GuildCommandContext::class
     private val developersIds = arrayOf<Snowflake>(Snowflake.of(316249690092077065))
 
     @Command

@@ -1,4 +1,4 @@
-package util
+package bot
 
 import discord4j.core.DiscordClient
 import discord4j.core.`object`.presence.Activity
@@ -9,16 +9,15 @@ import reactor.core.scheduler.Schedulers
 import reactor.util.function.Tuple2
 import reactor.util.function.component1
 import reactor.util.function.component2
-import java.lang.management.ManagementFactory
 import java.time.Duration
 
 class DynamicPresence (private val client : DiscordClient, delay : Duration) {
-    private val presenceFlux: Flux<Tuple2<Long, Any>> = Flux.merge(
+    private val presenceFlux: Flux<Tuple2<Long, in Any>> = Flux.merge(
             client.users.count(),
             client.guilds.count(),
             client.regions.count(),
             client.guilds.flatMap { it.channels }.count(),
-            ManagementFactory.getThreadMXBean().threadCount.toMono()
+            Thread.activeCount().toMono()
     ).index().delayElements(delay)
 
     private val words = arrayOf("users", "guilds", "regions", "channels", "threads")
