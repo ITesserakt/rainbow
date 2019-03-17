@@ -1,9 +1,6 @@
 package modules
 
-import command.Command
-import command.ModuleBase
-import command.Permissions
-import command.Summary
+import command.*
 import context.GuildCommandContext
 import discord4j.core.`object`.entity.Member
 import discord4j.core.`object`.util.Permission
@@ -40,6 +37,7 @@ class AdminModule : ModuleBase<GuildCommandContext>() {
 
     @Command
     @Permissions(Permission.KICK_MEMBERS)
+    @Aliases("поджопник")
     @Summary("Кикает указанного пользователя")
     fun kick(member: Member, reason: String = ""): Disposable = context.guild.subscribe { guild ->
         guild.kick(member.id, reason)
@@ -85,9 +83,8 @@ class AdminModule : ModuleBase<GuildCommandContext>() {
                                 .setPermissions(PermissionSet.none())
                                 .setMentionable(false)
                                 .setName("Muted")
+                                .setHoist(false)
                     }
                 }
             }.map { it.id }
 }
-
-internal class MutedUser internal constructor(val guildId : String, val userId : String, val roles : Array<String>)

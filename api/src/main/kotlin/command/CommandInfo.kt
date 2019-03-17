@@ -10,21 +10,10 @@ data class CommandInfo(
         val description: String,
         internal val functionPointer: KFunction<*>,
         internal val modulePointer: ModuleBase<*>,
-        val permissions: PermissionSet
+        val permissions: PermissionSet,
+        internal val aliases: List<String>
 ) {
     internal val parameters: List<KParameter> = functionPointer.parameters
-
-    init {
-        require(name.isNotEmpty() && ' ' !in name) { "Имя не должно содержать пробелов или быть пустым" }
-        require(!functionPointer.isExternal
-                && !functionPointer.isInfix
-                && !functionPointer.isInline
-                && !functionPointer.isOperator
-                && !functionPointer.isAbstract
-                && !functionPointer.isSuspend) {
-            "Неподдерживаемый тип функции"
-        }
-    }
 
     private fun stringifyParams() = parameters
             .drop(1)

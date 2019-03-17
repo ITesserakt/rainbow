@@ -7,7 +7,6 @@ import discord4j.core.`object`.util.Permission
 import reactor.core.publisher.toMono
 import startedTime
 import util.RandomColor
-import util.toOptional
 import java.time.Duration
 import java.time.LocalTime
 import kotlin.reflect.KClass
@@ -16,6 +15,7 @@ class HelpModule : ModuleBase<GuildCommandContext>() {
     override val contextType: KClass<GuildCommandContext> = GuildCommandContext::class
 
     @Command
+    @Aliases("test")
     @Summary("Выводит список всех команд, если имя команды не передано, иначе - описание команды")
     fun help(`command name`: String = "") {
         `command name`.toMono()
@@ -33,13 +33,12 @@ class HelpModule : ModuleBase<GuildCommandContext>() {
 
         `command name`.toMono()
                 .filter { it.isNotBlank() } //когда просим какую-нибудь команду
-                .map { GuildCommandProvider.find(it).toOptional() }
+                .map { GuildCommandProvider.find(it) }
                 .subscribe { optCmdInfo ->
-                    if (!optCmdInfo.isPresent)
+                    if (optCmdInfo == null)
                         context.reply("Данной команды не найдено, используйте `!help` для списка всех команд.")
                     else {
-                        val cmdInfo = optCmdInfo.get()
-                        context.reply("**$cmdInfo**\n${cmdInfo.description}")
+                        context.reply("**$optCmdInfo**\n${optCmdInfo.description}")
                     }
                 }
     }
