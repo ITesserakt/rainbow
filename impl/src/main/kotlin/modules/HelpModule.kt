@@ -44,9 +44,9 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Command
     @Summary("Дополнительная информация о боте")
     fun about() {
-        context.reply("""v0.0.7-ALPHA
+        context.reply("""v0.0.7.19-ALPHA
             |https://github.com/ITesserakt/rainbow
-            |Основано на DISCORD4J v3.0.0.M4
+            |Основано на DISCORD4J v3.0.0
         """.trimMargin())
     }
 

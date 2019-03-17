@@ -11,7 +11,6 @@ annotation class Summary (val description: String = "")
 @Target(AnnotationTarget.FUNCTION)
 annotation class Permissions(vararg val permissions : Permission)
 
-@Deprecated("Not implemented")
 @Target(AnnotationTarget.FUNCTION)
 annotation class Hidden
 

@@ -4,6 +4,7 @@ import context.ICommandContext
 import discord4j.core.`object`.util.Permission
 import discord4j.core.`object`.util.PermissionSet
 import util.Loggers
+import util.hasAnnotation
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.createInstance
@@ -17,7 +18,8 @@ object CommandRegistry {
     fun register(instance: KClass<ModuleBase<ICommandContext>>) {
         val instanceOfInstance = instance.createInstance()
 
-        instance.declaredMemberFunctions.filterNot { it.findAnnotation<Command>() == null }
+        instance.declaredMemberFunctions
+                .filter { it.hasAnnotation<Command>() }
                 .filter(::processFunc)
                 .forEach { func ->
                     val provider = providers.find { it.type == instanceOfInstance.contextType }
