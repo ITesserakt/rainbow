@@ -2,6 +2,7 @@ package command
 
 import context.ICommandContext
 import util.Loggers
+import util.hasAnnotation
 import kotlin.reflect.KClass
 
 abstract class CommandProvider<T : ICommandContext>(val type: KClass<T>) {
@@ -9,7 +10,7 @@ abstract class CommandProvider<T : ICommandContext>(val type: KClass<T>) {
 
     private val commands_ = hashMapOf<Array<String>, CommandInfo>()
     val commands: Array<CommandInfo>
-        get() = commands_.values.toTypedArray()
+        get() = commands_.values.filter { !it.functionPointer.hasAnnotation<Hidden>() }.toTypedArray()
 
     open fun find(name: String): CommandInfo? = commands_.entries.find { name in it.key }?.value
     internal open fun addCommand(command: CommandInfo) {

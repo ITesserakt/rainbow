@@ -1,6 +1,7 @@
 package modules
 
 import command.Command
+import command.Hidden
 import command.ModuleBase
 import command.Summary
 import context.GuildCommandContext
@@ -12,6 +13,7 @@ class DeveloperModule : ModuleBase<GuildCommandContext>(GuildCommandContext::cla
     private val developersIds = arrayOf(316249690092077065.toSnowflake())
 
     @Command
+    @Hidden
     @Summary("Вырубает нахрен бота")
     fun logout() = requireDeveloper {
         context.client
