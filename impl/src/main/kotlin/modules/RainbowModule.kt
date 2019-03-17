@@ -15,10 +15,8 @@ import util.RandomColor
 import java.awt.Color
 import java.time.Duration
 import javax.naming.NoPermissionException
-import kotlin.reflect.KClass
 
-class RainbowModule : ModuleBase<GuildCommandContext>() {
-    override val contextType: KClass<GuildCommandContext> = GuildCommandContext::class
+class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     private val rainbows = hashMapOf<Snowflake, Disposable>()
 
     private var stepAccumulator = 0f

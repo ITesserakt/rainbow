@@ -4,8 +4,7 @@ import context.ICommandContext
 import discord4j.core.spec.MessageCreateSpec
 import kotlin.reflect.KClass
 
-abstract class ModuleBase<T : ICommandContext> {
-    abstract val contextType: KClass<T>
+abstract class ModuleBase<T : ICommandContext>(val contextType: KClass<T>) {
     protected lateinit var context: T
 
     internal fun setContext(context: ICommandContext) {

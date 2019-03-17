@@ -12,11 +12,9 @@ import reactor.core.publisher.switchIfEmpty
 import util.toSnowflake
 import java.awt.Color
 import kotlin.collections.set
-import kotlin.reflect.KClass
 
-class AdminModule : ModuleBase<GuildCommandContext>() {
-    override val contextType: KClass<GuildCommandContext> = GuildCommandContext::class
-    val mutedUsers = hashMapOf<Pair<Snowflake, Snowflake>, List<Snowflake>>()
+class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
+    private val mutedUsers = hashMapOf<Pair<Snowflake, Snowflake>, List<Snowflake>>()
 
     @Command
     @Summary("Банит указанного пользователя")
