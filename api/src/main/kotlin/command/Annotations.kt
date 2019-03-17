@@ -13,4 +13,7 @@ annotation class Permissions(vararg val permissions : Permission)
 
 @Deprecated("Not implemented")
 @Target(AnnotationTarget.FUNCTION)
-annotation class Hide
+annotation class Hidden
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class Aliases(vararg val aliases: String)

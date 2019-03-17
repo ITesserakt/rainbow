@@ -4,13 +4,14 @@ import command.Command
 import command.ModuleBase
 import command.Summary
 import context.GuildCommandContext
-import discord4j.core.`object`.util.Snowflake
 import util.Database
+import util.toSnowflake
 import kotlin.reflect.KClass
+import kotlin.system.exitProcess
 
 class DeveloperModule : ModuleBase<GuildCommandContext>() {
     override val contextType: KClass<GuildCommandContext> = GuildCommandContext::class
-    private val developersIds = arrayOf<Snowflake>(Snowflake.of(316249690092077065))
+    private val developersIds = arrayOf(316249690092077065.toSnowflake())
 
     @Command
     @Summary("Вырубает нахрен бота")
@@ -19,7 +20,7 @@ class DeveloperModule : ModuleBase<GuildCommandContext>() {
                 .logout()
                 .subscribe()
         Database.close()
-        System.exit(0)
+        exitProcess(0)
     }
 
     private inline fun requireDeveloper(crossinline block: () -> Unit) {
