@@ -9,10 +9,8 @@ import startedTime
 import util.RandomColor
 import java.time.Duration
 import java.time.LocalTime
-import kotlin.reflect.KClass
 
-class HelpModule : ModuleBase<GuildCommandContext>() {
-    override val contextType: KClass<GuildCommandContext> = GuildCommandContext::class
+class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
 
     @Command
     @Aliases("test")

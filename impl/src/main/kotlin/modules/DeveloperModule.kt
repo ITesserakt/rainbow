@@ -6,11 +6,9 @@ import command.Summary
 import context.GuildCommandContext
 import util.Database
 import util.toSnowflake
-import kotlin.reflect.KClass
 import kotlin.system.exitProcess
 
-class DeveloperModule : ModuleBase<GuildCommandContext>() {
-    override val contextType: KClass<GuildCommandContext> = GuildCommandContext::class
+class DeveloperModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     private val developersIds = arrayOf(316249690092077065.toSnowflake())
 
     @Command
