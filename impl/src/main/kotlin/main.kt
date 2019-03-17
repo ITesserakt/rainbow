@@ -21,6 +21,7 @@ import types.MemberResolver
 import types.MessageChannelResolver
 import types.RoleResolver
 import types.resolverProvider
+import util.on
 import java.time.Duration
 import java.time.LocalTime
 import java.util.*
@@ -56,14 +57,14 @@ fun main() {
 
 private fun specifyEvents(client: DiscordClient) {
     with(client.eventDispatcher) {
-        on(ReadyEvent::class.java)
+        on<ReadyEvent>()
                 .subscribe { ReadyEventHandler().handle(it) }
-        on(MessageCreateEvent::class.java)
+        on<MessageCreateEvent>()
                 .subscribe {
                     GuildCommandHandler().handle(it)
                     PrivateChannelCommandHandler().handle(it)
                 }
-        on(MemberJoinEvent::class.java)
+        on<MemberJoinEvent>()
                 .subscribe { JoinHandler().handle(it) }
     }
 }

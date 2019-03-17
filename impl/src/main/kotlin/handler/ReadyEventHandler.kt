@@ -1,13 +1,13 @@
 package handler
 
 import discord4j.core.event.domain.lifecycle.ReadyEvent
-import reactor.util.Loggers
 import startedTime
+import util.Loggers
 import util.times
 import java.time.LocalTime
 
 class ReadyEventHandler : Handler<ReadyEvent>() {
-    private val logger = Loggers.getLogger(ReadyEventHandler::class.java)
+    private val logger = Loggers.getLogger<ReadyEventHandler>()
 
     override fun handle(event: ReadyEvent) {
         startedTime = LocalTime.now()

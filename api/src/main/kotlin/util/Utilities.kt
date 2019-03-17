@@ -2,8 +2,6 @@ package util
 
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
-import reactor.util.Logger
-import reactor.util.Loggers
 import reactor.util.function.Tuple2
 import java.awt.Color
 import java.util.*
@@ -22,8 +20,3 @@ inline val RandomColor
 
 fun <T1 : Any, T2 : Any> Mono<T1>.zipWith(other: T2): Mono<Tuple2<T1, T2>> =
         this.zipWith(other.toMono())
-
-object Loggers {
-    @JvmStatic
-    inline fun <reified T> getLogger(): Logger = Loggers.getLogger(T::class.java)
-}

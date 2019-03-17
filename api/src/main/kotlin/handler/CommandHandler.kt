@@ -7,16 +7,16 @@ import reactor.core.Disposable
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toFlux
 import reactor.core.publisher.toMono
-import reactor.util.Loggers
 import reactor.util.function.component1
 import reactor.util.function.component2
+import util.Loggers
 import util.zipWith
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
 abstract class CommandHandler : Handler<MessageCreateEvent>() {
     private lateinit var parser: Parser
-    private val logger = Loggers.getLogger(CommandHandler::class.java)
+    private val logger = Loggers.getLogger<CommandHandler>()
 
     protected fun execute(command: CommandInfo, context: ICommandContext): Disposable =
             command.modulePointer.setContext(context).toMono()
