@@ -70,3 +70,7 @@ private fun specifyEvents(client: DiscordClient) {
 }
 
 lateinit var startedTime: LocalTime
+
+//TODO доделать memberJoinEvent
+//TODO доделать нормальный мут
+//TODO добавить аннотации: group, requireDeveloper, requireOwner

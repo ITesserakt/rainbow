@@ -4,7 +4,11 @@ import command.GuildCommandProvider
 import context.GuildCommandContext
 import discord4j.core.event.domain.message.MessageCreateEvent
 import reactor.core.publisher.toMono
+import reactor.util.function.component1
+import reactor.util.function.component2
 import util.toOptional
+import util.zipWith
+import javax.naming.NoPermissionException
 
 class GuildCommandHandler : CommandHandler() {
     override fun handle(event: MessageCreateEvent) {
@@ -21,6 +25,17 @@ class GuildCommandHandler : CommandHandler() {
                     context to command
                 }.filter { (_, command) -> command.isPresent }
                 .map { it.first to it.second.get() }
+                .filterWhen { (context, command) ->
+                    context.message.authorAsMember
+                            .flatMap { it.basePermissions }.zipWith(command.permissions)
+                            .map { (base, needed) ->
+                                val copy = needed.asEnumSet().clone()
+                                copy.removeAll(base)
+                                if (copy.isNotEmpty())
+                                    throw NoPermissionException("Недостаточно привелегий")
+                                return@map true
+                            }
+                }
                 .flatMap { (context, command) ->
                     execute(command, context)
                 }.subscribe({},
