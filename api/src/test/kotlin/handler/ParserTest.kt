@@ -39,28 +39,28 @@ internal class ParserTest {
 
     @Test
     fun `parse non-optional user id to user entity`() {
-        StepVerifier.create(parser.parse(0, User::class))
+        StepVerifier.create(parser.parse(0, User::class, false))
                 .assertNext { Assertions.assertEquals(it.id, id) }
                 .verifyComplete()
     }
 
     @Test
     fun `parse optional user id to user entity`() {
-        StepVerifier.create(parser.parseOptional(0, User::class))
+        StepVerifier.create(parser.parseOptional(0, User::class, false))
                 .assertNext { Assertions.assertEquals(it.id, id) }
                 .verifyComplete()
     }
 
     @Test
     fun `parse nothing to empty mono`() {
-        StepVerifier.create(parser.parseOptional(1, User::class))
+        StepVerifier.create(parser.parseOptional(1, User::class, false))
                 .expectNextCount(0)
                 .verifyComplete()
     }
 
     @Test
     fun `parse non-existing argument, expect error`() {
-        StepVerifier.create(parser.parse(1, User::class))
+        StepVerifier.create(parser.parse(1, User::class, false))
                 .expectError(IllegalArgumentException::class.java)
                 .verify()
     }

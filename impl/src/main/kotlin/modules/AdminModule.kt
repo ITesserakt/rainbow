@@ -9,6 +9,7 @@ import discord4j.core.`object`.util.Snowflake
 import reactor.core.Disposable
 import reactor.core.publisher.Mono
 import reactor.core.publisher.switchIfEmpty
+import reactor.core.publisher.toMono
 import util.toSnowflake
 import java.awt.Color
 import kotlin.collections.set
@@ -19,7 +20,7 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
     @Command
     @Summary("Банит указанного пользователя")
     @Permissions(Permission.BAN_MEMBERS)
-    fun ban(member: Member, reason: String = ""): Disposable = context.guild.subscribe { guild ->
+    fun ban(member: Member, @Continuous reason: String = ""): Disposable = context.guild.subscribe { guild ->
         guild.ban(member.id) { spec -> spec.reason = reason }
                 .doOnError { context.reply("Невозможно забанить этого пользователя") }
                 .thenReturn(arrayOf(
@@ -37,7 +38,7 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
     @Permissions(Permission.KICK_MEMBERS)
     @Aliases("поджопник")
     @Summary("Кикает указанного пользователя")
-    fun kick(member: Member, reason: String = ""): Disposable = context.guild.subscribe { guild ->
+    fun kick(member: Member, @Continuous reason: String = ""): Disposable = context.guild.subscribe { guild ->
         guild.kick(member.id, reason)
                 .doOnError { context.reply("Невозможно кикнуть этого пользователя") }
                 .subscribe()
@@ -46,7 +47,7 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
     @Command
     @Summary("Разбанивает указанного пользователя")
     @Permissions(Permission.BAN_MEMBERS)
-    fun pardon(userId: Long, reason: String = "") {
+    fun pardon(userId: Long, @Continuous reason: String = "") {
         context.guild.subscribe {
             it.unban(userId.toSnowflake(), reason).subscribe()
         }
@@ -54,7 +55,7 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
 
     @Command
     @Permissions(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS)
-    fun mute(member: Member): Disposable = getMuteRole().subscribe {
+    fun mute(@Continuous member: Member): Disposable = getMuteRole().subscribe {
         mutedUsers[context.guildId to member.id] = member.roleIds.toList()
         member.edit { spec ->
             spec.setRoles(setOf(it))
@@ -63,7 +64,7 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
 
     @Command
     @Permissions(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS)
-    fun unmute(member: Member) {
+    fun unmute(@Continuous member: Member) {
         val savedRoles = mutedUsers.remove(context.guildId to member.id)
                 ?: throw NoSuchElementException("Пользователь не замучен")
         member.edit {
@@ -85,4 +86,16 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
                     }
                 }
             }.map { it.id }
+
+    @Command
+    @Permissions(Permission.MANAGE_MESSAGES)
+    @Summary("Удаляет последние `num` сообщений")
+    @Aliases("delete messages")
+    fun clear(num: Long): Disposable = context.message.channel
+            .flatMapMany {
+                it.getMessagesBefore(context.message.id)
+                        .mergeWith(context.message.toMono())
+            }.take(num)
+            .flatMap { it.delete() }
+            .subscribe()
 }

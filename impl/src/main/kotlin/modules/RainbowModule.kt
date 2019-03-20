@@ -1,8 +1,6 @@
 package modules
 
-import command.Command
-import command.ModuleBase
-import command.Permissions
+import command.*
 import context.GuildCommandContext
 import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.util.Permission
@@ -40,6 +38,7 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
 
     @Command
     @Permissions(Permission.MANAGE_ROLES)
+    @Summary("Радужное переливание роли")
     fun rainbow(role: Role, `delay in ms`: Long = 500, step: Float = 0.5f) {
         val delay = Duration.ofMillis(`delay in ms`)
         if (delay < Duration.ofMillis(100)) {
@@ -71,7 +70,8 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
     }
 
     @Command("rainbow_stop")
-    fun rainbowStop(role: Role) {
+    @Summary("Остановка переливания роли")
+    fun rainbowStop(@Continuous role: Role) {
         if (rainbows.contains(role.id)) rainbows.remove(role.id)?.dispose()
     }
 }
