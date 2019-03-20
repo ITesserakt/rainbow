@@ -1,9 +1,6 @@
 package modules
 
-import command.Command
-import command.Hidden
-import command.ModuleBase
-import command.Summary
+import command.*
 import context.GuildCommandContext
 import util.Database
 import util.toSnowflake
@@ -15,6 +12,7 @@ class DeveloperModule : ModuleBase<GuildCommandContext>(GuildCommandContext::cla
     @Command
     @Hidden
     @Summary("Вырубает нахрен бота")
+    @Aliases("exit", "quit")
     fun logout() = requireDeveloper {
         context.client
                 .logout()
