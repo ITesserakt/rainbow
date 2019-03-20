@@ -6,6 +6,7 @@ import kotlin.reflect.KClass
 
 abstract class ModuleBase<T : ICommandContext>(val contextType: KClass<T>) {
     protected lateinit var context: T
+        private set
 
     internal fun setContext(context: ICommandContext) {
         @Suppress("UNCHECKED_CAST")

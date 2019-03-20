@@ -21,10 +21,9 @@ class GuildCommandHandler : CommandHandler() {
                     context to command
                 }.filter { (_, command) -> command.isPresent }
                 .map { it.first to it.second.get() }
-                .subscribe(
-                        { (context, command) ->
-                            execute(command, context)
-                        },
+                .flatMap { (context, command) ->
+                    execute(command, context)
+                }.subscribe({},
                         { err ->
                             event.message.channel.subscribe {
                                 it.createMessage("Ошибка: ${err.localizedMessage}").subscribe()

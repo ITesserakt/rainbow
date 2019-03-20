@@ -2,6 +2,8 @@ package modules
 
 import command.*
 import context.GuildCommandContext
+import discord4j.common.GitProperties.APPLICATION_VERSION
+import discord4j.common.GitProperties.getProperties
 import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.util.Permission
 import reactor.core.publisher.toMono
@@ -11,13 +13,12 @@ import java.time.Duration
 import java.time.LocalTime
 
 class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
-
     @Command
     @Aliases("test")
     @Summary("Выводит список всех команд, если имя команды не передано, иначе - описание команды")
-    fun help(`command name`: String = "") {
+    fun help(@Continuous `command name`: String = "") {
         `command name`.toMono()
-                .filter { it.isBlank() }
+                .filter(String::isBlank)
                 .map { GuildCommandProvider.commands }
                 .subscribe {
                     context.reply {
@@ -30,8 +31,8 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
                 }
 
         `command name`.toMono()
-                .filter { it.isNotBlank() } //когда просим какую-нибудь команду
-                .map { GuildCommandProvider.find(it) }
+                .filter(String::isNotBlank) //когда просим какую-нибудь команду
+                .map(GuildCommandProvider::find)
                 .subscribe { optCmdInfo ->
                     if (optCmdInfo == null)
                         context.reply("Данной команды не найдено, используйте `!help` для списка всех команд.")
@@ -44,9 +45,9 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Command
     @Summary("Дополнительная информация о боте")
     fun about() {
-        context.reply("""v0.0.7.19-ALPHA
+        context.reply("""v0.0.7.20-ALPHA
             |https://github.com/ITesserakt/rainbow
-            |Основано на DISCORD4J v3.0.0
+            |Основано на DISCORD4J ${getProperties()[APPLICATION_VERSION]}
         """.trimMargin())
     }
 
@@ -59,7 +60,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Command("role_info")
     @Summary("Информация об указанной роли")
     @Permissions(Permission.VIEW_AUDIT_LOG)
-    fun roleInfo(role: Role) {
+    fun roleInfo(@Continuous role: Role) {
         context.reply {
             setEmbed {
                 it.setColor(role.color)

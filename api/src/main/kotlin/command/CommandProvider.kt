@@ -17,7 +17,7 @@ abstract class CommandProvider<T : ICommandContext>(val type: KClass<T>) {
         if (find(command.name) == null || command.aliases.map { find(it) }.all { it == null }) {
             commands_[arrayOf(*command.aliases.toTypedArray(), command.name)] = command
         } else {
-            logger.error("Команда с таким названием уже зарегестрирована")
+            logger.error("Команда с таким названием уже зарегистрирована")
         }
     }
 }
