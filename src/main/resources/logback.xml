@@ -3,31 +3,30 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-                %d{HH:mm:ss} [%thread] %-5level %logger{20} - %msg%n
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n
             </Pattern>
         </layout>
     </appender>
 
-    <appender name="FILE-AUDIT"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/error.log</file>
+    <appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/logback.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
-                %d{MM-dd HH:mm:ss} [%thread] %-5level - %msg%n
+                %d{dd.MM.yyyy HH:mm:ss} [%thread] %-5level - %msg%n
             </Pattern>
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily -->
-            <fileNamePattern>
-                logs/archived/error.%d{yyyy-MM-dd}.%i.log
-            </fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy
-                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <fileNamePattern>logs/archived/logback.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
+
+    <logger name="ru.tesserakt.bot.rainbow" level="warn" >
+        <appender-ref ref="FILE-AUDIT" />
+    </logger>
 
     <root level="info" >
         <appender-ref ref="STDOUT" />

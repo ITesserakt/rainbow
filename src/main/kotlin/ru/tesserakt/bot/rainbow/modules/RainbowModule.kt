@@ -1,5 +1,6 @@
 package ru.tesserakt.bot.rainbow.modules
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.tesserakt.bot.rainbow.core.ModuleBase
 import ru.tesserakt.bot.rainbow.core.commands.*
@@ -11,7 +12,7 @@ import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
 class RainbowModule : ModuleBase<CommandContext>() {
-    val logger = LoggerFactory.getLogger(RainbowModule::class.java)
+    private val logger : Logger = LoggerFactory.getLogger(RainbowModule::class.java)
 
     private var stepAccumulator = 0f
 
@@ -25,9 +26,12 @@ class RainbowModule : ModuleBase<CommandContext>() {
     private val task: () -> Color = {
         if (stepAccumulator >= 1) {
             stepAccumulator = 0f
+
             currentColor = targetColor
             targetColor = colors[index]
-            index = (index + 1) % 7
+
+            index++
+            if(index >= 7) index = 0
         }
         val mixR: Int = (currentColor.red * (1 - stepAccumulator) + targetColor.red * stepAccumulator).toInt()
         val mixG: Int = (currentColor.green * (1 - stepAccumulator) + targetColor.green * stepAccumulator).toInt()
@@ -40,8 +44,13 @@ class RainbowModule : ModuleBase<CommandContext>() {
     @Command
     @Summary("Радужный цвет у указанной роли")
     @Restrictions(Permissions.MANAGE_ROLES)
-    fun rainbow(role: IRole, delay : Long = 40L) {
-        timerDict[role.stringID] = fixedRateTimer(period = delay) {
+    fun rainbow(role: IRole, `delay in ms` : Long = 100L) {
+        if(`delay in ms` < 100L) {
+            context.reply("Слишком маленькая задержка")
+            return
+        }
+
+        timerDict[role.stringID] = fixedRateTimer(period = `delay in ms`) {
             runCatching {
                 val newColor = task()
                 role.changeColor(newColor)

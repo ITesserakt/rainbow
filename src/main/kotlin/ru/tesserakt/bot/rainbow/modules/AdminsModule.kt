@@ -80,8 +80,10 @@ internal class AdminsModule : ModuleBase<CommandContext>() {
     @Restrictions(Permissions.KICK, Permissions.BAN)
     fun unmute(@Remainder user: IUser) {
         val guild = context.guild
+
         val mutedUser = mutedUsers.find { it.guild == guild && it.user == user }
                 ?: throw NoSuchElementException("Пользователь ${user.name} не замучен!")
+
         context.guild.editUserRoles(user, mutedUser.roles)
         mutedUsers.remove(mutedUser)
     }

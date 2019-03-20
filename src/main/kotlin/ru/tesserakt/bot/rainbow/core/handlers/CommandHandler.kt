@@ -42,8 +42,10 @@ class CommandHandler : Handler() {
         return true
     }
 
-    private fun checkPrefix(runArray: List<String>): Boolean {
-        if ((runArray.isEmpty() || runArray[0].isEmpty()) && runArray[0][0] != '!') return false
-        return true
-    }
+    private fun checkPrefix(runArray: List<String>): Boolean =
+            when {
+                runArray.isEmpty() -> false
+                runArray[0].isEmpty() && runArray[0][0] != '!' -> false
+                else -> true
+            }
 }
