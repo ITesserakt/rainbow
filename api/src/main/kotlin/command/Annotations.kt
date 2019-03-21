@@ -19,3 +19,6 @@ annotation class Aliases(vararg val aliases: String)
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Continuous
+
+@Target(AnnotationTarget.CLASS)
+annotation class Group(val groupName: String)

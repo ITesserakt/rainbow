@@ -60,6 +60,8 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
 
     @Command
     @Permissions(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS)
+    @Hidden
+    @Summary("Мутит указанного пользователя")
     fun mute(@Continuous member: Member): Disposable = getMuteRole().subscribe {
         mutedUsers[context.guildId to member.id] = member.roleIds.toList()
         member.edit { spec ->
@@ -69,6 +71,8 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
 
     @Command
     @Permissions(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS)
+    @Hidden
+    @Summary("Размучивает указанного пользователя")
     fun unmute(@Continuous member: Member) {
         val savedRoles = mutedUsers.remove(context.guildId to member.id)
                 ?: throw NoSuchElementException("Пользователь не замучен")

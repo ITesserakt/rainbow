@@ -10,7 +10,7 @@ abstract class ModuleBase<T : ICommandContext>(val contextType: KClass<T>) {
 
     internal fun setContext(context: ICommandContext) {
         @Suppress("UNCHECKED_CAST")
-        this.context = (context as? T) ?: throw IllegalArgumentException("Неверный тип контекста")
+        this.context = context as T
     }
 
     protected fun T.reply(message: String) {
