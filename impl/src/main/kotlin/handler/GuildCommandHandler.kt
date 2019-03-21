@@ -38,11 +38,6 @@ class GuildCommandHandler : CommandHandler() {
                 }
                 .flatMap { (context, command) ->
                     execute(command, context)
-                }.subscribe({},
-                        { err ->
-                            event.message.channel.subscribe {
-                                it.createMessage("Ошибка: ${err.localizedMessage}").subscribe()
-                            }
-                        })
+                }.subscribe()
     }
 }

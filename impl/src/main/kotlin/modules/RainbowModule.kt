@@ -17,6 +17,7 @@ import util.toOptional
 import java.awt.Color
 import java.time.Duration
 
+@Group("rainbow")
 class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     private val rainbows = hashMapOf<Snowflake, Disposable>()
 
@@ -41,8 +42,8 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
 
     @Command
     @Permissions(Permission.MANAGE_ROLES)
-    @Summary("Радужное переливание роли")
-    fun rainbow(role: Role, `delay in ms`: Long = 500, step: Float = 0.5f) {
+    @Summary("Радужное переливание цвета роли")
+    fun start(role: Role, `delay in ms`: Long = 500, step: Float = 0.5f) {
         val delay = Duration.ofMillis(`delay in ms`)
                 .takeIf { it >= Duration.ofMillis(100) }.toOptional()
                 .orElseThrow { IllegalArgumentException("Слишком маленькая задержка ( < 100 )") }
@@ -69,7 +70,7 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
                 .subscribe()
     }
 
-    @Command("rainbow_stop")
+    @Command("stop")
     @Summary("Остановка переливания роли")
     fun rainbowStop(@Continuous role: Role) {
         if (rainbows.contains(role.id)) rainbows.remove(role.id)?.dispose()

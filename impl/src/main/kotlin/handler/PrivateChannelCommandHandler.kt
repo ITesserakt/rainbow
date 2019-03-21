@@ -19,14 +19,7 @@ class PrivateChannelCommandHandler : CommandHandler() {
                     context to command
                 }.filter { (_, command) -> command.isPresent }
                 .map { it.first to it.second.get() }
-                .subscribe(
-                        { (context, command) ->
-                            execute(command, context)
-                        },
-                        { err ->
-                            event.message.channel.subscribe {
-                                it.createMessage("Ошибка: ${err.localizedMessage}").subscribe()
-                            }
-                        })
+                .map { (context, command) -> execute(command, context) }
+                .subscribe()
     }
 }
