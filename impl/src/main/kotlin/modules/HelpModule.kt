@@ -9,6 +9,7 @@ import discord4j.core.`object`.util.Permission
 import reactor.core.publisher.toMono
 import startedTime
 import util.RandomColor
+import util.toPrettyString
 import java.time.Duration
 import java.time.LocalTime
 
@@ -54,7 +55,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Command
     @Summary("Время работы бота")
     fun uptime() {
-        context.reply(Duration.between(LocalTime.now(), startedTime).toString())
+        context.reply(Duration.between(LocalTime.now(), startedTime).toPrettyString())
     }
 
     @Command("role_info")
@@ -64,6 +65,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
         context.reply {
             setEmbed {
                 it.setColor(role.color)
+                it.setTitle(role.name)
                 it.addField("Id", role.id.asString(), true)
                 it.addField("Position", role.rawPosition.toString(), true)
                 it.addField("Mention", "`${role.mention}`", true)

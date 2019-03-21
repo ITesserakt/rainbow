@@ -10,6 +10,8 @@ import reactor.core.Disposable
 import reactor.core.publisher.Mono
 import reactor.core.publisher.switchIfEmpty
 import reactor.core.publisher.toMono
+import util.NoPermissionsException
+import util.and
 import util.toSnowflake
 import java.awt.Color
 import kotlin.collections.set
@@ -17,22 +19,25 @@ import kotlin.collections.set
 class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     private val mutedUsers = hashMapOf<Pair<Snowflake, Snowflake>, List<Snowflake>>()
 
+    private val banGives = arrayOf(
+            "https://i.pinimg.com/originals/5d/77/0c/5d770cbd18e7f9857d1e497a851509b8.gif",
+            "https://69.media.tumblr.com/904432c5b044f0588bb31fc49ab8b642/tumblr_ow4mafo4eI1son3fpo2_500.gif",
+            "https://thumbs.gfycat.com/UnconsciousDeliciousLcont-max-1mb.gif",
+            "https://tenor.com/view/banned-thor-gif-6072837"
+    )
+
     @Command
     @Summary("Банит указанного пользователя")
     @Permissions(Permission.BAN_MEMBERS)
-    fun ban(member: Member, @Continuous reason: String = ""): Disposable = context.guild.subscribe { guild ->
-        guild.ban(member.id) { spec -> spec.reason = reason }
-                .doOnError { context.reply("Невозможно забанить этого пользователя") }
-                .thenReturn(arrayOf(
-                        "https://i.pinimg.com/originals/5d/77/0c/5d770cbd18e7f9857d1e497a851509b8.gif",
-                        "https://69.media.tumblr.com/904432c5b044f0588bb31fc49ab8b642/tumblr_ow4mafo4eI1son3fpo2_500.gif",
-                        "https://thumbs.gfycat.com/UnconsciousDeliciousLcont-max-1mb.gif",
-                        "https://tenor.com/view/banned-thor-gif-6072837"
-                )).map {
-                    context.reply(it.random())
-                }
-                .subscribe()
-    }
+    fun ban(member: Member, @Continuous reason: String = ""): Disposable = context.client.self
+            .flatMap { it.asMember(context.guildId) }
+            .filterWhen { it.isHigher(member) and context.guild.map { guild -> guild.ownerId != member.id } }
+            .switchIfEmpty { throw NoPermissionsException("Невозможно забанить этого пользователя") }
+            .then(context.guild)
+            .flatMap { it.ban(member.id) { spec -> spec.reason = reason } }
+            .thenReturn(banGives).map {
+                context.reply(it.random())
+            }.subscribe()
 
     @Command
     @Permissions(Permission.KICK_MEMBERS)
