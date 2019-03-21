@@ -27,11 +27,17 @@ abstract class CommandHandler : Handler<MessageCreateEvent>() {
                         command.functionPointer.callBy(params)
                     }.doOnError { err ->
                         context.message.channel
-                                .flatMap { it.createMessage("Ошибка: ${err.localizedMessage}") }
+                                .flatMap { it.createMessage("Ошибка: ${getError(err)}") } //FIXME два сообщения об ошибке
                                 .subscribe {
                                     logger.error(it.content.get(), err)
                                 }
                     }
+
+    private fun getError(error: Throwable?): String {
+        return if (error?.message.isNullOrEmpty())
+            getError(error?.cause)
+        else error?.message ?: "неизвестно"
+    }
 
     private fun parseParameters(command: CommandInfo): Mono<Map<KParameter, Any?>> =
             command.parameters.toFlux()

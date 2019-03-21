@@ -6,9 +6,9 @@ import discord4j.core.event.domain.message.MessageCreateEvent
 import reactor.core.publisher.toMono
 import reactor.util.function.component1
 import reactor.util.function.component2
+import util.NoPermissionsException
 import util.toOptional
 import util.zipWith
-import javax.naming.NoPermissionException
 
 class GuildCommandHandler : CommandHandler() {
     override fun handle(event: MessageCreateEvent) {
@@ -32,7 +32,7 @@ class GuildCommandHandler : CommandHandler() {
                                 val copy = needed.asEnumSet().clone()
                                 copy.removeAll(base)
                                 if (copy.isNotEmpty())
-                                    throw NoPermissionException("Недостаточно привелегий")
+                                    throw NoPermissionsException()
                                 return@map true
                             }
                 }
