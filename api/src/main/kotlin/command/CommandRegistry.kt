@@ -36,6 +36,10 @@ object CommandRegistry {
                             isHidden = HiddenAnnotationProcessor(func)
                                 .process(),
                             isRequiringDeveloper = RequiredDeveloperAnnotationProcessor(func)
+                                .process() || RequiredDeveloperAnnotationProcessor(instance)
+                                .process(),
+                            isRequiringOwner = RequiredOwnerAnnotationProcessor(func)
+                                .process() || RequiredOwnerAnnotationProcessor(instance)
                                 .process()
                         )
                     )

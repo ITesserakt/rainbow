@@ -39,6 +39,9 @@ class GuildCommandHandler : CommandHandler() {
                             throw NoPermissionsException()
                         return@map true
                     }
+            }.filter { (context, command) ->
+                !command.isRequiringOwner ||
+                        context.author.map { it.id } == context.guild.map { it.ownerId } //Странное сравнение
             }
             .flatMap { (context, command) ->
                 execute(command, context)
