@@ -1,3 +1,4 @@
+
 import bot.DynamicPresence
 import command.CommandLoader
 import command.CommandRegistry
@@ -24,15 +25,14 @@ import types.resolverProvider
 import util.on
 import java.time.Duration
 import java.time.LocalTime
-import java.util.*
 
 private val logger: Logger = Loggers.getLogger(Class.forName("MainKt"))
 
 fun main() {
     logger.info("Starting loading of bot...")
 
-    val props = ResourceBundle.getBundle("config")
-    val client = DiscordClientBuilder(props.getString("token")).build()
+    val token = System.getenv("TOKEN")
+    val client = DiscordClientBuilder(token).build()
 
     specifyEvents(client)
 
