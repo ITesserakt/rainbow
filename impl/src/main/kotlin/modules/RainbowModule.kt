@@ -45,29 +45,29 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
     @Summary("Радужное переливание цвета роли")
     fun start(role: Role, `delay in ms`: Long = 500, step: Float = 0.5f) {
         val delay = Duration.ofMillis(`delay in ms`)
-                .takeIf { it >= Duration.ofMillis(100) }.toOptional()
-                .orElseThrow { IllegalArgumentException("Слишком маленькая задержка ( < 100 )") }
+            .takeIf { it >= Duration.ofMillis(100) }.toOptional()
+            .orElseThrow { IllegalArgumentException("Слишком маленькая задержка ( < 100 )") }
 
         context.client.self
-                .flatMap { it.asMember(context.guildId) }
-                .filterWhen { it.hasHigherRoles(listOf(role)) }
-                .switchIfEmpty {
-                    throw NoPermissionsException(
-                            """Роль `${role.name}` находится иерархически выше роли бота.
+            .flatMap { it.asMember(context.guildId) }
+            .filterWhen { it.hasHigherRoles(listOf(role)) }
+            .switchIfEmpty {
+                throw NoPermissionsException(
+                    """Роль `${role.name}` находится иерархически выше роли бота.
                               |В разделе управления сервером передвиньте роль бота выше необходимой роли""".trimMargin()
-                    )
-                }.subscribe()
+                )
+            }.subscribe()
 
         rainbows[role.id] = Mono.fromCallable { task(step) }
-                .delayElement(delay)
-                .zipWith(role.toMono())
-                .flatMap { (color, role) ->
-                    role.edit {
-                        it.setColor(color)
-                    }
-                }.repeat { !rainbows[role.id]?.isDisposed!! }
-                .onBackpressureDrop()
-                .subscribe()
+            .delayElement(delay)
+            .zipWith(role.toMono())
+            .flatMap { (color, role) ->
+                role.edit {
+                    it.setColor(color)
+                }
+            }.repeat { !rainbows[role.id]?.isDisposed!! }
+            .onBackpressureDrop()
+            .subscribe()
     }
 
     @Command("stop")

@@ -8,10 +8,12 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.javaMethod
 
-class DescriptionProcessor : IProcessor<String> {
-    private val logger = Loggers.getLogger<DescriptionProcessor>()
+internal inline class DescriptionAnnotationProcessor(override val elem: KAnnotatedElement) :
+    IAnnotationProcessor<String> {
+    private val logger
+        get() = Loggers.getLogger<DescriptionAnnotationProcessor>()
 
-    override fun process(elem: KAnnotatedElement): String = elem.findAnnotation<Summary>()?.let {
+    override fun process(): String = elem.findAnnotation<Summary>()?.let {
         if (it.description.isBlank() && elem is KCallable<*>)
             logger.warn("Нет описания для команды `${elem.name}`")
         it.description
