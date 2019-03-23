@@ -24,7 +24,7 @@ fun <T1 : Any, T2 : Any> Mono<T1>.zipWith(other: T2): Mono<Tuple2<T1, T2>> =
         this.zipWith(other.toMono())
 
 fun Duration.toPrettyString(): String = this.toString()
-        .drop(2)
+    .drop(3)
         .replace('-', ' ')
 
 infix fun Mono<Boolean>.and(other: Mono<Boolean>): Mono<Boolean> = BooleanUtils.and(this, other)
