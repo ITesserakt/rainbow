@@ -1,6 +1,7 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
+}
 apply plugin: 'application'
-
-mainClassName = 'MainKt'
 
 dependencies {
     compile project(':api')
@@ -20,3 +21,12 @@ dependencies {
     testCompile "io.projectreactor:reactor-test:3.2.6.RELEASE"
     testImplementation "io.mockk:mockk:1.9.1"
 }
+
+shadowJar {
+    mainClassName = 'MainKt'
+    baseName = 'rainbow'
+    version = '0.0.7.23'
+}
+
+task stage(dependsOn: ['clean', 'shadowJar'])
+shadowJar.mustRunAfter clean
