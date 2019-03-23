@@ -12,9 +12,8 @@ class CommandLoader(private val pathToPackage: String) {
         val path = pathToPackage.replace(PKG_SEPARATOR, DIR_SEPARATOR)
         val url = Thread.currentThread().contextClassLoader.getResource(path)
                 ?: throw IllegalArgumentException("Неверно введено имя пакета")
-        val `package` = File(url.toURI())
-
-        `package`.listFiles().forEach {
+        val file = File(url.toURI())
+        file.listFiles().forEach {
             buffer.addAll(findRec(it, pathToPackage))
         }
         return buffer
@@ -47,7 +46,7 @@ class CommandLoader(private val pathToPackage: String) {
 
     private companion object Constants {
         private const val PKG_SEPARATOR = '.'
-        private const val DIR_SEPARATOR = '/'
+        private val DIR_SEPARATOR = File.pathSeparatorChar
         private const val CLASS_FILE_SUFFIX = ".class"
     }
 }
