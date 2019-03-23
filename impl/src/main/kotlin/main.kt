@@ -73,4 +73,3 @@ lateinit var startedTime: LocalTime
 
 //TODO доделать memberJoinEvent
 //TODO доделать нормальный мут
-//TODO добавить аннотации: requireOwner

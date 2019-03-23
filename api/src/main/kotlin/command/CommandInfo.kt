@@ -13,7 +13,8 @@ data class CommandInfo(
     internal val aliases: List<String>,
     val permissions: PermissionSet,
     internal val isHidden: Boolean,
-    internal val isRequiringDeveloper: Boolean
+    internal val isRequiringDeveloper: Boolean,
+    val isRequiringOwner: Boolean
 ) {
     internal val parameters: List<KParameter> = functionPointer.parameters
 

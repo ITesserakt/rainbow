@@ -3,8 +3,6 @@ package command
 import context.ICommandContext
 import util.Loggers
 import java.io.File
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 class CommandLoader(private val pathToPackage: String) {
     private val logger = Loggers.getLogger<CommandLoader>()
@@ -40,9 +38,9 @@ class CommandLoader(private val pathToPackage: String) {
         var count = 0
         logger.info("Начата загрузка модулей...")
 
-        find().filter { it.kotlin.isSubclassOf(ModuleBase::class) }
+        find().filterIsInstance<Class<ModuleBase<ICommandContext>>>()
                 .forEach {
-                    CommandRegistry.register(it.kotlin as KClass<ModuleBase<ICommandContext>>)
+                    CommandRegistry.register(it.kotlin)
                     count++
                 }.run { logger.info("Загружено $count модулей") }
     }

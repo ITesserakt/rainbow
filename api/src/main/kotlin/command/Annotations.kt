@@ -25,3 +25,6 @@ annotation class Group(val groupName: String)
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class RequireDeveloper
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+annotation class RequireOwner
