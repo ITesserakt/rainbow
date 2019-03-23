@@ -10,9 +10,9 @@ class CommandLoader(private val pathToPackage: String) {
     private fun find(): List<Class<*>> {
         val buffer = mutableListOf<Class<*>>()
         val path = pathToPackage.replace(PKG_SEPARATOR, DIR_SEPARATOR)
-        val url = Thread.currentThread().contextClassLoader.getResource(path)
+        val url = Thread.currentThread().contextClassLoader.getResource(path).toExternalForm()
                 ?: throw IllegalArgumentException("Неверно введено имя пакета")
-        val `package` = File(url.toURI())
+        val `package` = File(url)
 
         `package`.listFiles().forEach {
             buffer.addAll(findRec(it, pathToPackage))
