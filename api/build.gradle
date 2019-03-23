@@ -9,6 +9,8 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
+    compile "org.reflections:reflections:0.9.11"
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.0"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.4.0"
     testCompile "io.projectreactor:reactor-test:3.2.6.RELEASE"

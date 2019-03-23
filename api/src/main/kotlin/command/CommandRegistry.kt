@@ -10,7 +10,7 @@ import kotlin.reflect.full.declaredMemberFunctions
 object CommandRegistry {
     private val providers = mutableListOf<CommandProvider<out ICommandContext>>()
 
-    fun register(instance: KClass<ModuleBase<ICommandContext>>) {
+    fun register(instance: KClass<out ModuleBase<ICommandContext>>) {
         val instanceOfInstance = instance.createInstance()
 
         instance.declaredMemberFunctions
