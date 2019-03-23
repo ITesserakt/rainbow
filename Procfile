@@ -1,1 +1,1 @@
-worker: java -jar build/libs/rainbow-all.jar
+worker: java -jar impl/build/libs/rainbow-0.0.7.23-all.jar

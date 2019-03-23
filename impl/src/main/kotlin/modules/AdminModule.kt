@@ -9,7 +9,6 @@ import discord4j.core.`object`.util.Snowflake
 import reactor.core.Disposable
 import reactor.core.publisher.Mono
 import reactor.core.publisher.switchIfEmpty
-import reactor.core.publisher.toMono
 import util.NoPermissionsException
 import util.and
 import util.toSnowflake
@@ -101,10 +100,8 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
     @Summary("Удаляет последние `num` сообщений")
     @Aliases("delete messages")
     fun clear(num: Long): Disposable = context.message.channel
-        .flatMapMany {
-            it.getMessagesBefore(context.message.id)
-                .mergeWith(context.message.toMono())
-        }.take(num)
-        .flatMap { it.delete() }
+        .flatMapMany { it.getMessagesBefore(context.message.id) }
+        .take(num)
+        .flatMap { msg -> msg.delete() }
         .subscribe()
 }

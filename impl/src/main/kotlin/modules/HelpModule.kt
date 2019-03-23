@@ -18,7 +18,9 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Aliases("test")
     @Summary("Выводит список всех команд, если имя команды не передано, иначе - описание команды")
     fun help(@Continuous `command name`: String = "") {
-        `command name`.toMono()
+        val cmdName = `command name`.replace(' ', '_')
+
+        cmdName.toMono()
                 .filter(String::isBlank)
                 .map { GuildCommandProvider.commands }
                 .subscribe {
@@ -31,7 +33,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
                     }
                 }
 
-        `command name`.toMono()
+        cmdName.toMono()
                 .filter(String::isNotBlank) //когда просим какую-нибудь команду
                 .map(GuildCommandProvider::find)
                 .subscribe { optCmdInfo ->
@@ -55,7 +57,9 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Command
     @Summary("Время работы бота")
     fun uptime() {
-        context.reply(Duration.between(LocalTime.now(), startedTime).toPrettyString())
+        context.reply(
+            "Бот работает уже ${Duration.between(LocalTime.now(), startedTime).toPrettyString()}"
+        )
     }
 
     @Command("role_info")
