@@ -22,9 +22,11 @@ class DynamicPresence (private val client : DiscordClient, delay : Duration) {
 
     private val words = arrayOf("users", "guilds", "regions", "channels", "threads")
 
-    fun start(): Flux<String> = presenceFlux.map { (index, value) ->
-        "$value ${words[index.toInt()]}"
-    }.doOnNext {
-        client.updatePresence(Presence.online(Activity.watching(it))).subscribe()
-    }.repeat().subscribeOn(Schedulers.elastic())
+    fun start(): Flux<Void> = presenceFlux.map { (index, value) ->
+        "$value ${words[index.toInt()]} | say !help"
+    }
+        .flatMap { client.updatePresence(Presence.online(Activity.watching(it))) }
+        .retry(10)
+        .repeat()
+        .subscribeOn(Schedulers.elastic())
 }

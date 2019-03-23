@@ -5,7 +5,7 @@ import discord4j.core.`object`.util.Permission
 @Target(AnnotationTarget.FUNCTION)
 annotation class Command(val name: String = "")
 
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.FUNCTION)
 annotation class Summary(val description: String = "")
 
 @Target(AnnotationTarget.FUNCTION)
@@ -22,3 +22,6 @@ annotation class Continuous
 
 @Target(AnnotationTarget.CLASS)
 annotation class Group(val groupName: String)
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+annotation class RequireDeveloper

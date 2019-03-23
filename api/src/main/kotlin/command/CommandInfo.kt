@@ -6,12 +6,14 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.jvmErasure
 
 data class CommandInfo(
-        val name: String,
-        val description: String,
-        internal val functionPointer: KFunction<*>,
-        internal val modulePointer: ModuleBase<*>,
-        val permissions: PermissionSet,
-        internal val aliases: List<String>
+    val name: String,
+    val description: String,
+    internal val functionPointer: KFunction<*>,
+    internal val modulePointer: ModuleBase<*>,
+    internal val aliases: List<String>,
+    val permissions: PermissionSet,
+    internal val isHidden: Boolean,
+    internal val isRequiringDeveloper: Boolean
 ) {
     internal val parameters: List<KParameter> = functionPointer.parameters
 

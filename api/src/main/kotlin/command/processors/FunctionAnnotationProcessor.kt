@@ -4,10 +4,12 @@ import util.Loggers
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KFunction
 
-class FunctionProcessor : IProcessor<Boolean> {
-    private val logger = Loggers.getLogger<FunctionProcessor>()
+internal inline class FunctionAnnotationProcessor(override val elem: KAnnotatedElement) :
+    IAnnotationProcessor<Boolean> {
+    private val logger
+        get() = Loggers.getLogger<FunctionAnnotationProcessor>()
 
-    override fun process(elem: KAnnotatedElement): Boolean {
+    override fun process(): Boolean {
         elem as KFunction<*>
         if (elem.isOperator
                 or elem.isInline
