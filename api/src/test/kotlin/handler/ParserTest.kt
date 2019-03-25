@@ -8,17 +8,20 @@ import discord4j.core.`object`.util.Snowflake
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.junit.jupiter.api.*
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import reactor.test.StepVerifier
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockKExtension::class)
 internal class ParserTest {
     @MockK
-    private lateinit var fakeContext : ICommandContext
-    private lateinit var client : DiscordClient
-    private lateinit var parser : Parser
+    private lateinit var fakeContext: ICommandContext
+    private lateinit var client: DiscordClient
+    private lateinit var parser: Parser
     private val id = Snowflake.of(481169011262881793L)
 
     @BeforeAll
@@ -32,36 +35,31 @@ internal class ParserTest {
         parser = Parser(fakeContext)
     }
 
-    @AfterAll
-    private fun tearDown() {
-        client.logout().subscribe()
+    @Test
+    suspend fun `parse non-optional user id to user entity`() {
+        val result = parser.parse(0, User::class, false)
+        Assertions.assertEquals(result.id, id)
     }
 
     @Test
-    fun `parse non-optional user id to user entity`() {
-        StepVerifier.create(parser.parse(0, User::class, false))
-                .assertNext { Assertions.assertEquals(it.id, id) }
-                .verifyComplete()
+    suspend fun `parse optional user id to user entity`() {
+        val result = parser.parseOptional(0, User::class, false)
+        Assertions.assertNotNull(result)
+        Assertions.assertEquals(result!!.id, id)
     }
 
     @Test
-    fun `parse optional user id to user entity`() {
-        StepVerifier.create(parser.parseOptional(0, User::class, false))
-                .assertNext { Assertions.assertEquals(it.id, id) }
-                .verifyComplete()
-    }
-
-    @Test
-    fun `parse nothing to empty mono`() {
-        StepVerifier.create(parser.parseOptional(1, User::class, false))
-                .expectNextCount(0)
-                .verifyComplete()
+    suspend fun `parse nothing to empty mono`() {
+        val result = parser.parseOptional(1, User::class, false)
+        Assertions.assertNull(result)
     }
 
     @Test
     fun `parse non-existing argument, expect error`() {
-        StepVerifier.create(parser.parse(1, User::class, false))
-                .expectError(IllegalArgumentException::class.java)
-                .verify()
+        Assertions.assertThrows(NoSuchElementException::class.java) {
+            runBlocking {
+                parser.parse(1, User::class, false)
+            }
+        }
     }
 }

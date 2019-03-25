@@ -1,25 +1,25 @@
 package modules
 
+import com.sun.javafx.util.Utils
 import command.*
 import context.GuildCommandContext
 import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.util.Permission
 import discord4j.core.`object`.util.Snowflake
-import reactor.core.Disposable
-import reactor.core.publisher.Mono
-import reactor.core.publisher.switchIfEmpty
-import reactor.core.publisher.toMono
-import reactor.util.function.component1
-import reactor.util.function.component2
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import util.NoPermissionsException
 import util.RandomColor
+import util.await
 import util.toOptional
 import java.awt.Color
 import java.time.Duration
 
 @Group("rainbow")
 class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
-    private val rainbows = hashMapOf<Snowflake, Disposable>()
+    private val rainbows = hashMapOf<Snowflake, Job>()
 
     private var stepAccumulator = 0f
     private var currentColor = RandomColor
@@ -40,39 +40,43 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
         Color(mixR, mixG, mixB)
     }
 
-    @Command
+    @Command("start")
     @Permissions(Permission.MANAGE_ROLES)
     @Summary("Радужное переливание цвета роли")
-    fun start(role: Role, `delay in ms`: Long = 500, step: Float = 0.5f) {
-        val delay = Duration.ofMillis(`delay in ms`)
+    suspend fun rainbowStart(role: Role, `delay in ms`: Long = 500, step: Float = 0.5f) {
+        val clampedDelay = clampDelay(`delay in ms`)
+        val clampedStep = Utils.clamp(0.01f, step, 0.9f)
+
+        checkForRightRolePosition(role)
+
+        rainbows[role.id] = scope.launch {
+            while (isActive) {
+                val color = task(clampedStep)
+                delay(clampedDelay.toMillis())
+
+                role.edit { it.setColor(color) }.await()
+            }
+        }
+    }
+
+    private fun clampDelay(`delay in ms`: Long): Duration =
+        Duration.ofMillis(`delay in ms`)
             .takeIf { it >= Duration.ofMillis(100) }.toOptional()
             .orElseThrow { IllegalArgumentException("Слишком маленькая задержка ( < 100 )") }
 
-        context.client.self
-            .flatMap { it.asMember(context.guildId) }
-            .filterWhen { it.hasHigherRoles(listOf(role)) }
-            .switchIfEmpty {
-                throw NoPermissionsException(
-                    """Роль `${role.name}` находится иерархически выше роли бота.
-                              |В разделе управления сервером передвиньте роль бота выше необходимой роли""".trimMargin()
-                )
-            }.subscribe()
-
-        rainbows[role.id] = Mono.fromCallable { task(step) }
-            .delayElement(delay)
-            .zipWith(role.toMono())
-            .flatMap { (color, role) ->
-                role.edit {
-                    it.setColor(color)
-                }
-            }.repeat { !rainbows[role.id]?.isDisposed!! }
-            .onBackpressureDrop()
-            .subscribe()
+    private suspend fun checkForRightRolePosition(role: Role) {
+        val botAsMember = context.client.self.flatMap { it.asMember(context.guildId) }.await()
+        if (!botAsMember.hasHigherRoles(listOf(role)).await())
+            throw NoPermissionsException(
+                """Роль `${role.name}` находится иерархически выше роли бота.
+                  |В разделе управления сервером передвиньте роль бота выше необходимой роли""".trimMargin()
+            )
     }
 
     @Command("stop")
     @Summary("Остановка переливания роли")
+    @Permissions(Permission.MANAGE_ROLES)
     fun rainbowStop(@Continuous role: Role) {
-        if (rainbows.contains(role.id)) rainbows.remove(role.id)?.dispose()
+        rainbows.remove(role.id)?.cancel()
     }
 }

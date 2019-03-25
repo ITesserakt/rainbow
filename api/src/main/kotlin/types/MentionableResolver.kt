@@ -1,20 +1,22 @@
 package types
 
 import context.ICommandContext
-import reactor.core.publisher.Mono
-import reactor.core.publisher.switchIfEmpty
+import kotlinx.coroutines.Deferred
+import util.toOptional
 
 abstract class MentionableResolver<T> : ITypeResolver<T> {
-    abstract fun mentionMatch(context: ICommandContext, input: String): Mono<T>
-    abstract fun idMatch(context: ICommandContext, input: String): Mono<T>
-    abstract fun elseMatch(context: ICommandContext, input: String): Mono<T>
+    abstract fun mentionMatchAsync(context: ICommandContext, input: String): Deferred<T?>
+    abstract fun idMatchAsync(context: ICommandContext, input: String): Deferred<T?>
+    abstract fun elseMatchAsync(context: ICommandContext, input: String): Deferred<T?>
     abstract val exceptionMessage : String
 
-    override fun read(context: ICommandContext, input: String): Mono<T> {
+    override suspend fun read(context: ICommandContext, input: String): T {
         return when {
-            Regex("""^<.\d{18}>$""").matches(input) -> mentionMatch(context, input)
-            Regex("""^\d{18}$""").matches(input) -> idMatch(context, input)
-            else -> elseMatch(context, input)
-        }.switchIfEmpty { throw NoSuchElementException(exceptionMessage) }
+            Regex("""^<.\d{18}>$""").matches(input) -> mentionMatchAsync(context, input)
+            Regex("""^\d{18}$""").matches(input) -> idMatchAsync(context, input)
+            else -> elseMatchAsync(context, input)
+        }.await()
+            .toOptional()
+            .orElseThrow { NoSuchElementException(exceptionMessage) }
     }
 }

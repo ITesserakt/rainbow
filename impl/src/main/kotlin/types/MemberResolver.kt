@@ -3,23 +3,34 @@ package types
 import context.GuildCommandContext
 import context.ICommandContext
 import discord4j.core.`object`.entity.Member
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import util.awaitMany
+import util.awaitOrNull
+import util.get
 import util.toSnowflake
 
 class MemberResolver : MentionableResolver<Member>() {
-    override fun mentionMatch(context: ICommandContext, input: String): Mono<Member> =
-            (context as GuildCommandContext)
-                    .guild.flatMap { it.getMemberById(input.substring(2, input.length - 1).toSnowflake()) }
+    override fun mentionMatchAsync(context: ICommandContext, input: String) = GlobalScope.async {
+        context as GuildCommandContext
+        context.guild.await()
+            .getMemberById(input[2 until input.length - 1].toSnowflake())
+            .awaitOrNull()
+    }
 
-    override fun idMatch(context: ICommandContext, input: String): Mono<Member> =
-            (context as GuildCommandContext)
-                    .guild.flatMap { it.getMemberById(input.toSnowflake()) }
+    override fun idMatchAsync(context: ICommandContext, input: String) = GlobalScope.async {
+        context as GuildCommandContext
+        context.guild.await()
+            .getMemberById(input.toSnowflake())
+            .awaitOrNull()
+    }
 
-    override fun elseMatch(context: ICommandContext, input: String): Mono<Member> =
-            (context as GuildCommandContext)
-                    .guild.flatMapMany { it.members }
-                    .filter { it.username == input }
-                    .next()
+    override fun elseMatchAsync(context: ICommandContext, input: String) = GlobalScope.async {
+        context as GuildCommandContext
+        context.guild.await()
+            .members.awaitMany()
+            .find { it.nickname.orElse(it.username) == input }
+    }
 
     override val exceptionMessage: String = "Не найдено ни одного подходящего пользователя"
 }

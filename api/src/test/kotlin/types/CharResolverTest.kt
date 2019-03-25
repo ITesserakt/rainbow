@@ -1,22 +1,18 @@
 package types
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import reactor.test.StepVerifier
 
 internal class CharResolverTest : ResolverTestTemplate<Char>() {
     override val resolver: ITypeResolver<Char> = CharResolver()
 
     @Test
-    fun `one letter, parse to char, Mono(char)`() {
-        StepVerifier.create(resolver.read(fakeContext, "a"))
-                .expectNext('a')
-                .verifyComplete()
+    suspend fun `one letter, parse to char, Mono(char)`() {
+        Assertions.assertEquals(resolver.read(fakeContext, "a"), 'a')
     }
 
     @Test
-    fun `string, parse to char, Mono(char)`() {
-        StepVerifier.create(resolver.read(fakeContext, "abc"))
-                .expectNext('a')
-                .verifyComplete()
+    suspend fun `string, parse to char, Mono(char)`() {
+        Assertions.assertEquals(resolver.read(fakeContext, "abs"), 'a')
     }
 }

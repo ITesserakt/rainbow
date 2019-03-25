@@ -15,7 +15,6 @@ internal inline class FunctionAnnotationProcessor(override val elem: KAnnotatedE
                 or elem.isInline
                 or elem.isInfix
                 or elem.isExternal
-                or elem.isSuspend
                 or elem.isAbstract
         ) {
             logger.error("", IllegalStateException("Неверный тип функции"))

@@ -1,15 +1,12 @@
 package types
 
 import context.ICommandContext
-import reactor.core.publisher.Mono
-import reactor.core.publisher.switchIfEmpty
+import util.toOptional
 
-abstract class NumberResolver <T : Number> : ITypeResolver<T> {
-    override fun read(context: ICommandContext, input: String): Mono<T> =
-        Mono.justOrEmpty(readWithNulls(input))
-                .switchIfEmpty {
-                    throw ClassCastException("Введенное значение не является числом!")
-                }.map { it!! }
+abstract class NumberResolver<T : Number> : ITypeResolver<T> {
+    override suspend fun read(context: ICommandContext, input: String): T =
+        readWithNulls(input).toOptional()
+            .orElseThrow { IllegalArgumentException("Введенное значение не является числом!") }
 
     abstract fun readWithNulls(input: String): T?
 }

@@ -7,47 +7,40 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberFunctions
 
-object CommandRegistry {
-    private val providers = mutableListOf<CommandProvider<out ICommandContext>>()
-
-    fun register(instance: KClass<out ModuleBase<ICommandContext>>) {
+class CommandRegistry(private vararg val providers: CommandProvider<out ICommandContext>) {
+    internal fun register(instance: KClass<out ModuleBase<ICommandContext>>) {
         val instanceOfInstance = instance.createInstance()
 
         instance.declaredMemberFunctions
-                .filter { it.hasAnnotation<Command>() }
+            .filter { it.hasAnnotation<Command>() }
             .filter { FunctionAnnotationProcessor(it).process() }
-                .forEach { func ->
-                    val provider = providers.find { it.type == instanceOfInstance.contextType }
-                            ?: throw NoSuchElementException("Нет подходящего провайдера для контекста ${instanceOfInstance.contextType.simpleName}")
+            .forEach { func ->
+                val provider = providers.find { it.type == instanceOfInstance.contextType }
+                    ?: throw NoSuchElementException("Нет подходящего провайдера для контекста ${instanceOfInstance.contextType.simpleName}")
 
-                    provider.addCommand(
-                        CommandInfo(
-                            name = NameAnnotationProcessor(func)
-                                .setAdditionalProcessor(GroupAnnotationProcessor(instance))
-                                .process(),
-                            description = DescriptionAnnotationProcessor(func)
-                                .process(),
-                            functionPointer = func,
-                            modulePointer = instanceOfInstance,
-                            aliases = AliasesAnnotationProcessor(func)
-                                .process(),
-                            permissions = PermissionsAnnotationProcessor(func)
-                                .process(),
-                            isHidden = HiddenAnnotationProcessor(func)
-                                .process(),
-                            isRequiringDeveloper = RequiredDeveloperAnnotationProcessor(func)
-                                .process() || RequiredDeveloperAnnotationProcessor(instance)
-                                .process(),
-                            isRequiringOwner = RequiredOwnerAnnotationProcessor(func)
-                                .process() || RequiredOwnerAnnotationProcessor(instance)
-                                .process()
-                        )
+                provider.addCommand(
+                    CommandInfo(
+                        name = NameAnnotationProcessor(func)
+                            .setAdditionalProcessor(GroupAnnotationProcessor(instance))
+                            .process(),
+                        description = DescriptionAnnotationProcessor(func)
+                            .process(),
+                        functionPointer = func,
+                        modulePointer = instanceOfInstance,
+                        aliases = AliasesAnnotationProcessor(func)
+                            .process(),
+                        permissions = PermissionsAnnotationProcessor(func)
+                            .process(),
+                        isHidden = HiddenAnnotationProcessor(func)
+                            .process(),
+                        isRequiringDeveloper = RequiredDeveloperAnnotationProcessor(func)
+                            .process() || RequiredDeveloperAnnotationProcessor(instance)
+                            .process(),
+                        isRequiringOwner = RequiredOwnerAnnotationProcessor(func)
+                            .process() || RequiredOwnerAnnotationProcessor(instance)
+                            .process()
                     )
-                }
-    }
-
-    fun addProvider(provider: CommandProvider<out ICommandContext>): CommandRegistry {
-        providers.add(provider)
-        return this
+                )
+            }
     }
 }

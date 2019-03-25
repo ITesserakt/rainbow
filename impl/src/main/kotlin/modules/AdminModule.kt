@@ -6,12 +6,9 @@ import discord4j.core.`object`.entity.Member
 import discord4j.core.`object`.util.Permission
 import discord4j.core.`object`.util.PermissionSet
 import discord4j.core.`object`.util.Snowflake
-import reactor.core.Disposable
-import reactor.core.publisher.Mono
-import reactor.core.publisher.switchIfEmpty
-import util.NoPermissionsException
-import util.and
-import util.toSnowflake
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import util.*
 import java.awt.Color
 import kotlin.collections.set
 
@@ -28,80 +25,86 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
     @Command
     @Summary("Банит указанного пользователя")
     @Permissions(Permission.BAN_MEMBERS)
-    fun ban(member: Member, @Continuous reason: String = ""): Disposable = context.client.self
-        .flatMap { it.asMember(context.guildId) }
-        .filterWhen { it.isHigher(member) and context.guild.map { guild -> guild.ownerId != member.id } }
-        .switchIfEmpty { throw NoPermissionsException("Невозможно забанить этого пользователя") }
-        .flatMap { context.guild }
-        .flatMap { it.ban(member.id) { spec -> spec.reason = reason } }
-        .subscribe {
-            context.reply(banGives.random())
-        }
+    suspend fun ban(member: Member, @Continuous reason: String = "") {
+        val botAsMember = context.client.self.flatMap { it.asMember(context.guildId) }.await()
+        val guild = context.guild.await()
+
+        if (!botAsMember.isHigherAsync(member) || guild.ownerId == member.id)
+            throw NoPermissionsException("Невозможно забанить этого пользователя")
+
+        guild.ban(member.id) { it.reason = reason }.subscribe()
+
+        context.reply(banGives.random())
+    }
 
     @Command
     @Permissions(Permission.KICK_MEMBERS)
     @Aliases("поджопник")
     @Summary("Кикает указанного пользователя")
-    fun kick(member: Member, @Continuous reason: String = ""): Disposable = context.guild.subscribe { guild ->
-        guild.kick(member.id, reason)
-            .doOnError { context.reply("Невозможно кикнуть этого пользователя") }
-            .subscribe()
+    suspend fun kick(member: Member, @Continuous reason: String = "") {
+        runCatching {
+            context.guild.await().kick(member.id).subscribe()
+        }.onFailure { context.reply("Невозможно кикнуть этого пользователя") }
     }
 
     @Command
     @Summary("Разбанивает указанного пользователя")
     @Permissions(Permission.BAN_MEMBERS)
-    fun pardon(userId: Long, @Continuous reason: String = "") {
-        context.guild.subscribe {
-            it.unban(userId.toSnowflake(), reason).subscribe()
-        }
+    suspend fun pardon(userId: Long, @Continuous reason: String = "") {
+        context.guild.await()
+            .unban(userId.toSnowflake(), reason)
+            .subscribe()
     }
 
     @Command
     @Permissions(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS)
-    @Hidden
     @Summary("Мутит указанного пользователя")
-    fun mute(@Continuous member: Member): Disposable = getMuteRole().subscribe {
+    suspend fun mute(member: Member, `delay in min`: Float) {
+        val muteRole = getMuteRoleAsync().await().id
         mutedUsers[context.guildId to member.id] = member.roleIds.toList()
+
         member.edit { spec ->
-            spec.setRoles(setOf(it))
+            spec.setRoles(setOf(muteRole))
         }.subscribe()
+
+        delay((`delay in min` * 60000).toLong())
+
+        unmute(member)
     }
 
     @Command
     @Permissions(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS)
-    @Hidden
     @Summary("Размучивает указанного пользователя")
     fun unmute(@Continuous member: Member) {
         val savedRoles = mutedUsers.remove(context.guildId to member.id)
             ?: throw NoSuchElementException("Пользователь не замучен")
+
         member.edit {
             it.setRoles(savedRoles.toSet())
         }.subscribe()
     }
 
-    private fun getMuteRole(): Mono<Snowflake> = context.guild
-        .flatMapMany { it.roles }
-        .filter { it.name == "Muted" }.next()
-        .switchIfEmpty {
-            context.guild.flatMap {
-                it.createRole { spec ->
-                    spec.setColor(Color.WHITE)
-                        .setPermissions(PermissionSet.none())
-                        .setMentionable(false)
-                        .setName("Muted")
-                        .setHoist(false)
-                }
-            }
-        }.map { it.id }
+    private fun getMuteRoleAsync() = scope.async {
+        val guild = context.guild.await()
+        guild.roles.awaitMany().find { it.name == "Muted" }
+            ?: guild.createRole { spec ->
+                spec.setColor(Color.WHITE)
+                    .setPermissions(PermissionSet.none())
+                    .setMentionable(false)
+                    .setName("Muted")
+                    .setHoist(false)
+            }.await()
+    }
 
     @Command
     @Permissions(Permission.MANAGE_MESSAGES)
     @Summary("Удаляет последние `num` сообщений")
     @Aliases("delete messages")
-    fun clear(num: Long): Disposable = context.message.channel
-        .flatMapMany { it.getMessagesBefore(context.message.id) }
+    suspend fun clear(num: Long): Unit = context.channel.await()
+        .getMessagesBefore(context.message.id)
         .take(num)
-        .flatMap { msg -> msg.delete() }
-        .subscribe()
+        .awaitMany()
+        .forEach {
+            it.delete().subscribe()
+        }
 }

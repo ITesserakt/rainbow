@@ -2,7 +2,6 @@ package modules
 
 import command.*
 import context.GuildCommandContext
-import util.Database
 import kotlin.system.exitProcess
 
 class DeveloperModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
@@ -15,7 +14,6 @@ class DeveloperModule : ModuleBase<GuildCommandContext>(GuildCommandContext::cla
         context.client
             .logout()
             .subscribe()
-        Database.close()
         exitProcess(0)
     }
 }

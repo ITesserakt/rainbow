@@ -1,29 +1,23 @@
 package types
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import reactor.test.StepVerifier
 
 internal class BooleanResolverTest : ResolverTestTemplate<Boolean>() {
     override val resolver: ITypeResolver<Boolean> = BooleanResolver()
 
     @Test
-    fun `give true and expect true`() {
-        StepVerifier.create(resolver.read(fakeContext, "True"))
-                .expectNext(true)
-                .verifyComplete()
+    suspend fun `give true and expect true`() {
+        Assertions.assertTrue(resolver.read(fakeContext, "true"))
     }
 
     @Test
-    fun `give false and expect false`() {
-        StepVerifier.create(resolver.read(fakeContext, "false"))
-                .expectNext(false)
-                .verifyComplete()
+    suspend fun `give false and expect false`() {
+        Assertions.assertFalse(resolver.read(fakeContext, "false"))
     }
 
     @Test
-    fun `give something and expect false`() {
-        StepVerifier.create(resolver.read(fakeContext, "rhg4hgh954hhth44thf"))
-                .expectNext(false)
-                .verifyComplete()
+    suspend fun `give something and expect false`() {
+        Assertions.assertFalse(resolver.read(fakeContext, "rhg4hgh954hhth44thf"))
     }
 }
