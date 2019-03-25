@@ -104,37 +104,7 @@ fabric.properties
 .idea/httpRequests
 
 logs/
-Будет удалено .idea/.name
-Будет удалено .idea/compiler.xml
-Будет удалено .idea/encodings.xml
-Будет удалено .idea/kotlinScripting.xml
-Будет удалено .idea/misc.xml
-Будет удалено .idea/modules.xml
-Будет удалено .idea/modules/
-Будет удалено .idea/sbt.xml
-Будет удалено .idea/vcs.xml
-Будет удалено api/build/classes/kotlin/main/META-INF/
-Будет удалено api/build/classes/kotlin/test/META-INF/
-Будет удалено api/build/generated/
-Будет удалено api/build/kotlin/
-Будет удалено api/build/reports/
-Будет удалено api/build/test-results/
-Будет удалено api/build/tmp/
-Будет удалено api/src/main/java/
-Будет удалено api/src/main/resources/
-Будет удалено api/src/test/java/
-Будет удалено api/src/test/resources/
-Будет удалено impl/build/classes/kotlin/main/META-INF/
-Будет удалено impl/build/distributions/impl-0.0.7.tar
-Будет удалено impl/build/generated/
-Будет удалено impl/build/kotlin/
-Будет удалено impl/build/resources/
-Будет удалено impl/build/scripts/
-Будет удалено impl/build/tmp/
-Будет удалено impl/src/main/java/
-Будет удалено impl/src/main/resources/config.properties
-Будет удалено impl/src/test/java/
-Будет удалено impl/src/test/resources/
-Будет удалено src/
-Будет удалено src/main/java/
-Будет удалено src/test/
+*/build/*
+.idea/*
+config.properties
+*.iml
