@@ -8,14 +8,14 @@ import util.getSubTypesOf
 class CommandLoader(private val pathToPackage: String) {
     private val logger = Loggers.getLogger<CommandLoader>()
 
-    fun load() {
+    fun load(registry: CommandRegistry) {
         var count = 0
         logger.info("Начата загрузка модулей...")
 
         Reflections(pathToPackage)
             .getSubTypesOf<ModuleBase<ICommandContext>>()
             .forEach {
-                CommandRegistry.register(it.kotlin)
+                registry.register(it.kotlin)
                 count++
             }.run { logger.info("Загружено $count модулей") }
     }

@@ -10,7 +10,6 @@ import io.mockk.mockk
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import reactor.core.publisher.Mono
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
@@ -29,7 +28,7 @@ abstract class ResolverTestTemplate <T> {
 
         every { fakeContext.commandArgs } returns arrayOf()
         every { fakeContext.client } returns client!!
-        every { fakeContext.author } returns Mono.empty()
+        every { fakeContext.author } returns mockk()
         every { fakeContext.message } returns mockk()
 
         client?.login()?.subscribe()

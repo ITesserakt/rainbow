@@ -7,10 +7,10 @@ dependencies {
     compile project(':api')
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$courutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$courutines_version"
 
     implementation "com.discord4j:discord4j-core:$discord_version"
-
-    compile 'org.litote.kmongo:kmongo:3.9.2'
 
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'

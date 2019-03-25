@@ -3,27 +3,40 @@ package types
 import context.GuildCommandContext
 import context.ICommandContext
 import discord4j.core.`object`.entity.MessageChannel
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import reactor.core.publisher.cast
+import util.awaitOrNull
 import util.toSnowflake
 
 class MessageChannelResolver : MentionableResolver<MessageChannel>() {
-    override fun mentionMatch(context: ICommandContext, input: String): Mono<MessageChannel> =
+    override fun mentionMatchAsync(context: ICommandContext, input: String): Deferred<MessageChannel?> =
+        GlobalScope.async {
+            (context as GuildCommandContext)
+            context.guild.await()
+                .getChannelById(input.substring(2, input.length - 1).toSnowflake())
+                .cast<MessageChannel>()
+                .awaitOrNull()
+        }
+
+    override fun idMatchAsync(context: ICommandContext, input: String): Deferred<MessageChannel?> = GlobalScope.async {
         (context as GuildCommandContext)
-                .guild.flatMap { it.getChannelById(input.substring(2, input.length - 1).toSnowflake()) }
-                .cast()
+        context.guild.await()
+            .getChannelById(input.toSnowflake())
+            .cast<MessageChannel>()
+            .awaitOrNull()
+    }
 
-    override fun idMatch(context: ICommandContext, input: String): Mono<MessageChannel> =
+    override fun elseMatchAsync(context: ICommandContext, input: String): Deferred<MessageChannel?> =
+        GlobalScope.async {
             (context as GuildCommandContext)
-                    .guild.flatMap { it.getChannelById(input.toSnowflake()) }
-                    .cast()
-
-
-    override fun elseMatch(context: ICommandContext, input: String): Mono<MessageChannel> =
-            (context as GuildCommandContext)
-                    .client.guilds.flatMap { it.channels }
-                    .filter { it.name == input }
-                    .next().cast()
+                .client.guilds.flatMap { it.channels }
+                .filter { it.name == input }
+                .cast<MessageChannel>()
+                .awaitFirstOrNull()
+        }
 
     override val exceptionMessage: String = "Не найдено ни одного подходящего канала"
 }

@@ -6,7 +6,6 @@ import discord4j.common.GitProperties.APPLICATION_VERSION
 import discord4j.common.GitProperties.getProperties
 import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.util.Permission
-import reactor.core.publisher.toMono
 import startedTime
 import util.RandomColor
 import util.toPrettyString
@@ -17,37 +16,32 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Command
     @Aliases("test")
     @Summary("Выводит список всех команд, если имя команды не передано, иначе - описание команды")
-    fun help(@Continuous `command name`: String = "") {
+    suspend fun help(@Continuous `command name`: String = "") {
         val cmdName = `command name`.replace(' ', '_')
+        if (cmdName.isBlank()) {
+            val commands = GuildCommandProvider.commands
+                .sortedBy { it.name }
+                .joinToString(", \n")
 
-        cmdName.toMono()
-                .filter(String::isBlank)
-                .map { GuildCommandProvider.commands }
-                .subscribe {
-                    context.reply {
-                        setEmbed { spec ->
-                            spec.addField("All commands", it.sortedBy { it.name }.joinToString(",\n"), false)
-                            spec.setFooter("<...> defines necessary arguments, [...] defines unnecessary", null)
-                            spec.setColor(RandomColor)
-                        }
-                    }
+            context.reply {
+                setEmbed { spec ->
+                    spec.addField("All commands", commands, false)
+                    spec.setFooter("<...> defines necessary arguments, [...] defines unnecessary", null)
+                    spec.setColor(RandomColor)
                 }
-
-        cmdName.toMono()
-                .filter(String::isNotBlank) //когда просим какую-нибудь команду
-                .map(GuildCommandProvider::find)
-                .subscribe { optCmdInfo ->
-                    if (optCmdInfo == null)
-                        context.reply("Данной команды не найдено, используйте `!help` для списка всех команд.")
-                    else {
-                        context.reply("**$optCmdInfo**\n${optCmdInfo.description}")
-                    }
-                }
+            }
+        } else {
+            val command = GuildCommandProvider.find(`command name`)
+            if (command == null)
+                context.reply("Данной команды не найдено, используйте `!help` для списка всех команд.")
+            else
+                context.reply("**$command**\n${command.description}")
+        }
     }
 
     @Command
     @Summary("Дополнительная информация о боте")
-    fun about() {
+    suspend fun about() {
         context.reply("""v0.0.7.20-ALPHA
             |https://github.com/ITesserakt/rainbow
             |Основано на DISCORD4J ${getProperties()[APPLICATION_VERSION]}
@@ -56,7 +50,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
 
     @Command
     @Summary("Время работы бота")
-    fun uptime() {
+    suspend fun uptime() {
         context.reply(
             "Бот работает уже ${Duration.between(LocalTime.now(), startedTime).toPrettyString()}"
         )
@@ -65,7 +59,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Command("role_info")
     @Summary("Информация об указанной роли")
     @Permissions(Permission.VIEW_AUDIT_LOG)
-    fun roleInfo(@Continuous role: Role) {
+    suspend fun roleInfo(@Continuous role: Role) {
         context.reply {
             setEmbed {
                 it.setColor(role.color)
