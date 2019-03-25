@@ -8,6 +8,8 @@
 
 #Rainbow bot
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c098bd0a5ceb447e9fabe025e6942cac)](https://app.codacy.com/app/potryas85/rainbow?utm_source=github.com&utm_medium=referral&utm_content=ITesserakt/rainbow&utm_campaign=Badge_Grade_Dashboard)
+
 >Bot\`s state is ALPHA! So, if you have a problem, report an issue on github
 
 The main feature is rainbow roles
