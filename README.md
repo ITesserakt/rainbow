@@ -1,12 +1,7 @@
-<a href="https://discordbotlist.com/bots/481165004612173824">
-    <img 
-        width="380" 
-        height="150" 
-        src="https://discordbotlist.com/bots/481165004612173824/widget" 
-        alt="Rainbow stats on Discord Bot List">
-</a>
+[![Rainbow stats on Discord Bot List](https://discordbotlist.com/bots/481165004612173824/widget)](https://discordbotlist.com/bots/481165004612173824")
 
-#Rainbow bot
+# Rainbow bot [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3533cb9cd55b45ca95a5740b7949d1f7)](https://www.codacy.com/app/potryas85/rainbow?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ITesserakt/rainbow&amp;utm_campaign=Badge_Grade) 
+### Based on [Discord4J v3.0.1](https://github.com/Discord4J/Discord4J "A fast and reactive JVM-based REST/WS wrapper for the official Discord Bot API, written in Java")
 
 >Bot\`s state is ALPHA! So, if you have a problem, report an issue on github
 
@@ -16,7 +11,7 @@ All commands can be viewed from `!help` command. `!help [command]` will show you
 
 If you want to get a rainbow on role, then just place bot\`s role above
 
-##Defining your own command
+## Defining your own command
  
 Create new class, which extended by ModuleBase. Its prefer to name class using postfix `Module`.
 Also, as a type parameter of ModuleBase you have to provide your type of context 
@@ -44,7 +39,7 @@ class EchoModule : ModuleBase<GuildCommandContext>() {
 }
 ```
 
-##Defining your own handler
+## Defining your own handler
 
 Extend your class with Handler\<T : Event\> and do whatever you want
 ```kotlin
