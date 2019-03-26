@@ -1,6 +1,5 @@
 package modules
 
-import com.sun.javafx.util.Utils
 import command.*
 import context.GuildCommandContext
 import discord4j.core.`object`.entity.Role
@@ -13,9 +12,9 @@ import kotlinx.coroutines.launch
 import util.NoPermissionsException
 import util.RandomColor
 import util.await
-import util.toOptional
+import util.clamp
 import java.awt.Color
-import java.time.Duration
+import kotlin.collections.set
 
 @Group("rainbow")
 class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
@@ -25,7 +24,7 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
     private var currentColor = RandomColor
     private var targetColor = RandomColor
 
-    private val task: (Float) -> Color = {
+    private fun task(step: Float): Color {
         if (stepAccumulator >= 1) {
             stepAccumulator = 0f
 
@@ -36,33 +35,28 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
         val mixG: Int = (currentColor.green * (1 - stepAccumulator) + targetColor.green * stepAccumulator).toInt()
         val mixB: Int = (currentColor.blue * (1 - stepAccumulator) + targetColor.blue * stepAccumulator).toInt()
 
-        stepAccumulator += it
-        Color(mixR, mixG, mixB)
+        stepAccumulator += step
+        return Color(mixR, mixG, mixB)
     }
 
     @Command("start")
     @Permissions(Permission.MANAGE_ROLES)
     @Summary("Радужное переливание цвета роли")
     suspend fun rainbowStart(role: Role, `delay in ms`: Long = 500, step: Float = 0.5f) {
-        val clampedDelay = clampDelay(`delay in ms`)
-        val clampedStep = Utils.clamp(0.01f, step, 0.9f)
+        val clampedDelay = `delay in ms`.clamp(100L, 1000L)
+        val clampedStep = step.clamp(0.01f, 0.9f)
 
         checkForRightRolePosition(role)
 
         rainbows[role.id] = scope.launch {
             while (isActive) {
                 val color = task(clampedStep)
-                delay(clampedDelay.toMillis())
+                delay(clampedDelay)
 
                 role.edit { it.setColor(color) }.await()
             }
         }
     }
-
-    private fun clampDelay(`delay in ms`: Long): Duration =
-        Duration.ofMillis(`delay in ms`)
-            .takeIf { it >= Duration.ofMillis(100) }.toOptional()
-            .orElseThrow { IllegalArgumentException("Слишком маленькая задержка ( < 100 )") }
 
     private suspend fun checkForRightRolePosition(role: Role) {
         val botAsMember = context.client.self.flatMap { it.asMember(context.guildId) }.await()

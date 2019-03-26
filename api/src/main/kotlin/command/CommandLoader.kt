@@ -5,9 +5,15 @@ import org.reflections.Reflections
 import util.Loggers
 import util.getSubTypesOf
 
-class CommandLoader(private val pathToPackage: String) {
+/**
+ * Loader that finds commands in [pathToPackage]
+ */
+class CommandLoader(private vararg val pathToPackage: String) {
     private val logger = Loggers.getLogger<CommandLoader>()
 
+    /**
+     * Find and loads commands with specified [registry] from [pathToPackage]
+     */
     fun load(registry: CommandRegistry) {
         var count = 0
         logger.info("Начата загрузка модулей...")

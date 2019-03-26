@@ -6,7 +6,10 @@ import discord4j.core.`object`.entity.Role
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import util.*
+import util.awaitMany
+import util.awaitOrNull
+import util.get
+import util.toSnowflake
 
 class RoleResolver : MentionableResolver<Role>() {
     override fun mentionMatchAsync(context: ICommandContext, input: String): Deferred<Role?> = GlobalScope.async {
@@ -35,9 +38,7 @@ class RoleResolver : MentionableResolver<Role>() {
             Regex("""^<..\d{18}>$""").matches(input) -> mentionMatchAsync(context, input)
             Regex("""\d{18}""").matches(input) -> idMatchAsync(context, input)
             else -> elseMatchAsync(context, input)
-        }.await()
-            .toOptional()
-            .orElseThrow { NoSuchElementException(exceptionMessage) }
+        }.await() ?: throw NoSuchElementException(exceptionMessage)
     }
 
     override val exceptionMessage: String = "Не найдено ни одной подходящей роли"

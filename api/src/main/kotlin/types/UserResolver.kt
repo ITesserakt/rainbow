@@ -7,7 +7,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import util.awaitMany
 import util.awaitOrNull
-import util.toOptional
 import util.toSnowflake
 
 class UserResolver : MentionableResolver<User>() {
@@ -26,8 +25,8 @@ class UserResolver : MentionableResolver<User>() {
     override fun elseMatchAsync(context: ICommandContext, input: String): Deferred<User?> = GlobalScope.async {
         val users = context.client.users.awaitMany()
         val normalName = input.split('#')
-            .takeIf { it.size == 2 }.toOptional()
-            .orElseThrow { IllegalArgumentException("Ожидалось `Name#ID`, получено `$input`") }
+            .takeIf { it.size == 2 } ?: throw  IllegalArgumentException("Ожидалось `Name#ID`, получено `$input`")
+
         users.find { it.username == normalName[0] && it.discriminator == normalName[1] }
     }
 

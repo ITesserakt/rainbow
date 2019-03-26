@@ -7,6 +7,11 @@ import kotlin.reflect.full.findAnnotation
 
 internal inline class PermissionsAnnotationProcessor(override val elem: KAnnotatedElement) :
     IAnnotationProcessor<PermissionSet> {
-    override fun process(): PermissionSet =
-        PermissionSet.of(*(elem.findAnnotation<Permissions>()?.permissions ?: emptyArray()))
+    override fun process(): PermissionSet = PermissionSet.of(
+        elem.findAnnotation<Permissions>()?.permissions
+            .orEmpty()
+            .map { it.value }
+            .ifEmpty { listOf(0L) }
+            .reduce(Long::or)
+    )
 }

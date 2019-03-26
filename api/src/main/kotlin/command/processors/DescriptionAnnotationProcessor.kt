@@ -18,7 +18,7 @@ internal inline class DescriptionAnnotationProcessor(override val elem: KAnnotat
             logger.warn("Нет описания для команды `${elem.name}`")
         it.description
     } ?: {
-        elem as KFunction<*>
+        elem as? KFunction<*> ?: throw IllegalArgumentException("Может запускаться только для функций")
         logger.warn("Нет описания для команды `${elem.javaMethod?.declaringClass?.canonicalName}:${elem.name}`")
         "Описание отсутствует"
     }()

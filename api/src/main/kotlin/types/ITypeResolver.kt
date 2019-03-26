@@ -2,6 +2,9 @@ package types
 
 import context.ICommandContext
 
+/**
+ * Represents parser from [String] to [T]
+ */
 interface ITypeResolver <T> {
     suspend fun read(context: ICommandContext, input: String): T
 

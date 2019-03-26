@@ -11,7 +11,7 @@ import reactor.util.function.component1
 import reactor.util.function.component2
 import java.time.Duration
 
-class DynamicPresence (private val client : DiscordClient, delay : Duration) {
+internal class DynamicPresence(private val client: DiscordClient, delay: Duration) {
     private val presenceFlux: Flux<Tuple2<Long, in Any>> = Flux.merge(
             client.users.count(),
             client.guilds.count(),

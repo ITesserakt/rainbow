@@ -20,7 +20,7 @@ class PrivateChannelCommandHandler : CommandHandler() {
         val context = PrivateChannelCommandContext(event, args)
         val command = PrivateChannelCommandProvider.find(content[0]) ?: return@launch
 
-        runCatching { executeAsync(command, context).await() }
+        runCatching { executeAsync(command, context) }
             .onFailure {
                 context.channel.await()
                     .createMessage("Ошибка: ${getError(it)}")

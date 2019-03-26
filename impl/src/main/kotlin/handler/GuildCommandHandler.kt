@@ -1,13 +1,11 @@
 package handler
 
-import command.CommandInfo
 import command.GuildCommandProvider
 import context.GuildCommandContext
 import discord4j.core.event.domain.message.MessageCreateEvent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import util.Loggers
-import util.NoPermissionsException
 import util.await
 import util.isNotPresent
 
@@ -24,30 +22,24 @@ class GuildCommandHandler : CommandHandler() {
         val context = GuildCommandContext(event, args)
         val command = GuildCommandProvider.find(content[0].drop(1)) ?: return@launch
 
-        try {
-            checkForPermissions(context, command)
-        } catch (ex: NoPermissionsException) {
-            throw ex
+        val authorPerms = context.message.authorAsMember
+            .flatMap { it.basePermissions }.await()
+        val copy = command.permissions.asEnumSet().clone()
+        copy.removeAll(authorPerms)
+        if (copy.isNotEmpty()) {
+            context.channel.await().createMessage("Недостаточно привелегий").subscribe()
+            return@launch
         }
 
         if (command.isRequiringOwner && context.author.id != context.guild.await().ownerId)
             return@launch
 
         runCatching {
-            executeAsync(command, context).await()
+            executeAsync(command, context)
         }.onFailure { err ->
             context.channel.await().createMessage("Ошибка: ${getError(err)}").subscribe()
             logger.error(err.localizedMessage, err)
         }
-    }
-
-    private suspend fun checkForPermissions(context: GuildCommandContext, command: CommandInfo) {
-        val authorPerms = context.message.authorAsMember
-            .flatMap { it.basePermissions }.await()
-        val copy = command.permissions.asEnumSet().clone()
-        copy.removeAll(authorPerms)
-        if (copy.isNotEmpty())
-            throw NoPermissionsException()
     }
 
     private fun isNotRightEvent(event: MessageCreateEvent): Boolean = when {
