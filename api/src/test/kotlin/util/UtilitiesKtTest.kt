@@ -3,15 +3,9 @@ package util
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
-import java.util.*
 import kotlin.random.Random
 
 internal class UtilitiesKtTest {
-    @Test
-    fun `optional extension`() {
-        assertEquals(true.toOptional(), Optional.of(true))
-    }
-
     @Test
     fun `multiply string by number`() {
         assertEquals("-=" * 3, "-=-=-=")
