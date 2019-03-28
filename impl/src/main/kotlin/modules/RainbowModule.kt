@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import util.NoPermissionsException
 import util.RandomColor
 import util.await
-import util.clamp
 import java.awt.Color
 import kotlin.collections.set
 
@@ -43,8 +42,8 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
     @Permissions(Permission.MANAGE_ROLES)
     @Summary("Радужное переливание цвета роли")
     suspend fun rainbowStart(role: Role, `delay in ms`: Long = 500, step: Float = 0.5f) {
-        val clampedDelay = `delay in ms`.clamp(100L, 1000L)
-        val clampedStep = step.clamp(0.01f, 0.9f)
+        val clampedDelay = `delay in ms`.coerceAtLeast(100)
+        val clampedStep = step.coerceAtLeast(0.01f)
 
         checkForRightRolePosition(role)
 

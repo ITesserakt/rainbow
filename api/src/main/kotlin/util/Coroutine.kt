@@ -2,28 +2,23 @@ package util
 
 import discord4j.core.`object`.entity.Member
 import discord4j.core.`object`.util.Snowflake
-import kotlinx.coroutines.reactive.awaitFirstOrElse
+import discord4j.core.event.domain.Event
+import handler.Handler
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 /**
- * Suspends execution to get value of this [Mono] or throws exception if the [Mono] produces error
+ * Suspends execution to get value of this [Mono] or throws an exception if the [Mono] produces error
  * @throws NoSuchElementException If the [Mono] does not contain any value
  */
 suspend fun <T> Mono<T>.await(): T = this.awaitSingle()
 
 /**
- * Suspends execution to get value of this [Mono] or throws exception if the [Mono] produces error
+ * Suspends execution to get value of this [Mono] or throws an exception if the [Mono] produces error
  */
 suspend fun <T> Mono<T>.awaitOrNull(): T? = this.awaitFirstOrNull()
-
-/**
- * Suspends execution to get values of this [Flux] collected to list or throws exception if the [Flux] produces error
- * @return [List] of [T] or empty [List] if [Flux] is empty
- */
-suspend fun <T> Flux<T>.awaitMany(): List<T> = this.collectList().awaitFirstOrElse { emptyList() }
 
 /**
  * Requests to determine if this member is higher in the role hierarchy than the member as represented
@@ -49,3 +44,12 @@ suspend fun Member.isHigherAsync(id: Snowflake): Boolean = this.isHigher(id).awa
  * through the [Mono].
  */
 suspend fun Member.isHigherAsync(otherMember: Member): Boolean = this.isHigher(otherMember).await()
+
+/**
+ * Adds new handler to [Event].
+ *
+ * Uses for C# event style
+ */
+operator fun <T : Event> Flux<T>.plusAssign(handler: Handler<T>) {
+    subscribe { handler.handle(it) }
+}

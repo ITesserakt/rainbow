@@ -8,7 +8,7 @@ internal class ByteResolverTest : ResolverTestTemplate<Byte>(){
     override val resolver = ByteResolver()
 
     @Test
-    suspend fun `Valid string, parse to byte, expect Mono(byte)`() {
+    fun `Valid string, parse to byte, expect Mono(byte)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "2"), 2)
     }
 

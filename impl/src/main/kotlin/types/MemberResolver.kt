@@ -4,8 +4,10 @@ import context.GuildCommandContext
 import context.ICommandContext
 import discord4j.core.`object`.entity.Member
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.async
-import util.awaitMany
+import kotlinx.coroutines.channels.find
+import kotlinx.coroutines.reactive.openSubscription
 import util.awaitOrNull
 import util.get
 import util.toSnowflake
@@ -25,10 +27,11 @@ class MemberResolver : MentionableResolver<Member>() {
             .awaitOrNull()
     }
 
+    @ObsoleteCoroutinesApi
     override fun elseMatchAsync(context: ICommandContext, input: String) = GlobalScope.async {
         context as GuildCommandContext
         context.guild.await()
-            .members.awaitMany()
+            .members.openSubscription()
             .find { it.nickname.orElse(it.username) == input }
     }
 

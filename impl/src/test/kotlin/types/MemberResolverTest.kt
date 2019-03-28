@@ -11,7 +11,7 @@ class MemberResolverTest : ResolverTestTemplate<Member>() {
     private val id = 316249690092077065L.toSnowflake()
 
     @Test
-    suspend fun `mention, parse to member entity, Mono(member)`() {
+    fun `mention, parse to member entity`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "<&316249690092077065>").id, id)
     }
 
@@ -25,7 +25,7 @@ class MemberResolverTest : ResolverTestTemplate<Member>() {
     }
 
     @Test
-    suspend fun `id, parse to member entity, Mono(member)`() {
+    fun `id, parse to member entity, Mono(member)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "316249690092077065").id, id)
     }
 
@@ -39,7 +39,7 @@ class MemberResolverTest : ResolverTestTemplate<Member>() {
     }
 
     @Test
-    suspend fun `name, parse to member entity, Mono(member)`() {
+    fun `name, parse to member entity, Mono(member)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "VoV4ik").id, id)
     }
 

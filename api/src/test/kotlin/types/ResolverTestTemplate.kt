@@ -18,7 +18,7 @@ abstract class ResolverTestTemplate <T> {
     @MockK
     protected lateinit var fakeContext : ICommandContext
     protected abstract val resolver : ITypeResolver<T>
-    private var client: DiscordClient? = null
+    private lateinit var client: DiscordClient
 
     @BeforeAll
     protected open fun setUp() {
@@ -27,10 +27,10 @@ abstract class ResolverTestTemplate <T> {
         client = DiscordClientBuilder(token).build()
 
         every { fakeContext.commandArgs } returns arrayOf()
-        every { fakeContext.client } returns client!!
+        every { fakeContext.client } returns client
         every { fakeContext.author } returns mockk()
         every { fakeContext.message } returns mockk()
 
-        client?.login()?.subscribe()
+        client.login().subscribe()
     }
 }

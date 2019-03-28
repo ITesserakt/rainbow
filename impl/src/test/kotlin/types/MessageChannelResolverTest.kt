@@ -11,7 +11,7 @@ internal class MessageChannelResolverTest : types.ResolverTestTemplate<MessageCh
     private val id = 490951935894093858.toSnowflake()
 
     @Test
-    suspend fun `mention, parse to channel entity, Mono(mChannel)`() {
+    fun `mention, parse to channel entity, Mono(mChannel)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "<&490951935894093858>").id, id)
     }
 
@@ -25,7 +25,7 @@ internal class MessageChannelResolverTest : types.ResolverTestTemplate<MessageCh
     }
 
     @Test
-    suspend fun `id, parse to channel entity, Mono(mChannel)`() {
+    fun `id, parse to channel entity, Mono(mChannel)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "490951935894093858").id, id)
     }
 
@@ -39,7 +39,7 @@ internal class MessageChannelResolverTest : types.ResolverTestTemplate<MessageCh
     }
 
     @Test
-    suspend fun `name, parse to channel entity, Mono(mChannel)`() {
+    fun `name, parse to channel entity, Mono(mChannel)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "основной").id, id)
     }
 

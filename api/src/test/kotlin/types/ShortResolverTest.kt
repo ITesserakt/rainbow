@@ -8,7 +8,7 @@ internal class ShortResolverTest : ResolverTestTemplate<Short>() {
     override val resolver = ShortResolver()
 
     @Test
-    suspend fun `Valid string, parse to short, expect Mono(short)`() {
+    fun `Valid string, parse to short, expect Mono(short)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "39"), 39)
     }
 

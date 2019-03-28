@@ -13,9 +13,8 @@ dependencies {
 
     compile "org.reflections:reflections:0.9.11"
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.0"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.4.0"
-    testCompile "io.projectreactor:reactor-test:3.2.6.RELEASE"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.1"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.4.1"
     testImplementation "io.mockk:mockk:1.9.1"
 }
 

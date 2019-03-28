@@ -8,7 +8,7 @@ internal class IntResolverTest : ResolverTestTemplate<Int>() {
     override val resolver = IntResolver()
 
     @Test
-    suspend fun `Valid string, parse to int, expect Mono(int)`() {
+    fun `Valid string, parse to int, expect Mono(int)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "39"), 39)
     }
 

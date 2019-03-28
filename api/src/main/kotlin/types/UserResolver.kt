@@ -2,10 +2,9 @@ package types
 
 import context.ICommandContext
 import discord4j.core.`object`.entity.User
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import util.awaitMany
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.find
+import kotlinx.coroutines.reactive.openSubscription
 import util.awaitOrNull
 import util.toSnowflake
 
@@ -22,10 +21,13 @@ class UserResolver : MentionableResolver<User>() {
             .awaitOrNull()
     }
 
+    @ObsoleteCoroutinesApi
+    @ExperimentalCoroutinesApi
     override fun elseMatchAsync(context: ICommandContext, input: String): Deferred<User?> = GlobalScope.async {
-        val users = context.client.users.awaitMany()
+        val users = context.client.users.openSubscription()
         val normalName = input.split('#')
-            .takeIf { it.size == 2 } ?: throw  IllegalArgumentException("Ожидалось `Name#ID`, получено `$input`")
+            .takeIf { it.size == 2 }
+            ?: throw  IllegalArgumentException("Ожидалось `Name#ID`, получено `$input`")
 
         users.find { it.username == normalName[0] && it.discriminator == normalName[1] }
     }

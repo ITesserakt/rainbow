@@ -8,7 +8,7 @@ internal class DoubleResolverTest : ResolverTestTemplate<Double>() {
     override val resolver = DoubleResolver()
 
     @Test
-    suspend fun `Valid string, parse to double, expect Mono(double)`() {
+    fun `Valid string, parse to double, expect Mono(double)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "39"), 39.0)
     }
 

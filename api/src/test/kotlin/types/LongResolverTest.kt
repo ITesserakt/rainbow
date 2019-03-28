@@ -8,7 +8,7 @@ internal class LongResolverTest : ResolverTestTemplate<Long>() {
     override val resolver = LongResolver()
 
     @Test
-    suspend fun `Valid string, parse to long, expect Mono(long)`() {
+    fun `Valid string, parse to long, expect Mono(long)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "39"), 39L)
     }
 

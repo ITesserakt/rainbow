@@ -8,7 +8,6 @@ import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.util.Permission
 import startedTime
 import util.RandomColor
-import util.toPrettyString
 import java.time.Duration
 import java.time.LocalTime
 
@@ -53,7 +52,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Summary("Время работы бота")
     suspend fun uptime() {
         context.reply(
-            "Бот работает уже ${Duration.between(LocalTime.now(), startedTime).toPrettyString()}"
+            "Бот работает уже ${Duration.between(LocalTime.now(), startedTime)}"
         )
     }
 

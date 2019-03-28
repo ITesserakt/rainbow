@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockKExtension::class)
@@ -26,7 +27,8 @@ internal class ParserTest {
 
     @BeforeAll
     private fun setUp() {
-        client = DiscordClientBuilder("NDgxMTY1MDA0NjEyMTczODI0.D0i6DQ.fSvsuP4feJNVeSvmSbyBs8t6bis").build()
+        val bundle = ResourceBundle.getBundle("config")
+        client = DiscordClientBuilder(bundle.getString("token")).build()
         client.login().subscribe()
 
         every { fakeContext.client } returns client
@@ -36,13 +38,13 @@ internal class ParserTest {
     }
 
     @Test
-    suspend fun `parse non-optional user id to user entity`() {
+    fun `parse non-optional user id to user entity`() = runBlocking {
         val result = parser.parse(0, User::class, false)
         Assertions.assertEquals(result.id, id)
     }
 
     @Test
-    suspend fun `parse optional user id to user entity`() {
+    fun `parse optional user id to user entity`() = runBlocking {
         val result = parser.parseOptional(0, User::class, false)
         Assertions.assertNotNull(result)
         Assertions.assertEquals(result!!.id, id)

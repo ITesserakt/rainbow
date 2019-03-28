@@ -20,12 +20,12 @@ internal class RoleResolverTest : ResolverTestTemplate<Role>() {
     }
 
     @Test
-    suspend fun `normal id, parse to role entity and expect Mono(role)`() {
+    fun `normal id, parse to role entity and expect Mono(role)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "510459822819246091").id, id)
     }
 
     @Test
-    suspend fun `role name, parse to role entity and expect Mono(role)`() {
+    fun `role name, parse to role entity and expect Mono(role)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "Admins").id, id)
     }
 

@@ -1,16 +1,38 @@
 package handler
 
+import command.CommandInfo
 import command.GuildCommandProvider
+import command.processors.PermissionsProcessor
+import command.processors.RequiredOwnerProcessor
 import context.GuildCommandContext
+import context.ICommandContext
 import discord4j.core.event.domain.message.MessageCreateEvent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import util.Loggers
+import util.NoPermissionsException
 import util.await
 import util.isNotPresent
 
-class GuildCommandHandler : CommandHandler() {
+class GuildCommandHandler : CommandHandler(), PermissionsProcessor, RequiredOwnerProcessor {
     private val logger = Loggers.getLogger<GuildCommandHandler>()
+
+    override suspend fun processOwner(command: CommandInfo, context: ICommandContext) {
+        context as GuildCommandContext
+        if (command.isRequiringOwner && context.author.id != context.guild.await().ownerId)
+            throw NoPermissionsException("Только владелец гильдии может запустить это")
+    }
+
+    override suspend fun processPerms(command: CommandInfo, context: ICommandContext) {
+        val authorPerms = context.message.authorAsMember
+            .flatMap { it.basePermissions }.await()
+
+        val copy = command.permissions.asEnumSet().clone()
+        copy.removeAll(authorPerms)
+        if (copy.isNotEmpty()) {
+            throw NoPermissionsException()
+        }
+    }
 
     override fun handle(event: MessageCreateEvent) = GlobalScope.launch {
         if (isNotRightEvent(event)) return@launch
@@ -22,23 +44,13 @@ class GuildCommandHandler : CommandHandler() {
         val context = GuildCommandContext(event, args)
         val command = GuildCommandProvider.find(content[0].drop(1)) ?: return@launch
 
-        val authorPerms = context.message.authorAsMember
-            .flatMap { it.basePermissions }.await()
-        val copy = command.permissions.asEnumSet().clone()
-        copy.removeAll(authorPerms)
-        if (copy.isNotEmpty()) {
-            context.channel.await().createMessage("Недостаточно привелегий").subscribe()
-            return@launch
-        }
-
-        if (command.isRequiringOwner && context.author.id != context.guild.await().ownerId)
-            return@launch
-
         runCatching {
+            processPerms(command, context)
+            processOwner(command, context)
             executeAsync(command, context)
-        }.onFailure { err ->
-            context.channel.await().createMessage("Ошибка: ${getError(err)}").subscribe()
-            logger.error(err.localizedMessage, err)
+        }.onFailure {
+            context.channel.await().createMessage("Ошибка: ${getError(it)}").subscribe()
+            logger.error(" ", it)
         }
     }
 

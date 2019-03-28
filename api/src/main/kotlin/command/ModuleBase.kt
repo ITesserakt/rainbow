@@ -10,7 +10,7 @@ abstract class ModuleBase<T : ICommandContext>(val contextType: KClass<T>) {
     protected lateinit var context: T
         private set
 
-    protected val scope = CoroutineScope(Dispatchers.Default)
+    protected val scope = CoroutineScope(Dispatchers.Unconfined)
 
     internal fun setContext(context: ICommandContext) {
         @Suppress("UNCHECKED_CAST")

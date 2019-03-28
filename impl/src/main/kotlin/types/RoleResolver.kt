@@ -3,10 +3,9 @@ package types
 import context.GuildCommandContext
 import context.ICommandContext
 import discord4j.core.`object`.entity.Role
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import util.awaitMany
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.find
+import kotlinx.coroutines.reactive.openSubscription
 import util.awaitOrNull
 import util.get
 import util.toSnowflake
@@ -26,13 +25,16 @@ class RoleResolver : MentionableResolver<Role>() {
             .awaitOrNull()
     }
 
+    @ObsoleteCoroutinesApi
     override fun elseMatchAsync(context: ICommandContext, input: String): Deferred<Role?> = GlobalScope.async {
         (context as GuildCommandContext)
         context.guild.await()
-            .roles.awaitMany()
+            .roles.openSubscription()
             .find { it.name == input }
     }
 
+    @ExperimentalCoroutinesApi
+    @ObsoleteCoroutinesApi
     override suspend fun read(context: ICommandContext, input: String): Role {
         return when {
             Regex("""^<..\d{18}>$""").matches(input) -> mentionMatchAsync(context, input)

@@ -51,11 +51,3 @@ object ResolverProvider {
         throw NoSuchElementException("Нет подходящего парсера для ${type.simpleName}")
     } as ITypeResolver<T>
 }
-
-/**
- * Using for better DSL.
- * @see ResolverProvider
- */
-inline fun resolverProvider(init: ResolverProvider.() -> Unit) {
-    ResolverProvider.init()
-}

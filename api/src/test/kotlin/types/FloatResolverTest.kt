@@ -8,7 +8,7 @@ internal class FloatResolverTest : ResolverTestTemplate<Float>() {
     override val resolver = FloatResolver()
 
     @Test
-    suspend fun `Valid string, parse to float, expect Mono(float)`() {
+    fun `Valid string, parse to float, expect Mono(float)`() = runBlocking {
         Assertions.assertEquals(resolver.read(fakeContext, "39"), 39.0f)
     }
 
