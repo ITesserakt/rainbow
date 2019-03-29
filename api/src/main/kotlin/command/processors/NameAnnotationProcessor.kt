@@ -12,10 +12,10 @@ internal inline class NameAnnotationProcessor(override val elem: KAnnotatedEleme
 
     override fun process(): String = elem.findAnnotation<Command>()?.let {
         val name = if (it.name.isNotBlank())
-            it.name.replace(' ', '-')
+            it.name.replace(' ', '_')
         else {
             elem as KCallable<*>
-            elem.name.replace(' ', '-')
+            elem.name.replace(' ', '_')
         }
         "${groupAnnotationProcessor?.process()}$name"
     } ?: throw IllegalStateException()

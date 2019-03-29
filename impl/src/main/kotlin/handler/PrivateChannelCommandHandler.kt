@@ -24,7 +24,7 @@ class PrivateChannelCommandHandler : CommandHandler() {
 
         runCatching { executeAsync(command, context) }
             .onFailure {
-                context.channel.await().createMessage("Ошибка: ${getError(it)}").subscribe()
+                context.channel.await().createMessage(getError(it)).subscribe()
                 logger.error(" ", it)
             }
     }

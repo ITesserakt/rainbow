@@ -21,8 +21,7 @@ abstract class CommandHandler : Handler<MessageCreateEvent>() {
         val authorId = context.author.id
         if (command.isRequiringDeveloper && authorId.asLong() != 316249690092077065) return null
 
-        val ps = parseParameters(command)
-        return command.functionPointer.callSuspendBy(ps)
+        return command.functionPointer.callSuspendBy(parseParameters(command))
     }
 
     protected tailrec fun getError(error: Throwable?): String =
