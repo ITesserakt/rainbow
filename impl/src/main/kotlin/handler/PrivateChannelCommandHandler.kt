@@ -12,7 +12,9 @@ class PrivateChannelCommandHandler : CommandHandler() {
     private val logger = Loggers.getLogger<PrivateChannelCommandHandler>()
 
     override fun handle(event: MessageCreateEvent) = GlobalScope.launch {
-        if (isNotRightEvent(event)) return@launch
+        if (event.guildId.isPresent) return@launch
+        if (event.member.isPresent) return@launch
+        if (event.message.content.isNotPresent) return@launch
 
         val content = event.message.content.get().split(' ')
 
@@ -25,11 +27,5 @@ class PrivateChannelCommandHandler : CommandHandler() {
                 context.channel.await().createMessage("Ошибка: ${getError(it)}").subscribe()
                 logger.error(" ", it)
             }
-    }
-
-    private fun isNotRightEvent(event: MessageCreateEvent) = when {
-        event.message.content.isNotPresent &&
-                event.guildId.isPresent -> true
-        else -> false
     }
 }

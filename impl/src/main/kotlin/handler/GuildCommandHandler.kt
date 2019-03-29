@@ -35,9 +35,11 @@ class GuildCommandHandler : CommandHandler(), PermissionsProcessor, RequiredOwne
     }
 
     override fun handle(event: MessageCreateEvent) = GlobalScope.launch {
-        if (isNotRightEvent(event)) return@launch
+        if (event.guildId.isNotPresent) return@launch
+        if (event.message.content.isNotPresent) return@launch
+        if (event.member.isNotPresent) return@launch
 
-        val content = event.message.content.orElse(" ").split(' ')
+        val content = event.message.content.get().split(' ')
         if (!content[0].startsWith('!')) return@launch
 
         val args = content.drop(1) //выбрасываем имя команды
@@ -52,12 +54,5 @@ class GuildCommandHandler : CommandHandler(), PermissionsProcessor, RequiredOwne
             context.channel.await().createMessage("Ошибка: ${getError(it)}").subscribe()
             logger.error(" ", it)
         }
-    }
-
-    private fun isNotRightEvent(event: MessageCreateEvent): Boolean = when {
-        event.guildId.isNotPresent &&
-                event.message.content.isNotPresent &&
-                event.member.isNotPresent -> true
-        else -> false
     }
 }

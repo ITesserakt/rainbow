@@ -1,5 +1,6 @@
 package util
 
+import discord4j.core.DiscordClientBuilder
 import java.util.*
 
 /**
@@ -26,3 +27,10 @@ val <T> Optional<T>.isNotPresent
  * @return substring between this [indices]
  */
 operator fun String.get(indices: IntRange) = this.slice(indices)
+
+fun discordClientBuilder(
+    token: String,
+    builder: DiscordClientBuilder.() -> DiscordClientBuilder
+): DiscordClientBuilder {
+    return builder(DiscordClientBuilder(token))
+}

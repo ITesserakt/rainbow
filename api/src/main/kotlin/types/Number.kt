@@ -4,7 +4,7 @@ import context.ICommandContext
 
 internal abstract class NumberResolver<T : Number> : ITypeResolver<T> {
     override suspend fun read(context: ICommandContext, input: String): T =
-        readWithNulls(input) ?: throw IllegalArgumentException("Введенное значение не является числом!")
+        readWithNulls(input) ?: throw NumberFormatException("`$input` не является числом")
 
     abstract fun readWithNulls(input: String): T?
 }

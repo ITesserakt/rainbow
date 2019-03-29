@@ -1,11 +1,12 @@
+import bot.DynamicPresence
 import command.CommandLoader
 import command.CommandRegistry
 import command.GuildCommandProvider
 import command.PrivateChannelCommandProvider
-import discord4j.core.DiscordClientBuilder
 import discord4j.core.`object`.entity.Member
 import discord4j.core.`object`.entity.MessageChannel
 import discord4j.core.`object`.entity.Role
+import discord4j.core.`object`.presence.Presence
 import discord4j.core.event.domain.lifecycle.ReadyEvent
 import discord4j.core.event.domain.message.MessageCreateEvent
 import handler.GuildCommandHandler
@@ -21,8 +22,10 @@ import types.MessageChannelResolver
 import types.ResolverProvider
 import types.RoleResolver
 import util.awaitOrNull
+import util.discordClientBuilder
 import util.on
 import util.plusAssign
+import java.time.Duration
 import java.time.LocalTime
 
 private val logger: Logger = Loggers.getLogger(Class.forName("MainKt"))
@@ -33,7 +36,9 @@ fun main() = runBlocking<Unit> {
     logger.info("Starting loading of bot...")
 
     val token = System.getenv("TOKEN")
-    val client = DiscordClientBuilder(token).build()
+    val client = discordClientBuilder(token) {
+        setInitialPresence(Presence.doNotDisturb())
+    }.build()
 
     with(client.eventDispatcher) {
         on<ReadyEvent>() += ReadyEventHandler()
@@ -54,9 +59,7 @@ fun main() = runBlocking<Unit> {
             )
         )
 
-//    DynamicPresence(client, Duration.ofSeconds(5))
-//        .start()
-//        .subscribe()
+    DynamicPresence(client, Duration.ofSeconds(5)).start()
 
     client.login().awaitOrNull()
 }

@@ -5,10 +5,10 @@ import context.GuildCommandContext
 import kotlinx.coroutines.cancel
 import kotlin.system.exitProcess
 
+@RequireDeveloper
 class DeveloperModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Command
     @Hidden
-    @RequireDeveloper
     @Summary("Вырубает нахрен бота")
     @Aliases("exit", "quit")
     fun logout() {

@@ -13,7 +13,7 @@ annotation class Command(val name: String = "")
  * Adds a description to command
  */
 @Target(AnnotationTarget.FUNCTION)
-annotation class Summary(val description: String = "")
+annotation class Summary(val description: String)
 
 /**
  * Specify which role can run this command
