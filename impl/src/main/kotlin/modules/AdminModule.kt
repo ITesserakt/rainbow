@@ -53,7 +53,7 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
     @Summary("Кикает указанного пользователя")
     suspend fun kick(member: Member, @Continuous reason: String = "") {
         runCatching {
-            context.guild.await().kick(member.id, reason).subscribe()
+            context.guild.await().kick(member.id, reason).await()
         }.onFailure { context.reply("Невозможно кикнуть этого пользователя") }
     }
 

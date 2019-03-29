@@ -3,7 +3,7 @@ package types
 import context.GuildCommandContext
 import discord4j.core.DiscordClient
 import discord4j.core.DiscordClientBuilder
-import discord4j.core.`object`.entity.MessageChannel
+import discord4j.core.`object`.entity.TextChannel
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -44,7 +44,7 @@ abstract class ResolverTestTemplate<T> : Assertions() {
             every { fakeContext.author } returns client.getUserById(316249690092077065.toSnowflake()).await()
             every { fakeContext.channel } returns GlobalScope.async {
                 client.getChannelById(490951935894093858.toSnowflake())
-                    .cast<MessageChannel>()
+                    .cast<TextChannel>()
                     .await()
             }
             every { fakeContext.commandArgs } returns arrayOf()

@@ -39,7 +39,9 @@ class GuildCommandHandler : CommandHandler(), PermissionsProcessor, RequiredOwne
         if (event.message.content.isNotPresent) return@launch
         if (event.member.isNotPresent) return@launch
 
-        val content = event.message.content.get().split(' ')
+        //TODO !cmd name ... тоже должно работать
+        val content = resolveContent(event.message.content.get())
+
         if (!content[0].startsWith('!')) return@launch
 
         val args = content.drop(1) //выбрасываем имя команды
@@ -54,5 +56,26 @@ class GuildCommandHandler : CommandHandler(), PermissionsProcessor, RequiredOwne
             context.channel.await().createMessage(getError(it)).subscribe()
             logger.error(" ", it)
         }
+    }
+
+    private fun resolveContent(content: String): List<String> {
+        var result = ""
+        var isInQuote = false
+        for (i in content) {
+            if (i == '"') {
+                isInQuote = !isInQuote
+                continue
+            }
+            if (i == ' ') {
+                result += if (isInQuote) '_'
+                else ' '
+                continue
+            }
+            result += i
+        }
+        return result
+            .split(' ')
+            .filter { it.isNotEmpty() }
+            .map { it.replace('_', ' ') }
     }
 }
