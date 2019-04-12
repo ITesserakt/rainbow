@@ -1,4 +1,4 @@
-package types
+package types.guild
 
 import context.GuildCommandContext
 import context.ICommandContext
@@ -6,6 +6,7 @@ import discord4j.core.`object`.entity.Role
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.find
 import kotlinx.coroutines.reactive.openSubscription
+import types.MentionableResolver
 import util.awaitOrNull
 import util.get
 import util.toSnowflake

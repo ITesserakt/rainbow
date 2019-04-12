@@ -1,9 +1,10 @@
-package types
+package types.guild
 
 import discord4j.core.`object`.entity.MessageChannel
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import types.ITypeResolver
 import util.toSnowflake
 
 internal class MessageChannelResolverTest : types.ResolverTestTemplate<MessageChannel>() {

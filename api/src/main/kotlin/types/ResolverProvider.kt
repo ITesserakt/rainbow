@@ -2,14 +2,20 @@
 
 package types
 
+import discord4j.core.`object`.entity.Member
+import discord4j.core.`object`.entity.MessageChannel
+import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.entity.User
+import types.guild.MemberResolver
+import types.guild.MessageChannelResolver
+import types.guild.RoleResolver
 import kotlin.reflect.KProperty
 
 /**
  * Binds and provides [ITypeResolver] for many types
  */
 object ResolverProvider {
-    val resolversMap = hashMapOf<Class<*>, ITypeResolver<*>>(
+    private val resolversMap = hashMapOf(
         User::class.java to UserResolver(),
         Int::class.java to IntResolver(),
         Long::class.java to LongResolver(),
@@ -19,23 +25,24 @@ object ResolverProvider {
         Double::class.java to DoubleResolver(),
         String::class.java to StringResolver(),
         Char::class.java to CharResolver(),
-        Boolean::class.java to BooleanResolver()
+        Boolean::class.java to BooleanResolver(),
+        Member::class.java to MemberResolver(),
+        Role::class.java to RoleResolver(),
+        MessageChannel::class.java to MessageChannelResolver()
     )
 
     /**
      * Delegates-style
      * @see get
      */
-    inline operator fun <reified T> getValue(ref: Nothing?, property: KProperty<*>): ITypeResolver<T> =
-        ResolverProvider.get<T>() as ITypeResolver<T>
+    inline operator fun <reified T : Any> getValue(ref: Nothing?, property: KProperty<*>): ITypeResolver<T> =
+        ResolverProvider.get()
 
     /**
      * Uses to get [ITypeResolver] for parsing [String] into [T]
      * @see get
      */
-    inline fun <reified T> get(): ITypeResolver<*> = resolversMap.getOrElse(T::class.java) {
-        throw NoSuchElementException("Нет подходящего парсера для ${T::class.qualifiedName}")
-    }
+    inline fun <reified T : Any> get() = ResolverProvider[T::class.java]
 
     inline fun <reified T : Any> bind() = T::class.java
 

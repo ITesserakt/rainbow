@@ -11,10 +11,10 @@ data class CommandInfo(
     internal val functionPointer: KFunction<*>,
     internal val modulePointer: ModuleBase<*>,
     internal val aliases: List<String>,
-    val permissions: PermissionSet,
+    internal val permissions: PermissionSet,
     internal val isHidden: Boolean,
     internal val isRequiringDeveloper: Boolean,
-    val isRequiringOwner: Boolean
+    internal val isRequiringOwner: Boolean
 ) {
     internal val parameters: List<KParameter> = functionPointer.parameters
 

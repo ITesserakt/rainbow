@@ -39,10 +39,12 @@ annotation class Aliases(vararg val aliases: String)
 /**
  * Allows you to pass arguments including spaces. Must be on the last argument
  *
+ * Make sure this annotation is on the last parameter
+ *
  * ```kotlin
- *     fun test(@Continuous message : String)
+ * fun test(@Continuous message : String)
  * ```
- * !test I love kotlin -> message = I love kotlin
+ * !test I love kotlin -> message == "I love kotlin'
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Continuous

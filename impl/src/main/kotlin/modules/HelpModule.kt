@@ -6,8 +6,8 @@ import discord4j.common.GitProperties.APPLICATION_VERSION
 import discord4j.common.GitProperties.getProperties
 import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.util.Permission
-import startedTime
 import util.RandomColor
+import util.startedTime
 import java.time.Duration
 import java.time.LocalTime
 
@@ -42,7 +42,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Summary("Дополнительная информация о боте")
     suspend fun about() {
         context.reply(
-            """v0.0.8-ALPHA
+            """v0.0.8.2-ALPHA
             |https://github.com/ITesserakt/rainbow
             |Основано на DISCORD4J ${getProperties()[APPLICATION_VERSION]}
         """.trimMargin())
@@ -52,7 +52,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Summary("Время работы бота")
     suspend fun uptime() {
         context.reply(
-            "Бот работает уже ${Duration.between(LocalTime.now(), startedTime)}"
+            "Бот работает уже ${Duration.between(LocalTime.now(), context.client.startedTime)}"
         )
     }
 

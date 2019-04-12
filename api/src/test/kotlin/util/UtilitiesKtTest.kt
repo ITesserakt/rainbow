@@ -19,7 +19,7 @@ internal class UtilitiesKtTest {
         val second = Random.nextInt(999)
         val result = Math.pow(first.toDouble(), second.toDouble())
 
-        assertEquals(first `**` second, result)
+        assertEquals(first `^` second, result)
     }
 
     @Test

@@ -1,4 +1,4 @@
-package types
+package types.guild
 
 import context.GuildCommandContext
 import context.ICommandContext
@@ -8,6 +8,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import reactor.core.publisher.cast
+import types.MentionableResolver
 import util.awaitOrNull
 import util.toSnowflake
 

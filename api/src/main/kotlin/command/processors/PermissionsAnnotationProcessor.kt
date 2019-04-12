@@ -1,8 +1,6 @@
 package command.processors
 
-import command.CommandInfo
 import command.Permissions
-import context.ICommandContext
 import discord4j.core.`object`.util.PermissionSet
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.full.findAnnotation
@@ -16,8 +14,4 @@ internal inline class PermissionsAnnotationProcessor(override val elem: KAnnotat
             .ifEmpty { listOf(0L) }
             .reduce(Long::or)
     )
-}
-
-interface PermissionsProcessor {
-    suspend fun processPerms(command: CommandInfo, context: ICommandContext)
 }

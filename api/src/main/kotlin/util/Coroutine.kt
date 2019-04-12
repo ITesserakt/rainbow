@@ -1,12 +1,8 @@
 package util
 
 import discord4j.core.`object`.entity.Member
-import discord4j.core.`object`.util.Snowflake
-import discord4j.core.event.domain.Event
-import handler.Handler
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 /**
@@ -21,19 +17,6 @@ suspend fun <T> Mono<T>.await(): T = this.awaitSingle()
 suspend fun <T> Mono<T>.awaitOrNull(): T? = this.awaitFirstOrNull()
 
 /**
- * Requests to determine if this member is higher in the role hierarchy than the member as represented
- * by the supplied ID or signal IllegalArgumentException if the member as represented by the supplied ID is in
- * a different guild than this member.
- * This is determined by the positions of each of the members' highest roles.
- *
- * @param id The ID of the member to compare in the role hierarchy with this member.
- * @return A [Mono] where, upon successful completion, emits `true` if this member is higher in the role
- * hierarchy than the member as represented by the supplied ID, `false` otherwise. If an error is received,
- * it is emitted through the [Mono].
- */
-suspend fun Member.isHigherAsync(id: Snowflake): Boolean = this.isHigher(id).await()
-
-/**
  * Requests to determine if this member is higher in the role hierarchy than the provided member or signal
  * IllegalArgumentException if the provided member is in a different guild than this member.
  * This is determined by the positions of each of the members' highest roles.
@@ -44,12 +27,3 @@ suspend fun Member.isHigherAsync(id: Snowflake): Boolean = this.isHigher(id).awa
  * through the [Mono].
  */
 suspend fun Member.isHigherAsync(otherMember: Member): Boolean = this.isHigher(otherMember).await()
-
-/**
- * Adds new handler to [Event].
- *
- * Uses for C# event style
- */
-operator fun <T : Event> Flux<T>.plusAssign(handler: Handler<T>) {
-    subscribe { handler.handle(it) }
-}

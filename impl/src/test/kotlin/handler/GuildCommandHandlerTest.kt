@@ -6,28 +6,16 @@ import org.junit.jupiter.api.Test
 internal class GuildCommandHandlerTest {
     @Test
     fun `quote splitting`() {
-        fun resolveContent(content: String): List<String> {
-            var result = ""
-            var isInQuote = false
-            for (i in content) {
-                if (i == '"') {
-                    isInQuote = !isInQuote
-                    continue
-                }
-                if (i == ' ') {
-                    result += if (isInQuote) '_'
-                    else ' '
-                    continue
-                }
-                result += i
-            }
-            return result
-                .split(' ')
+        fun resolve(s: String): List<String> =
+            s.split(Regex("""\s+(?=([^"]*"[^"]*")*[^"]*$)"""))
+                .map { it.replace("\"", "") }
                 .filter { it.isNotEmpty() }
-                .map { it.replace('_', ' ') }
-        }
 
         val s = """!help "some fail" ""  and even this"""
-        Assertions.assertEquals(resolveContent(s), listOf("!help", "some fail", "and", "even", "this"))
+        val s2 = """!rainbow_stop "rainbow stop" some"""
+        val s3 = "!help"
+        Assertions.assertEquals(resolve(s), listOf("!help", "some fail", "and", "even", "this"))
+        Assertions.assertEquals(resolve(s2), listOf("!rainbow_stop", "rainbow stop", "some"))
+        Assertions.assertEquals(resolve(s3), listOf("!help"))
     }
 }

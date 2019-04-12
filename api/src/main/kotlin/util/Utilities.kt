@@ -1,5 +1,6 @@
 package util
 
+import discord4j.core.DiscordClient
 import discord4j.core.DiscordClientBuilder
 import java.util.*
 
@@ -13,7 +14,8 @@ operator fun String.times(num: Int): String =
 /**
  * Uses for Python power style
  */
-infix fun Number.`**`(num: Number): Double =
+@Suppress("FunctionName")
+infix fun Number.`^`(num: Number): Double =
     Math.pow(this.toDouble(), num.toDouble())
 
 /**
@@ -28,9 +30,9 @@ val <T> Optional<T>.isNotPresent
  */
 operator fun String.get(indices: IntRange) = this.slice(indices)
 
-fun discordClientBuilder(
-    token: String,
-    builder: DiscordClientBuilder.() -> DiscordClientBuilder
-): DiscordClientBuilder {
-    return builder(DiscordClientBuilder(token))
+@Suppress("FunctionName")
+fun DiscordClientBuilder(
+    builder: DiscordClientBuilder.() -> Unit
+): DiscordClient {
+    return DiscordClientBuilder("").apply { builder() }.build()
 }

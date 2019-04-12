@@ -1,9 +1,11 @@
-package types
+package types.guild
 
 import discord4j.core.`object`.entity.Member
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import types.ITypeResolver
+import types.ResolverTestTemplate
 import util.toSnowflake
 
 class MemberResolverTest : ResolverTestTemplate<Member>() {

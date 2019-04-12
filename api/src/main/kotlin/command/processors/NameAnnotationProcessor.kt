@@ -16,7 +16,7 @@ internal inline class NameAnnotationProcessor(override val elem: KAnnotatedEleme
         else {
             elem as KCallable<*>
             elem.name
-        }.replace('_', ' ')
+        }.replace(' ', '_')
         "${groupAnnotationProcessor?.process()}$name"
     } ?: throw IllegalStateException()
 }
