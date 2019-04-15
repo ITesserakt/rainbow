@@ -6,7 +6,7 @@ package util
 class NoPermissionsException(message: String = "Недостаточно привелегий", cause: Throwable? = null) :
     IllegalStateException(message, cause)
 
-class CommandException(cause: Throwable?) : RuntimeException(cause) {
+class CommandException(cause: Throwable) : RuntimeException(cause) {
     override fun getLocalizedMessage(): String {
         tailrec fun getError(error: Throwable?): String =
             if (error?.message.isNullOrEmpty() || error?.message == "null")

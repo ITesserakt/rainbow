@@ -2,34 +2,31 @@ package types
 
 import context.ICommandContext
 import discord4j.core.`object`.entity.User
+import getUserByIdAsync
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.find
-import kotlinx.coroutines.reactive.openSubscription
-import util.awaitOrNull
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.reactive.flow.asFlow
 import util.toSnowflake
 
 class UserResolver : MentionableResolver<User>() {
     override fun mentionMatchAsync(context: ICommandContext, input: String): Deferred<User?> = GlobalScope.async {
-        context.client
-            .getUserById(input.substring(2, input.length - 1).toSnowflake())
-            .awaitOrNull()
+        context.client.getUserByIdAsync(input.substring(2, input.length - 1).toSnowflake())
     }
 
     override fun idMatchAsync(context: ICommandContext, input: String): Deferred<User?> = GlobalScope.async {
-        context.client
-            .getUserById(input.toSnowflake())
-            .awaitOrNull()
+        context.client.getUserByIdAsync(input.toSnowflake())
     }
 
-    @ObsoleteCoroutinesApi
+    @FlowPreview
     @ExperimentalCoroutinesApi
     override fun elseMatchAsync(context: ICommandContext, input: String): Deferred<User?> = GlobalScope.async {
-        val users = context.client.users.openSubscription()
+        val users = context.client.users.asFlow()
         val normalName = input.split('#')
             .takeIf { it.size == 2 }
             ?: throw  IllegalArgumentException("Ожидалось `Name#ID`, получено `$input`")
 
-        users.find { it.username == normalName[0] && it.discriminator == normalName[1] }
+        users.filter { it.username == normalName[0] && it.discriminator == normalName[1] }.single()
     }
 
     override val exceptionMessage: String = "Не найдено ни одного подходящего пользователя"

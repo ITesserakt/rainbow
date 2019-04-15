@@ -6,7 +6,7 @@ import kotlinx.coroutines.Deferred
 /**
  * A parser based on mention and it components
  */
-abstract class MentionableResolver<T> : ITypeResolver<T> {
+abstract class MentionableResolver<T : Any> : ITypeResolver<T> {
     abstract fun mentionMatchAsync(context: ICommandContext, input: String): Deferred<T?>
     abstract fun idMatchAsync(context: ICommandContext, input: String): Deferred<T?>
     abstract fun elseMatchAsync(context: ICommandContext, input: String): Deferred<T?>

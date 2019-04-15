@@ -1,6 +1,9 @@
 package command
 
 import context.ICommandContext
+import createEmbedAsync
+import createMessageAsync
+import discord4j.core.spec.EmbedCreateSpec
 import discord4j.core.spec.MessageCreateSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,14 +21,14 @@ abstract class ModuleBase<T : ICommandContext>(val contextType: KClass<T>) {
     }
 
     protected suspend fun T.reply(message: String) {
-        this.channel.await()
-            .createMessage(message)
-            .subscribe()
+        this.channel.await().createMessageAsync(message)
     }
 
     protected suspend fun T.reply(messageSpec: MessageCreateSpec.() -> Unit) {
-        this.channel.await()
-            .createMessage(messageSpec)
-            .subscribe()
+        this.channel.await().createMessageAsync(messageSpec)
+    }
+
+    protected suspend fun T.replyEmbed(embedSpec: EmbedCreateSpec.() -> Unit) {
+        channel.await().createEmbedAsync(embedSpec)
     }
 }

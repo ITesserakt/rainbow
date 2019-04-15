@@ -21,7 +21,7 @@ data class CommandInfo(
     private fun stringifyParams() = parameters
             .drop(1)
             .map {
-                val pattern = "${it.name} : ${(it.type.jvmErasure).simpleName}"
+                val pattern = "${it.name} : ${it.type.jvmErasure.simpleName}"
 
                 if (!it.isOptional) "<$pattern>"
                 else "[$pattern]"

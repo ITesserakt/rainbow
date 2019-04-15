@@ -11,14 +11,13 @@ import kotlinx.coroutines.runBlocking
 import reactor.util.Logger
 import reactor.util.Loggers
 import util.DiscordClientBuilder
-import util.awaitOrNull
 import util.on
 import util.plusAssign
 import java.time.Duration
 
 private val logger: Logger = Loggers.getLogger(Class.forName("MainKt"))
 
-fun main() = runBlocking<Unit> {
+fun main() = runBlocking {
     logger.info("Starting loading of bot...")
 
     val client = DiscordClientBuilder {
@@ -39,5 +38,5 @@ fun main() = runBlocking<Unit> {
 
     DynamicPresence(client, Duration.ofSeconds(5)).start()
 
-    client.login().awaitOrNull()
+    client.loginAsync()
 }

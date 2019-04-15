@@ -1,17 +1,20 @@
 package modules
 
+import asMemberAsync
 import command.*
 import context.GuildCommandContext
 import discord4j.core.`object`.entity.Role
 import discord4j.core.`object`.util.Permission
 import discord4j.core.`object`.util.Snowflake
+import editAsync
+import hasHigherRolesAsync
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import selfAsync
 import util.NoPermissionsException
 import util.RandomColor
-import util.await
 import java.awt.Color
 import kotlin.collections.set
 
@@ -52,14 +55,14 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
                 val color = task(clampedStep)
                 delay(clampedDelay)
 
-                role.edit { it.setColor(color) }.await()
+                role.editAsync { setColor(color) }
             }
         }
     }
 
     private suspend fun checkForRightRolePosition(role: Role) {
-        val botAsMember = context.client.self.flatMap { it.asMember(context.guildId) }.await()
-        if (!botAsMember.hasHigherRoles(listOf(role)).await())
+        val botAsMember = context.client.selfAsync.await().asMemberAsync(context.guildId)
+        if (!botAsMember.hasHigherRolesAsync(listOf(role)))
             throw NoPermissionsException(
                 """Роль `${role.name}` находится иерархически выше роли бота.
                   |В разделе управления сервером передвиньте роль бота выше необходимой роли""".trimMargin()

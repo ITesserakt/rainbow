@@ -3,10 +3,10 @@ package util
 import discord4j.core.DiscordClient
 import java.time.LocalTime
 
-private lateinit var startedTime: LocalTime
+private lateinit var startedTime_: LocalTime
 
 var DiscordClient.startedTime: LocalTime
-    get() = util.startedTime
+    get() = startedTime_
     set(value) {
-        util.startedTime = value
+        startedTime_ = value
     }

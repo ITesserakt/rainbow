@@ -35,8 +35,7 @@ object ResolverProvider {
      * Delegates-style
      * @see get
      */
-    inline operator fun <reified T : Any> getValue(ref: Nothing?, property: KProperty<*>): ITypeResolver<T> =
-        ResolverProvider.get()
+    inline operator fun <reified T : Any> getValue(ref: Nothing?, property: KProperty<*>): ITypeResolver<T> = get()
 
     /**
      * Uses to get [ITypeResolver] for parsing [String] into [T]

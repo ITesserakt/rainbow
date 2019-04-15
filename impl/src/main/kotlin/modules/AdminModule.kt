@@ -1,27 +1,31 @@
 package modules
 
+import asMemberAsync
+import banAsync
 import command.*
 import context.GuildCommandContext
+import createRoleAsync
 import discord4j.core.`object`.entity.Member
 import discord4j.core.`object`.util.Permission
 import discord4j.core.`object`.util.PermissionSet
 import discord4j.core.`object`.util.Snowflake
+import isHigherAsync
+import kickAsync
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.find
-import kotlinx.coroutines.channels.take
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.reactive.openSubscription
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.reactive.flow.asFlow
+import selfAsync
 import util.NoPermissionsException
-import util.await
-import util.isHigherAsync
 import util.toSnowflake
 import java.awt.Color
 import kotlin.collections.set
 
-@ObsoleteCoroutinesApi
 class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     private val mutedUsers = hashMapOf<Pair<Snowflake, Snowflake>, List<Snowflake>>()
 
@@ -36,14 +40,13 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
     @Summary("Банит указанного пользователя")
     @Permissions(Permission.BAN_MEMBERS)
     suspend fun ban(member: Member, @Continuous reason: String = "") {
-        val botAsMember = context.client.self.flatMap { it.asMember(context.guildId) }.await()
+        val botAsMember = context.client.selfAsync.await().asMemberAsync(context.guildId)
         val guild = context.guild.await()
 
         if (!botAsMember.isHigherAsync(member) || guild.ownerId == member.id)
             throw NoPermissionsException("Невозможно забанить этого пользователя")
 
-        guild.ban(member.id) { it.reason = reason }.subscribe()
-
+        guild.banAsync(member.id) { setReason(reason) }
         context.reply(banGives.random())
     }
 
@@ -53,7 +56,7 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
     @Summary("Кикает указанного пользователя")
     suspend fun kick(member: Member, @Continuous reason: String = "") {
         runCatching {
-            context.guild.await().kick(member.id, reason).await()
+            context.guild.await().kickAsync(member.id, reason)
         }.onFailure { context.reply("Невозможно кикнуть этого пользователя") }
     }
 
@@ -67,8 +70,8 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
             .subscribe()
     }
 
+    @FlowPreview
     @ExperimentalCoroutinesApi
-    @ObsoleteCoroutinesApi
     @Command
     @Permissions(Permission.BAN_MEMBERS, Permission.KICK_MEMBERS)
     @Summary("Мутит указанного пользователя")
@@ -97,30 +100,30 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
         }.subscribe()
     }
 
-    @ObsoleteCoroutinesApi
+    @FlowPreview
     @ExperimentalCoroutinesApi
     private fun getMuteRoleAsync() = scope.async {
         val guild = context.guild.await()
-        guild.roles.openSubscription().find { it.name == "Muted" }
-            ?: guild.createRole { spec ->
-                spec.setColor(Color.WHITE)
-                    .setPermissions(PermissionSet.none())
-                    .setMentionable(false)
-                    .setName("Muted")
-                    .setHoist(false)
-            }.await()
+        guild.roles.asFlow().filter { it.name == "Muted" }.singleOrNull()
+            ?: guild.createRoleAsync {
+                setColor(Color.WHITE)
+                setPermissions(PermissionSet.none())
+                setMentionable(false)
+                setName("Muted")
+                setHoist(false)
+            }
     }
 
-    @ObsoleteCoroutinesApi
+    @FlowPreview
     @Command
     @Permissions(Permission.MANAGE_MESSAGES)
     @Summary("Удаляет последние `num` сообщений")
     @Aliases("delete messages")
     suspend fun clear(num: Int): Unit = context.channel.await()
         .getMessagesBefore(context.message.id)
-        .openSubscription()
+        .asFlow()
         .take(num)
-        .consumeEach {
+        .collect {
             it.delete().subscribe()
         }
 }

@@ -3,6 +3,8 @@ package util
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.toList
+import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactive.openSubscription
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -16,7 +18,7 @@ internal class CoroutineKtTest : Assertions() {
     @Test
     fun `await on non-empty mono and expect value`() = runBlocking {
         val mono = Mono.just(1)
-        assertEquals(mono.await(), 1)
+        assertEquals(mono.awaitSingle(), 1)
     }
 
     @Test
@@ -24,7 +26,7 @@ internal class CoroutineKtTest : Assertions() {
         val mono = Mono.empty<Int>()
         assertThrows(NoSuchElementException::class.java) {
             runBlocking {
-                mono.await()
+                mono.awaitSingle()
             }
         }
     }
@@ -32,13 +34,13 @@ internal class CoroutineKtTest : Assertions() {
     @Test
     fun `await on mono with data and expect value`() = runBlocking {
         val mono = Mono.just(1)
-        assertEquals(mono.awaitOrNull(), 1)
+        assertEquals(mono.awaitFirstOrNull(), 1)
     }
 
     @Test
     fun `await on empty mono and expect null`() = runBlocking {
         val mono = Mono.empty<Int>()
-        assertEquals(mono.awaitOrNull(), null)
+        assertEquals(mono.awaitFirstOrNull(), null)
     }
 
     @ObsoleteCoroutinesApi
@@ -75,13 +77,13 @@ internal class CoroutineKtTest : Assertions() {
 
         assertThrows(NullPointerException::class.java) {
             runBlocking {
-                mono.awaitOrNull()
+                mono.awaitFirstOrNull()
             }
         }
 
         assertThrows(NullPointerException::class.java) {
             runBlocking {
-                mono.await()
+                mono.awaitSingle()
             }
         }
     }

@@ -1,29 +1,23 @@
 package handler
 
+import command.CommandProvider
 import command.PrivateChannelCommandProvider
+import context.ICommandContext
 import context.PrivateChannelCommandContext
 import discord4j.core.event.domain.message.MessageCreateEvent
-import util.Loggers
 import util.isNotPresent
 
 class PrivateChannelCommandHandler : CommandHandler() {
-    private val logger = Loggers.getLogger<PrivateChannelCommandHandler>()
+    override val prefix = ""
 
-    override suspend fun handle(event: MessageCreateEvent) {
-        if (event.guildId.isPresent) return
-        if (event.member.isPresent) return
-        if (event.message.content.isNotPresent) return
+    override fun defineContracts(event: MessageCreateEvent): Boolean =
+        event.guildId.isNotPresent
+                && event.member.isNotPresent
+                && event.message.author.isPresent
+                && event.message.content.isPresent
 
-        val content = event.message.content.get().split(' ')
+    override fun setContext(event: MessageCreateEvent, args: List<String>): ICommandContext =
+        PrivateChannelCommandContext(event, args)
 
-        val args = content.drop(1)
-        val context = PrivateChannelCommandContext(event, args)
-        val command = PrivateChannelCommandProvider.find(content[0]) ?: return
-
-        runCatching { executeAsync(command, context) }
-            .onFailure {
-                context.channel.await().createMessage(it.localizedMessage).subscribe()
-                logger.error(" ", it)
-            }
-    }
+    override val provider: CommandProvider<out ICommandContext> = PrivateChannelCommandProvider
 }

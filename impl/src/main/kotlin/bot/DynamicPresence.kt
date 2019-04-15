@@ -4,9 +4,9 @@ import discord4j.core.DiscordClient
 import discord4j.core.`object`.presence.Activity
 import discord4j.core.`object`.presence.Presence
 import kotlinx.coroutines.*
+import kotlinx.coroutines.reactive.awaitSingle
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
-import util.await
 import java.time.Duration
 
 internal class DynamicPresence(private val client: DiscordClient, private val delay: Duration) {
@@ -22,7 +22,7 @@ internal class DynamicPresence(private val client: DiscordClient, private val de
     fun start() = GlobalScope.launch(Dispatchers.IO) {
         var index = 0
         while (isActive) {
-            val activity = "${presenceArray[index].await()} ${words[index]} | say !help"
+            val activity = "${presenceArray[index].awaitSingle()} ${words[index]} | say !help"
             client.updatePresence(Presence.online(Activity.watching(activity))).subscribe()
 
             delay(delay.toMillis())

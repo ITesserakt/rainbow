@@ -28,15 +28,15 @@ class CommandLoader internal constructor(internal val pathToPackage: String) {
     }
 }
 
-private var commandLoader = CommandLoader("")
+private var commandLoader_ = CommandLoader("")
 var DiscordClient.commandLoader
-    get() = command.commandLoader
+    get() = commandLoader_
     private set(value) {
-        command.commandLoader = value
+        commandLoader_ = value
     }
 
 var DiscordClientBuilder.commandLoadersPackage: String
-    get() = commandLoader.pathToPackage
+    get() = commandLoader_.pathToPackage
     set(value) {
-        commandLoader = CommandLoader(value)
+        commandLoader_ = CommandLoader(value)
     }

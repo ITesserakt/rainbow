@@ -1,2 +1,4 @@
 rootProject.name = 'rainbow'
-include('api', 'impl')
+include('api', 'impl', 'generated')
+include 'generated'
+

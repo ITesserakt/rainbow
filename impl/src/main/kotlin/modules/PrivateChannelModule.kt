@@ -3,6 +3,7 @@ package modules
 import command.*
 import context.PrivateChannelCommandContext
 import kotlinx.coroutines.cancel
+import logoutAsync
 import kotlin.system.exitProcess
 
 class PrivateChannelModule : ModuleBase<PrivateChannelCommandContext>(PrivateChannelCommandContext::class) {
@@ -16,10 +17,8 @@ class PrivateChannelModule : ModuleBase<PrivateChannelCommandContext>(PrivateCha
     @RequireDeveloper
     @Summary("Выключает бота")
     @Aliases("exit", "quit")
-    fun logout() {
-        context.client
-            .logout()
-            .subscribe()
+    suspend fun logout() {
+        context.client.logoutAsync()
         scope.cancel()
         exitProcess(0)
     }

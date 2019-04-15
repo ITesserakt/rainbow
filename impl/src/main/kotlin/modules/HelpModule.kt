@@ -22,12 +22,10 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
                 .sortedBy { it.name }
                 .joinToString(", \n")
 
-            context.reply {
-                setEmbed { spec ->
-                    spec.addField("All commands", commands, false)
-                    spec.setFooter("<...> defines necessary arguments, [...] defines unnecessary", null)
-                    spec.setColor(RandomColor)
-                }
+            context.replyEmbed {
+                addField("All commands", commands, false)
+                setFooter("<...> defines necessary arguments, [...] defines unnecessary", null)
+                setColor(RandomColor)
             }
         } else {
             val command = GuildCommandProvider.find(`command name`)
@@ -45,7 +43,8 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
             """v0.0.8.2-ALPHA
             |https://github.com/ITesserakt/rainbow
             |Основано на DISCORD4J ${getProperties()[APPLICATION_VERSION]}
-        """.trimMargin())
+        """.trimMargin()
+        )
     }
 
     @Command
@@ -60,18 +59,17 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Summary("Информация об указанной роли")
     @Permissions(Permission.VIEW_AUDIT_LOG)
     suspend fun roleInfo(@Continuous role: Role) {
-        context.reply {
-            setEmbed {
-                it.setColor(role.color)
-                it.setTitle(role.name)
-                it.addField("Id", role.id.asString(), true)
-                it.addField("Position", role.rawPosition.toString(), true)
-                it.addField("Mention", "`${role.mention}`", true)
-                it.addField("Permissions",
-                        role.permissions
-                                .joinToString { perm -> perm.name.toLowerCase().replace('_', ' ') }
-                                .ifEmpty { "No permissions (╯°□°）╯︵ ┻━┻" }, true)
-            }
+        context.replyEmbed {
+            setColor(role.color)
+            setTitle(role.name)
+            addField("Id", role.id.asString(), true)
+            addField("Position", role.rawPosition.toString(), true)
+            addField("Mention", "`${role.mention}`", true)
+            addField("Permissions",
+                role.permissions
+                    .joinToString { perm -> perm.name.toLowerCase().replace('_', ' ') }
+                    .ifEmpty { "No permissions (╯°□°）╯︵ ┻━┻" }, true
+            )
         }
     }
 }
