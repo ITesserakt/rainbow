@@ -26,28 +26,44 @@ Commands are simple functions with some magic annotations, such as
 * Aliases
 * Require...
 
-There is also a special annotation for parameters: `continuous`. 
+There is also a special annotation for parameters: `@Continuous`. 
 It indicates that the argument will be expanded to the end of the input.
+
+Context variable is available only from function annotated with `@Command`.
 
 ```kotlin
 class EchoModule : ModuleBase<GuildCommandContext>() {
     @Command
     @Summary("the simplest command that reprints your last message")
-    suspend fun echo() {
-        context.reply(context.message.content.get())
+    suspend fun echo(@Continuous msg : String) {
+        context.reply(msg)
     }
 }
 ```
 
 ## Defining your own handler
 
-Extend your class with Handler\<T : Event\> and do whatever you want
+This can be done in 2 ways:
+1. with a lambda, but we can\`t unsubscribe:
 ```kotlin
-class ReadyEventHandler : Handler<ReadyEvent>() {
-    override fun handle(event : ReadyEvent) = yourCoroutineScope.lauch {
-        /*
-         *   code
-        */
-    }
+discordClient.eventDispatcher.on<ReadyEvent>() += {
+    //code
 }
 ```
+2. with a handler instance:
+```kotlin
+class ReadyHandler : Handler<ReadyEvent>() {
+    override suspend fun handle(event : ReadyEvent) {
+        //code
+    }
+}
+
+discordClient.eventDispatcher.on<ReadyEvent>() += ReadyHandler()
+//...
+discordClient.eventDispatcher.on<ReadyEvent>() -= ReadyHandler()
+```
+
+## Auto loading of commands
+
+It\`s possible to load all commands from a specified package using `DiscordClient.commandLoader.load()`. As arguments you have to pass providers for contexts.
+> by default, the entire jar file is viewed, which can be slow for a large project, so you can indicate from which package commands are loaded. In DiscordClientBuilder use `commandLoadersPackage`
