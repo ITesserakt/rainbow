@@ -41,7 +41,10 @@ abstract class CommandHandler : Handler<MessageCreateEvent>() {
             command.modulePointer.setContext(context)
             if (!resolveLimiters(command, context)) throw NoPermissionsException()
             val params = parseParameters(command)
+
+            command.modulePointer.beforeExecution(context)
             command.functionPointer.callSuspendBy(params)
+            command.modulePointer.afterExecution(context)
         }.onFailure {
             val error = CommandException(it)
             context.channel.await()

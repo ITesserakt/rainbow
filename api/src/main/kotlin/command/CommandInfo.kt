@@ -1,5 +1,6 @@
 package command
 
+import context.ICommandContext
 import discord4j.core.`object`.util.PermissionSet
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -9,7 +10,7 @@ data class CommandInfo(
     val name: String,
     val description: String,
     internal val functionPointer: KFunction<*>,
-    internal val modulePointer: ModuleBase<*>,
+    internal val modulePointer: ModuleBase<ICommandContext>,
     internal val aliases: List<String>,
     internal val permissions: PermissionSet,
     internal val isHidden: Boolean,

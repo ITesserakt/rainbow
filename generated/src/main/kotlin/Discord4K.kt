@@ -56,6 +56,7 @@ import io.netty.buffer.ByteBuf
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.reactivestreams.Publisher
 import reactor.netty.ByteBufMono
@@ -2203,10 +2204,23 @@ val UserService.currentUserAsync: Deferred<UserResponse>
         currentUser.awaitSingle()
     }
 
+/**
+ * @see [DiscordClient.logout]
+ */
 suspend inline fun DiscordClient.logoutAsync() {
-    this.logout().awaitSingle()
+    this.logout().awaitFirstOrNull()
 }
 
+/**
+ * @see [DiscordClient.login]
+ */
 suspend inline fun DiscordClient.loginAsync() {
-    this.login().awaitSingle()
+    this.login().awaitFirstOrNull()
+}
+
+/**
+ * @see [MessageChannel.type]
+ */
+suspend inline fun MessageChannel.typeAsync() {
+    this.type().awaitFirstOrNull()
 }

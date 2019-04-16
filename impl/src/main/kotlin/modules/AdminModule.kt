@@ -33,7 +33,8 @@ class AdminModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) 
         "https://i.pinimg.com/originals/5d/77/0c/5d770cbd18e7f9857d1e497a851509b8.gif",
         "https://69.media.tumblr.com/904432c5b044f0588bb31fc49ab8b642/tumblr_ow4mafo4eI1son3fpo2_500.gif",
         "https://thumbs.gfycat.com/UnconsciousDeliciousLcont-max-1mb.gif",
-        "https://tenor.com/view/banned-thor-gif-6072837"
+        "https://tenor.com/view/banned-thor-gif-6072837",
+        "https://tenor.com/view/trump-donaldtrump-interview-banned-cnn-gif-7677105"
     )
 
     @Command

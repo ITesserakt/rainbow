@@ -7,6 +7,7 @@ import discord4j.core.spec.EmbedCreateSpec
 import discord4j.core.spec.MessageCreateSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import typeAsync
 import kotlin.reflect.KClass
 
 abstract class ModuleBase<T : ICommandContext>(val contextType: KClass<T>) {
@@ -28,4 +29,10 @@ abstract class ModuleBase<T : ICommandContext>(val contextType: KClass<T>) {
 
     protected suspend fun T.replyEmbed(embedSpec: EmbedCreateSpec.() -> Unit) =
         channel.await().createEmbedAsync(embedSpec)
+
+    open suspend fun beforeExecution(context: T) {
+        context.channel.await().typeAsync()
+    }
+
+    open suspend fun afterExecution(context: T) {}
 }

@@ -40,3 +40,9 @@ fun main() = runBlocking {
 
     client.loginAsync()
 }
+
+//TODO Добавить:
+// cooldown,
+// requireNSFW,
+// requireGuild,
+// requireBotPermissions
