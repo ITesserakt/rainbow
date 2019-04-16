@@ -67,7 +67,6 @@ import reactor.netty.http.websocket.WebsocketOutbound
 import reactor.util.function.Tuple2
 import java.awt.Color
 import java.io.Serializable
-import java.util.function.Consumer
 
 /**
  * @see [DiscordClient.edit]
@@ -84,7 +83,7 @@ suspend inline fun DiscordClient.createGuildAsync(noinline arg0: GuildCreateSpec
  * @see [DiscordClient.updatePresence]
  */
 suspend inline fun DiscordClient.updatePresenceAsync(arg0: Presence) {
-    this.updatePresence(arg0).awaitSingle()
+    this.updatePresence(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -103,7 +102,7 @@ suspend inline fun Category.editAsync(noinline arg0: CategoryEditSpec.() -> Unit
  * @see [Channel.delete]
  */
 suspend inline fun Channel.deleteAsync(arg0: String) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -115,14 +114,14 @@ suspend inline fun Guild.editAsync(noinline arg0: GuildEditSpec.() -> Unit): Gui
  * @see [Guild.unban]
  */
 suspend inline fun Guild.unbanAsync(arg0: Snowflake) {
-    this.unban(arg0).awaitSingle()
+    this.unban(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Guild.unban]
  */
 suspend inline fun Guild.unbanAsync(arg0: Snowflake, arg1: String) {
-    this.unban(arg0, arg1).awaitSingle()
+    this.unban(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -172,14 +171,14 @@ suspend inline fun Guild.createTextChannelAsync(noinline arg0: TextChannelCreate
  * @see [Guild.kick]
  */
 suspend inline fun Guild.kickAsync(arg0: Snowflake) {
-    this.kick(arg0).awaitSingle()
+    this.kick(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Guild.kick]
  */
 suspend inline fun Guild.kickAsync(arg0: Snowflake, arg1: String) {
-    this.kick(arg0, arg1).awaitSingle()
+    this.kick(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -192,14 +191,14 @@ suspend inline fun Guild.createRoleAsync(noinline arg0: RoleCreateSpec.() -> Uni
  * @see [Guild.ban]
  */
 suspend inline fun Guild.banAsync(arg0: Snowflake, noinline arg1: BanQuerySpec.() -> Unit) {
-    this.ban(arg0, arg1).awaitSingle()
+    this.ban(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [GuildChannel.addRoleOverwrite]
  */
 suspend inline fun GuildChannel.addRoleOverwriteAsync(arg0: Snowflake, arg1: PermissionOverwrite) {
-    this.addRoleOverwrite(arg0, arg1).awaitSingle()
+    this.addRoleOverwrite(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -210,7 +209,7 @@ suspend inline fun GuildChannel.addRoleOverwriteAsync(
     arg1: PermissionOverwrite,
     arg2: String
 ) {
-    this.addRoleOverwrite(arg0, arg1, arg2).awaitSingle()
+    this.addRoleOverwrite(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -221,15 +220,14 @@ suspend inline fun GuildChannel.addMemberOverwriteAsync(
     arg1: PermissionOverwrite,
     arg2: String
 ) {
-    this.addMemberOverwrite(arg0, arg1, arg2).awaitSingle()
+    this.addMemberOverwrite(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
  * @see [GuildChannel.addMemberOverwrite]
  */
 suspend inline fun GuildChannel.addMemberOverwriteAsync(arg0: Snowflake, arg1: PermissionOverwrite) {
-
-    this.addMemberOverwrite(arg0, arg1).awaitSingle()
+    this.addMemberOverwrite(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -242,7 +240,7 @@ suspend inline fun GuildEmoji.editAsync(noinline arg0: GuildEmojiEditSpec.() -> 
  * @see [GuildEmoji.delete]
  */
 suspend inline fun GuildEmoji.deleteAsync(arg0: String) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -264,36 +262,36 @@ suspend inline fun Member.asMemberAsync(arg0: Snowflake): Member = this.asMember
 /**
  * @see [Member.edit]
  */
-suspend inline fun Member.editAsync(arg0: Consumer<GuildMemberEditSpec>) {
-    this.edit(arg0).awaitSingle()
+suspend inline fun Member.editAsync(noinline arg0: GuildMemberEditSpec.() -> Unit) {
+    this.edit(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Member.unban]
  */
 suspend inline fun Member.unbanAsync(arg0: String) {
-    this.unban(arg0).awaitSingle()
+    this.unban(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Member.removeRole]
  */
 suspend inline fun Member.removeRoleAsync(arg0: Snowflake) {
-    this.removeRole(arg0).awaitSingle()
+    this.removeRole(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Member.removeRole]
  */
 suspend inline fun Member.removeRoleAsync(arg0: Snowflake, arg1: String) {
-    this.removeRole(arg0, arg1).awaitSingle()
+    this.removeRole(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [Member.kick]
  */
 suspend inline fun Member.kickAsync(arg0: String) {
-    this.kick(arg0).awaitSingle()
+    this.kick(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -306,21 +304,21 @@ suspend inline fun Member.hasHigherRolesAsync(arg0: Iterable<Role>): Boolean =
  * @see [Member.addRole]
  */
 suspend inline fun Member.addRoleAsync(arg0: Snowflake, arg1: String) {
-    this.addRole(arg0, arg1).awaitSingle()
+    this.addRole(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [Member.addRole]
  */
 suspend inline fun Member.addRoleAsync(arg0: Snowflake) {
-    this.addRole(arg0).awaitSingle()
+    this.addRole(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Member.ban]
  */
 suspend inline fun Member.banAsync(noinline arg0: BanQuerySpec.() -> Unit) {
-    this.ban(arg0).awaitSingle()
+    this.ban(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -332,28 +330,28 @@ suspend inline fun Message.editAsync(noinline arg0: MessageEditSpec.() -> Unit):
  * @see [Message.addReaction]
  */
 suspend inline fun Message.addReactionAsync(arg0: ReactionEmoji) {
-    this.addReaction(arg0).awaitSingle()
+    this.addReaction(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Message.removeSelfReaction]
  */
 suspend inline fun Message.removeSelfReactionAsync(arg0: ReactionEmoji) {
-    this.removeSelfReaction(arg0).awaitSingle()
+    this.removeSelfReaction(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Message.delete]
  */
 suspend inline fun Message.deleteAsync(arg0: String) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Message.removeReaction]
  */
 suspend inline fun Message.removeReactionAsync(arg0: ReactionEmoji, arg1: Snowflake) {
-    this.removeReaction(arg0, arg1).awaitSingle()
+    this.removeReaction(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -383,7 +381,7 @@ suspend inline fun Role.editAsync(noinline arg0: RoleEditSpec.() -> Unit): Role 
  * @see [Role.delete]
  */
 suspend inline fun Role.deleteAsync(arg0: String) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -400,7 +398,7 @@ suspend inline fun TextChannel.addRoleOverwriteAsync(
     arg1: PermissionOverwrite,
     arg2: String
 ) {
-    this.addRoleOverwrite(arg0, arg1, arg2).awaitSingle()
+    this.addRoleOverwrite(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -429,7 +427,7 @@ suspend inline fun TextChannel.addMemberOverwriteAsync(
     arg1: PermissionOverwrite,
     arg2: String
 ) {
-    this.addMemberOverwrite(arg0, arg1, arg2).awaitSingle()
+    this.addMemberOverwrite(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -464,21 +462,21 @@ suspend inline fun Webhook.editAsync(noinline arg0: WebhookEditSpec.() -> Unit):
  * @see [Webhook.delete]
  */
 suspend inline fun Webhook.deleteAsync(arg0: String) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ExtendedPermissionOverwrite.delete]
  */
 suspend inline fun ExtendedPermissionOverwrite.deleteAsync(arg0: String) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Invite.delete]
  */
 suspend inline fun Invite.deleteAsync(arg0: String) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -491,14 +489,14 @@ suspend inline fun Invitable.createInviteAsync(noinline arg0: InviteCreateSpec.(
  * @see [ShardAwareStore.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> ShardAwareStore<K, V>.saveAsync(arg0: Publisher<Tuple2<K, V>>) {
-    this.save(arg0).awaitSingle()
+    this.save(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ShardAwareStore.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> ShardAwareStore<K, V>.saveAsync(arg0: K, arg1: V) {
-    this.save(arg0, arg1).awaitSingle()
+    this.save(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -511,14 +509,14 @@ suspend inline fun <K : Comparable<K>, V : Serializable> ShardAwareStore<K, V>.f
  * @see [ShardAwareStore.deleteInRange]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> ShardAwareStore<K, V>.deleteInRangeAsync(arg0: K, arg1: K) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ShardAwareStore.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> ShardAwareStore<K, V>.deleteAsync(arg0: Publisher<K>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -528,14 +526,14 @@ suspend inline fun <T, R> DiscordWebClient.exchangeAsync(
     arg0: ClientRequest,
     arg1: Any,
     arg2: Class<T>,
-    arg3: Consumer<HttpClientResponse>
+    noinline arg3: HttpClientResponse.() -> Unit
 ): T = this.exchange(arg0, arg1, arg2, arg3).awaitSingle()
 
 /**
  * @see [EmptyReaderStrategy.read]
  */
 suspend inline fun EmptyReaderStrategy.readAsync(arg0: ByteBufMono, arg1: Class<Void>) {
-    this.read(arg0, arg1).awaitSingle()
+    this.read(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -604,7 +602,7 @@ suspend inline fun <T> Router.exchangeAsync(arg0: DiscordRequest<T>): T =
  * @see [ChannelService.deleteGroupDMRecipient]
  */
 suspend inline fun ChannelService.deleteGroupDMRecipientAsync(arg0: Long, arg1: Long) {
-    this.deleteGroupDMRecipient(arg0, arg1).awaitSingle()
+    this.deleteGroupDMRecipient(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -617,14 +615,14 @@ suspend inline fun ChannelService.createMessageAsync(arg0: Long, arg1: Multipart
  * @see [ChannelService.deletePinnedMessage]
  */
 suspend inline fun ChannelService.deletePinnedMessageAsync(arg0: Long, arg1: Long) {
-    this.deletePinnedMessage(arg0, arg1).awaitSingle()
+    this.deletePinnedMessage(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ChannelService.triggerTypingIndicator]
  */
 suspend inline fun ChannelService.triggerTypingIndicatorAsync(arg0: Long) {
-    this.triggerTypingIndicator(arg0).awaitSingle()
+    this.triggerTypingIndicator(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -640,7 +638,7 @@ suspend inline fun ChannelService.createChannelInviteAsync(
  * @see [ChannelService.deleteAllReactions]
  */
 suspend inline fun ChannelService.deleteAllReactionsAsync(arg0: Long, arg1: Long) {
-    this.deleteAllReactions(arg0, arg1).awaitSingle()
+    this.deleteAllReactions(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -651,7 +649,7 @@ suspend inline fun ChannelService.addGroupDMRecipientAsync(
     arg1: Long,
     arg2: GroupAddRecipientRequest
 ) {
-    this.addGroupDMRecipient(arg0, arg1, arg2).awaitSingle()
+    this.addGroupDMRecipient(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -663,7 +661,7 @@ suspend inline fun ChannelService.editChannelPermissionsAsync(
     arg2: PermissionsEditRequest,
     arg3: String
 ) {
-    this.editChannelPermissions(arg0, arg1, arg2, arg3).awaitSingle()
+    this.editChannelPermissions(arg0, arg1, arg2, arg3).awaitFirstOrNull()
 }
 
 /**
@@ -683,7 +681,7 @@ suspend inline fun ChannelService.deleteOwnReactionAsync(
     arg1: Long,
     arg2: String
 ) {
-    this.deleteOwnReaction(arg0, arg1, arg2).awaitSingle()
+    this.deleteOwnReaction(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -694,14 +692,14 @@ suspend inline fun ChannelService.createReactionAsync(
     arg1: Long,
     arg2: String
 ) {
-    this.createReaction(arg0, arg1, arg2).awaitSingle()
+    this.createReaction(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
  * @see [ChannelService.addPinnedMessage]
  */
 suspend inline fun ChannelService.addPinnedMessageAsync(arg0: Long, arg1: Long) {
-    this.addPinnedMessage(arg0, arg1).awaitSingle()
+    this.addPinnedMessage(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -718,7 +716,7 @@ suspend inline fun ChannelService.deleteChannelPermissionAsync(
     arg1: Long,
     arg2: String
 ) {
-    this.deleteChannelPermission(arg0, arg1, arg2).awaitSingle()
+    this.deleteChannelPermission(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -729,14 +727,14 @@ suspend inline fun ChannelService.deleteMessageAsync(
     arg1: Long,
     arg2: String
 ) {
-    this.deleteMessage(arg0, arg1, arg2).awaitSingle()
+    this.deleteMessage(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
  * @see [ChannelService.bulkDeleteMessages]
  */
 suspend inline fun ChannelService.bulkDeleteMessagesAsync(arg0: Long, arg1: BulkDeleteRequest) {
-    this.bulkDeleteMessages(arg0, arg1).awaitSingle()
+    this.bulkDeleteMessages(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -748,7 +746,7 @@ suspend inline fun ChannelService.deleteReactionAsync(
     arg2: String,
     arg3: Long
 ) {
-    this.deleteReaction(arg0, arg1, arg2, arg3).awaitSingle()
+    this.deleteReaction(arg0, arg1, arg2, arg3).awaitFirstOrNull()
 }
 
 /**
@@ -777,7 +775,7 @@ suspend inline fun EmojiService.deleteGuildEmojiAsync(
     arg1: Long,
     arg2: String
 ) {
-    this.deleteGuildEmoji(arg0, arg1, arg2).awaitSingle()
+    this.deleteGuildEmoji(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -799,7 +797,7 @@ suspend inline fun GuildService.modifyGuildMemberAsync(
     arg2: GuildMemberModifyRequest,
     arg3: String
 ) {
-    this.modifyGuildMember(arg0, arg1, arg2, arg3).awaitSingle()
+    this.modifyGuildMember(arg0, arg1, arg2, arg3).awaitFirstOrNull()
 }
 
 /**
@@ -865,14 +863,14 @@ suspend inline fun GuildService.modifyGuildIntegrationAsync(
     arg1: Long,
     arg2: IntegrationModifyRequest
 ) {
-    this.modifyGuildIntegration(arg0, arg1, arg2).awaitSingle()
+    this.modifyGuildIntegration(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
  * @see [GuildService.syncGuildIntegration]
  */
 suspend inline fun GuildService.syncGuildIntegrationAsync(arg0: Long, arg1: Long) {
-    this.syncGuildIntegration(arg0, arg1).awaitSingle()
+    this.syncGuildIntegration(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -892,7 +890,7 @@ suspend inline fun GuildService.deleteGuildRoleAsync(
     arg1: Long,
     arg2: String
 ) {
-    this.deleteGuildRole(arg0, arg1, arg2).awaitSingle()
+    this.deleteGuildRole(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -903,7 +901,7 @@ suspend inline fun GuildService.removeGuildBanAsync(
     arg1: Long,
     arg2: String
 ) {
-    this.removeGuildBan(arg0, arg1, arg2).awaitSingle()
+    this.removeGuildBan(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -915,14 +913,14 @@ suspend inline fun GuildService.addGuildMemberRoleAsync(
     arg2: Long,
     arg3: String
 ) {
-    this.addGuildMemberRole(arg0, arg1, arg2, arg3).awaitSingle()
+    this.addGuildMemberRole(arg0, arg1, arg2, arg3).awaitFirstOrNull()
 }
 
 /**
  * @see [GuildService.deleteGuildIntegration]
  */
 suspend inline fun GuildService.deleteGuildIntegrationAsync(arg0: Long, arg1: Long) {
-    this.deleteGuildIntegration(arg0, arg1).awaitSingle()
+    this.deleteGuildIntegration(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -934,7 +932,7 @@ suspend inline fun GuildService.createGuildBanAsync(
     arg2: Map<String, Any?>,
     arg3: String
 ) {
-    this.createGuildBan(arg0, arg1, arg2, arg3).awaitSingle()
+    this.createGuildBan(arg0, arg1, arg2, arg3).awaitFirstOrNull()
 }
 
 /**
@@ -953,14 +951,14 @@ suspend inline fun GuildService.createGuildIntegrationAsync(
     arg0: Long,
     arg1: IntegrationCreateRequest
 ) {
-    this.createGuildIntegration(arg0, arg1).awaitSingle()
+    this.createGuildIntegration(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [GuildService.deleteGuild]
  */
 suspend inline fun GuildService.deleteGuildAsync(arg0: Long) {
-    this.deleteGuild(arg0).awaitSingle()
+    this.deleteGuild(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -971,7 +969,7 @@ suspend inline fun GuildService.removeGuildMemberAsync(
     arg1: Long,
     arg2: String
 ) {
-    this.removeGuildMember(arg0, arg1, arg2).awaitSingle()
+    this.removeGuildMember(arg0, arg1, arg2).awaitFirstOrNull()
 }
 
 /**
@@ -983,7 +981,7 @@ suspend inline fun GuildService.removeGuildMemberRoleAsync(
     arg2: Long,
     arg3: String
 ) {
-    this.removeGuildMemberRole(arg0, arg1, arg2, arg3).awaitSingle()
+    this.removeGuildMemberRole(arg0, arg1, arg2, arg3).awaitFirstOrNull()
 }
 
 /**
@@ -1002,7 +1000,7 @@ suspend inline fun UserService.modifyCurrentUserAsync(arg0: UserModifyRequest): 
  * @see [UserService.leaveGuild]
  */
 suspend inline fun UserService.leaveGuildAsync(arg0: Long) {
-    this.leaveGuild(arg0).awaitSingle()
+    this.leaveGuild(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1039,35 +1037,35 @@ suspend inline fun WebhookService.modifyWebhookAsync(
  * @see [WebhookService.deleteWebhook]
  */
 suspend inline fun WebhookService.deleteWebhookAsync(arg0: Long, arg1: String) {
-    this.deleteWebhook(arg0, arg1).awaitSingle()
+    this.deleteWebhook(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [DefaultGatewayClient.close]
  */
 suspend inline fun DefaultGatewayClient.closeAsync(arg0: Boolean) {
-    this.close(arg0).awaitSingle()
+    this.close(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [DefaultGatewayClient.execute]
  */
 suspend inline fun DefaultGatewayClient.executeAsync(arg0: String) {
-    this.execute(arg0).awaitSingle()
+    this.execute(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [DefaultGatewayClient.execute]
  */
 suspend inline fun DefaultGatewayClient.executeAsync(arg0: String, arg1: GatewayObserver) {
-    this.execute(arg0, arg1).awaitSingle()
+    this.execute(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [DefaultGatewayClient.sendBuffer]
  */
 suspend inline fun DefaultGatewayClient.sendBufferAsync(arg0: Publisher<ByteBuf>) {
-    this.sendBuffer(arg0).awaitSingle()
+    this.sendBuffer(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1077,42 +1075,42 @@ suspend inline fun DiscordWebSocketHandler.handleAsync(
     arg0: WebsocketInbound,
     arg1: WebsocketOutbound
 ) {
-    this.handle(arg0, arg1).awaitSingle()
+    this.handle(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [GatewayClient.execute]
  */
 suspend inline fun GatewayClient.executeAsync(arg0: String, arg1: GatewayObserver) {
-    this.execute(arg0, arg1).awaitSingle()
+    this.execute(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [GatewayClient.execute]
  */
 suspend inline fun GatewayClient.executeAsync(arg0: String) {
-    this.execute(arg0).awaitSingle()
+    this.execute(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [GatewayClient.sendBuffer]
  */
 suspend inline fun GatewayClient.sendBufferAsync(arg0: Publisher<ByteBuf>) {
-    this.sendBuffer(arg0).awaitSingle()
+    this.sendBuffer(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [GatewayClient.send]
  */
 suspend inline fun GatewayClient.sendAsync(arg0: Publisher<GatewayPayload<*>>) {
-    this.send(arg0).awaitSingle()
+    this.send(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [GatewayClient.close]
  */
 suspend inline fun GatewayClient.closeAsync(arg0: Boolean) {
-    this.close(arg0).awaitSingle()
+    this.close(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1131,7 +1129,7 @@ suspend inline fun JacksonPayloadWriter.writeAsync(arg0: GatewayPayload<*>): Byt
  * @see [JdkStore.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> JdkStore<K, V>.saveAsync(arg0: Publisher<Tuple2<K, V>>) {
-    this.save(arg0).awaitSingle()
+    this.save(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1141,7 +1139,7 @@ suspend inline fun <K : Comparable<K>, V : Serializable> JdkStore<K, V>.saveAsyn
     arg0: K,
     arg1: V
 ) {
-    this.save(arg0, arg1).awaitSingle()
+    this.save(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -1157,35 +1155,35 @@ suspend inline fun <K : Comparable<K>, V : Serializable> JdkStore<K, V>.deleteIn
     arg0: K,
     arg1: K
 ) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [JdkStore.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> JdkStore<K, V>.deleteAsync(arg0: Publisher<K>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [JdkStore.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> JdkStore<K, V>.deleteAsync(arg0: K) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [NoOpStore.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> NoOpStore<K, V>.saveAsync(arg0: K, arg1: V) {
-    this.save(arg0, arg1).awaitSingle()
+    this.save(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [NoOpStore.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> NoOpStore<K, V>.saveAsync(arg0: Publisher<Tuple2<K, V>>) {
-    this.save(arg0).awaitSingle()
+    this.save(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1198,21 +1196,21 @@ suspend inline fun <K : Comparable<K>, V : Serializable> NoOpStore<K, V>.findAsy
  * @see [NoOpStore.deleteInRange]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> NoOpStore<K, V>.deleteInRangeAsync(arg0: K, arg1: K) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [NoOpStore.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> NoOpStore<K, V>.deleteAsync(arg0: K) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [NoOpStore.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> NoOpStore<K, V>.deleteAsync(arg0: Publisher<K>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1225,49 +1223,49 @@ suspend inline fun <V : Serializable> NoOpLongObjStore<V>.findAsync(arg0: Long):
  * @see [NoOpLongObjStore.deleteInRange]
  */
 suspend inline fun <V : Serializable> NoOpLongObjStore<V>.deleteInRangeAsync(arg0: Long, arg1: Long) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [NoOpLongObjStore.saveWithLong]
  */
 suspend inline fun <V : Serializable> NoOpLongObjStore<V>.saveWithLongAsync(arg0: Publisher<LongObjTuple2<V>>) {
-    this.saveWithLong(arg0).awaitSingle()
+    this.saveWithLong(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [NoOpLongObjStore.saveWithLong]
  */
 suspend inline fun <V : Serializable> NoOpLongObjStore<V>.saveWithLongAsync(arg0: Long, arg1: V) {
-    this.saveWithLong(arg0, arg1).awaitSingle()
+    this.saveWithLong(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [NoOpLongObjStore.delete]
  */
 suspend inline fun <V : Serializable> NoOpLongObjStore<V>.deleteAsync(arg0: Long) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [NoOpLongObjStore.delete]
  */
 suspend inline fun <V : Serializable> NoOpLongObjStore<V>.deleteAsync(arg0: Publisher<Long>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ForwardingStore.save]
  */
 suspend inline fun <V : Serializable> ForwardingStore<V>.saveAsync(arg0: Long, arg1: V) {
-    this.save(arg0, arg1).awaitSingle()
+    this.save(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ForwardingStore.save]
  */
 suspend inline fun <V : Serializable> ForwardingStore<V>.saveAsync(arg0: Publisher<Tuple2<Long, V>>) {
-    this.save(arg0).awaitSingle()
+    this.save(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1280,49 +1278,49 @@ suspend inline fun <V : Serializable> ForwardingStore<V>.findAsync(arg0: Long): 
  * @see [ForwardingStore.deleteInRange]
  */
 suspend inline fun <V : Serializable> ForwardingStore<V>.deleteInRangeAsync(arg0: Long, arg1: Long) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ForwardingStore.saveWithLong]
  */
 suspend inline fun <V : Serializable> ForwardingStore<V>.saveWithLongAsync(arg0: Long, arg1: V) {
-    this.saveWithLong(arg0, arg1).awaitSingle()
+    this.saveWithLong(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ForwardingStore.saveWithLong]
  */
 suspend inline fun <V : Serializable> ForwardingStore<V>.saveWithLongAsync(arg0: Publisher<LongObjTuple2<V>>) {
-    this.saveWithLong(arg0).awaitSingle()
+    this.saveWithLong(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ForwardingStore.delete]
  */
 suspend inline fun <V : Serializable> ForwardingStore<V>.deleteAsync(arg0: Publisher<Long>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ForwardingStore.delete]
  */
 suspend inline fun <V : Serializable> ForwardingStore<V>.deleteAsync(arg0: Long) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [LongObjStore.save]
  */
 suspend inline fun <V : Serializable> LongObjStore<V>.saveAsync(arg0: Long, arg1: V) {
-    this.save(arg0, arg1).awaitSingle()
+    this.save(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [LongObjStore.save]
  */
 suspend inline fun <V : Serializable> LongObjStore<V>.saveAsync(arg0: Publisher<Tuple2<Long, V>>) {
-    this.save(arg0).awaitSingle()
+    this.save(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1335,35 +1333,35 @@ suspend inline fun <V : Serializable> LongObjStore<V>.findAsync(arg0: Long): V =
  * @see [LongObjStore.deleteInRange]
  */
 suspend inline fun <V : Serializable> LongObjStore<V>.deleteInRangeAsync(arg0: Long, arg1: Long) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [LongObjStore.saveWithLong]
  */
 suspend inline fun <V : Serializable> LongObjStore<V>.saveWithLongAsync(arg0: Publisher<LongObjTuple2<V>>) {
-    this.saveWithLong(arg0).awaitSingle()
+    this.saveWithLong(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [LongObjStore.saveWithLong]
  */
 suspend inline fun <V : Serializable> LongObjStore<V>.saveWithLongAsync(arg0: Long, arg1: V) {
-    this.saveWithLong(arg0, arg1).awaitSingle()
+    this.saveWithLong(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [LongObjStore.delete]
  */
 suspend inline fun <V : Serializable> LongObjStore<V>.deleteAsync(arg0: Publisher<Long>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [LongObjStore.delete]
  */
 suspend inline fun <V : Serializable> LongObjStore<V>.deleteAsync(arg0: Long) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1376,49 +1374,49 @@ suspend inline fun <V : Serializable> ReadOnlyLongObjStore<V>.findAsync(arg0: Lo
  * @see [ReadOnlyLongObjStore.deleteInRange]
  */
 suspend inline fun <V : Serializable> ReadOnlyLongObjStore<V>.deleteInRangeAsync(arg0: Long, arg1: Long) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ReadOnlyLongObjStore.saveWithLong]
  */
 suspend inline fun <V : Serializable> ReadOnlyLongObjStore<V>.saveWithLongAsync(arg0: Publisher<LongObjTuple2<V>>) {
-    this.saveWithLong(arg0).awaitSingle()
+    this.saveWithLong(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ReadOnlyLongObjStore.saveWithLong]
  */
 suspend inline fun <V : Serializable> ReadOnlyLongObjStore<V>.saveWithLongAsync(arg0: Long, arg1: V) {
-    this.saveWithLong(arg0, arg1).awaitSingle()
+    this.saveWithLong(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ReadOnlyLongObjStore.delete]
  */
 suspend inline fun <V : Serializable> ReadOnlyLongObjStore<V>.deleteAsync(arg0: Publisher<Long>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ReadOnlyLongObjStore.delete]
  */
 suspend inline fun <V : Serializable> ReadOnlyLongObjStore<V>.deleteAsync(arg0: Long) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ReadOnlyStore.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> ReadOnlyStore<K, V>.saveAsync(arg0: K, arg1: V) {
-    this.save(arg0, arg1).awaitSingle()
+    this.save(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ReadOnlyStore.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> ReadOnlyStore<K, V>.saveAsync(arg0: Publisher<Tuple2<K, V>>) {
-    this.save(arg0).awaitSingle()
+    this.save(arg0).awaitFirstOrNull()
 }
 
 /**
@@ -1434,35 +1432,35 @@ suspend inline fun <K : Comparable<K>, V : Serializable> ReadOnlyStore<K, V>.del
     arg0: K,
     arg1: K
 ) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [ReadOnlyStore.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> ReadOnlyStore<K, V>.deleteAsync(arg0: K) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [ReadOnlyStore.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> ReadOnlyStore<K, V>.deleteAsync(arg0: Publisher<K>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Store.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> Store<K, V>.saveAsync(arg0: Publisher<Tuple2<K, V>>) {
-    this.save(arg0).awaitSingle()
+    this.save(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Store.save]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> Store<K, V>.saveAsync(arg0: K, arg1: V) {
-    this.save(arg0, arg1).awaitSingle()
+    this.save(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
@@ -1475,21 +1473,21 @@ suspend inline fun <K : Comparable<K>, V : Serializable> Store<K, V>.findAsync(a
  * @see [Store.deleteInRange]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> Store<K, V>.deleteInRangeAsync(arg0: K, arg1: K) {
-    this.deleteInRange(arg0, arg1).awaitSingle()
+    this.deleteInRange(arg0, arg1).awaitFirstOrNull()
 }
 
 /**
  * @see [Store.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> Store<K, V>.deleteAsync(arg0: Publisher<K>) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
  * @see [Store.delete]
  */
 suspend inline fun <K : Comparable<K>, V : Serializable> Store<K, V>.deleteAsync(arg0: K) {
-    this.delete(arg0).awaitSingle()
+    this.delete(arg0).awaitFirstOrNull()
 }
 
 /**
