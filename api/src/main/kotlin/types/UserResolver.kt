@@ -5,7 +5,7 @@ import discord4j.core.`object`.entity.User
 import getUserByIdAsync
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.reactive.flow.asFlow
 import util.toSnowflake
 
@@ -26,7 +26,7 @@ class UserResolver : MentionableResolver<User>() {
             .takeIf { it.size == 2 }
             ?: throw  IllegalArgumentException("Ожидалось `Name#ID`, получено `$input`")
 
-        users.filter { it.username == normalName[0] && it.discriminator == normalName[1] }.single()
+        users.filter { it.username == normalName[0] && it.discriminator == normalName[1] }.singleOrNull()
     }
 
     override val exceptionMessage: String = "Не найдено ни одного подходящего пользователя"

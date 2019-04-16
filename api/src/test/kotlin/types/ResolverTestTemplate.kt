@@ -1,22 +1,26 @@
 package types
 
-import context.ICommandContext
+import context.GuildCommandContext
 import discord4j.core.DiscordClient
 import discord4j.core.DiscordClientBuilder
+import getGuildByIdAsync
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import util.toSnowflake
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-abstract class ResolverTestTemplate <T> {
+abstract class ResolverTestTemplate<T : Any> {
     @MockK
-    protected lateinit var fakeContext : ICommandContext
+    protected lateinit var fakeContext: GuildCommandContext
     protected abstract val resolver : ITypeResolver<T>
     private lateinit var client: DiscordClient
 
@@ -26,10 +30,14 @@ abstract class ResolverTestTemplate <T> {
 
         client = DiscordClientBuilder(token).build()
 
-        every { fakeContext.commandArgs } returns arrayOf()
+        every { fakeContext.commandArgs } returns arrayOf("hello!")
         every { fakeContext.client } returns client
         every { fakeContext.author } returns mockk()
         every { fakeContext.message } returns mockk()
+        every { fakeContext.guildId } returns 490951935894093850.toSnowflake()
+        every { fakeContext.guild } returns GlobalScope.async {
+            fakeContext.client.getGuildByIdAsync(fakeContext.guildId)!!
+        }
 
         client.login().subscribe()
     }

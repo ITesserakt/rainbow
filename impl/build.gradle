@@ -25,7 +25,7 @@ dependencies {
 
 shadowJar {
     mainClassName = 'MainKt'
-    version = '0.0.8.2'
+    version = '0.0.8.5'
 }
 
 task stage(dependsOn: ['clean', 'shadowJar'])

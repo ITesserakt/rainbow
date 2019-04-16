@@ -20,15 +20,12 @@ abstract class ModuleBase<T : ICommandContext>(val contextType: KClass<T>) {
         this.context = context as T
     }
 
-    protected suspend fun T.reply(message: String) {
+    protected suspend fun T.reply(message: String) =
         this.channel.await().createMessageAsync(message)
-    }
 
-    protected suspend fun T.reply(messageSpec: MessageCreateSpec.() -> Unit) {
+    protected suspend fun T.reply(messageSpec: MessageCreateSpec.() -> Unit) =
         this.channel.await().createMessageAsync(messageSpec)
-    }
 
-    protected suspend fun T.replyEmbed(embedSpec: EmbedCreateSpec.() -> Unit) {
+    protected suspend fun T.replyEmbed(embedSpec: EmbedCreateSpec.() -> Unit) =
         channel.await().createEmbedAsync(embedSpec)
-    }
 }

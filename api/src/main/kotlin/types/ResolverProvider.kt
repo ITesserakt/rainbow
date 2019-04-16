@@ -15,7 +15,7 @@ import kotlin.reflect.KProperty
  * Binds and provides [ITypeResolver] for many types
  */
 object ResolverProvider {
-    private val resolversMap = hashMapOf(
+    private val resolversMap: HashMap<Class<out Any>, ITypeResolver<out Any>> = hashMapOf(
         User::class.java to UserResolver(),
         Int::class.java to IntResolver(),
         Long::class.java to LongResolver(),

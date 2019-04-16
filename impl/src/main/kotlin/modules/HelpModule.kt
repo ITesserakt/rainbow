@@ -40,7 +40,7 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
     @Summary("Дополнительная информация о боте")
     suspend fun about() {
         context.reply(
-            """v0.0.8.2-ALPHA
+            """v0.0.8.5-ALPHA
             |https://github.com/ITesserakt/rainbow
             |Основано на DISCORD4J ${getProperties()[APPLICATION_VERSION]}
         """.trimMargin()
@@ -49,11 +49,9 @@ class HelpModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class) {
 
     @Command
     @Summary("Время работы бота")
-    suspend fun uptime() {
-        context.reply(
-            "Бот работает уже ${Duration.between(LocalTime.now(), context.client.startedTime)}"
-        )
-    }
+    suspend fun uptime() = context.reply(
+        "Бот работает уже ${Duration.between(LocalTime.now(), context.client.startedTime)}"
+    )
 
     @Command("role_info")
     @Summary("Информация об указанной роли")

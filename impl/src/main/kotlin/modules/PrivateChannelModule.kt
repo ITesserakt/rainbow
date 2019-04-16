@@ -9,6 +9,7 @@ import kotlin.system.exitProcess
 class PrivateChannelModule : ModuleBase<PrivateChannelCommandContext>(PrivateChannelCommandContext::class) {
     @Command
     @Aliases("test")
+    @Summary("Приветственное сообщение")
     suspend fun hello() {
         context.reply("Hello!")
     }
