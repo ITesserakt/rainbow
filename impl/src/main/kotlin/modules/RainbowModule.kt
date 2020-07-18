@@ -41,9 +41,9 @@ class RainbowModule : ModuleBase<GuildCommandContext>(GuildCommandContext::class
     @Command("start")
     @Permissions(Permission.MANAGE_ROLES)
     @Summary("Радужное переливание цвета роли")
-    suspend fun rainbowStart(role: Role, `delay in sec`: Long = 30, step: Float = 0.5f) {
-        val clampedDelay = `delay in sec`.coerceAtLeast(10) * 1000
-        val clampedStep = step.coerceIn(0.1f..0.9f)
+    suspend fun rainbowStart(role: Role, `delay in ms`: Long = 2000, step: Float = 0.5f) {
+        val clampedDelay = `delay in ms`.coerceAtLeast(120)
+        val clampedStep = step.coerceIn(0.01f..0.99f)
 
         checkForRightRolePosition(role)
 
