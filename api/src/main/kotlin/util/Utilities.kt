@@ -2,7 +2,6 @@ package util
 
 import discord4j.core.event.domain.Event
 import handler.Handler
-import org.jetbrains.annotations.Contract
 import reactor.core.publisher.Flux
 import java.time.Duration
 import java.util.*
@@ -44,15 +43,4 @@ operator fun String.get(indices: IntRange) = this.slice(indices)
  */
 operator fun <T : Event> Flux<T>.plusAssign(handler: Handler<T>) {
     this.subscribe { handler.handle(it) }
-}
-
-/**
- * Clams [T] between [min] and [max] exclusive
- * @return clamped [T]
- */
-@Contract(pure = true)
-fun <T> T.clamp(min: T, max: T): T where T : Number, T : Comparable<T> {
-    if (this < min) return min
-    if (this > max) return max
-    return this
 }
