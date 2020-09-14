@@ -14,7 +14,7 @@ dependencies {
     compile "org.reflections:reflections:0.9.11"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.0"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.0"
     testCompile "io.projectreactor:reactor-test:3.3.7.RELEASE"
     testImplementation "io.mockk:mockk:1.9.1"
 }
